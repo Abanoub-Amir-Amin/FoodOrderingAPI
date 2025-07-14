@@ -1,8 +1,4 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Identity.Abstractions;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.Resource;
+using Microsoft.EntityFrameworkCore;
 
 namespace FoodOrderingAPI
 {
@@ -13,8 +9,9 @@ namespace FoodOrderingAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+
+            builder.Services.AddDbContext<ApplicationDBContext>(op =>
+            op.UseSqlServer(builder.Configuration.GetConnectionString("FoodOrderingDb")));
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

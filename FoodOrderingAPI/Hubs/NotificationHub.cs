@@ -4,15 +4,15 @@ namespace FoodOrderingAPI.Hubs
 {
     public class NotificationHub:Hub
     {
-        public async Task SendNotification(string userId, string message)
+        public async Task SendNotification(Guid userId, string message)
         {
-            await Clients.User(userId).SendAsync("ReceiveNotification", message);
+            await Clients.User(userId.ToString()).SendAsync("ReceiveNotification", message);
         }
         public async Task SendToAll(string message)
         {
             await Clients.All.SendAsync("ReceivePublicNotification", message);
         }
-        public async Task JoinGroup(string groupName)
+        public async Task AddGroup(string groupName)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         }
