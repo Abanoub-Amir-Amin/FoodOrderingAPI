@@ -20,6 +20,6 @@ namespace FoodOrderingAPI.Models
         public DateTime CreatedAt { get; set; }
         public Guid? GroupId { get; set; }
         public IEnumerable<Notification> Notifications { get; set; } = new HashSet<Notification>();
-        public virtual Group Group { get; set; }
+        public virtual Group? Group { get; set; }
     }
 }

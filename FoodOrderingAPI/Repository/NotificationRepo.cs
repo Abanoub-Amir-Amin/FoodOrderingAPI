@@ -1,11 +1,11 @@
 ﻿using FoodOrderingAPI.Hubs;
 using FoodOrderingAPI.Models;
-using FoodOrderingAPI.Services;
+using FoodOrderingAPI.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 
 namespace FoodOrderingAPI.Repository
 {
-    public class NotificationRepo : INotificationService
+    public class NotificationRepo : INotificationRepo
     {
         public ApplicationDBContext Context { get; }
         public IHubContext<NotificationHub> HubContext { get; }
@@ -46,20 +46,24 @@ namespace FoodOrderingAPI.Repository
             HubContext.Clients.All.SendAsync("ReceivePublicNotification", message);
         }
 
-        public void CreateNotificationToGroup(string groupName, string message)
-        {
-            var notification = new Notification
-            {
-                UserId = null,
-                Message = message,
-                Type = "GroupNotification",
-                IsRead = null,
-                CreatedAt = DateTime.UtcNow
-            };
-            Context.Notifications.Add(notification);
-            Context.SaveChanges();
-            HubContext.Clients.Groups(groupName).SendAsync("ReceiveGroupNotification", message);
-        }
+        //public void CreateNotificationToGroup(string groupName, string message)
+        //{
+        //    var notification = new Notification
+        //    {
+        //        UserId = null,
+        //        Message = message,
+        //        Type = "GroupNotification",
+        //        IsRead = null,
+        //        CreatedAt = DateTime.UtcNow
+        //    };
+        //    Context.Notifications.Add(notification);
+        //    Context.SaveChanges();
+        //    HubContext.Clients.Groups(groupName).SendAsync("ReceiveGroupNotification", message);
+        //}
 
+        //public void AddToGroup(Guid userId, string groupName)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

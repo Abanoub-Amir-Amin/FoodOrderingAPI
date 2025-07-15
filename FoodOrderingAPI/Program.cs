@@ -1,3 +1,5 @@
+using FoodOrderingAPI.Repository;
+using FoodOrderingAPI.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodOrderingAPI
@@ -9,11 +11,15 @@ namespace FoodOrderingAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddControllers();
 
             builder.Services.AddDbContext<ApplicationDBContext>(op =>
             op.UseSqlServer(builder.Configuration.GetConnectionString("FoodOrderingDb")));
 
-            builder.Services.AddControllers();
+            builder.Services.AddSignalR();
+
+            builder.Services.AddScoped<INotificationRepo, NotificationRepo>();
+
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
             builder.Services.AddSwaggerGen();
