@@ -2,7 +2,7 @@
 {
     public interface INotificationRepo
     {
-        public void CreateNotificationTo(Guid userId, string message);
+        public void CreateNotificationTo(string userId, string message);
         public void CreateNotificationToAll(string message);
 
         // Uncomment if group notifications are needed

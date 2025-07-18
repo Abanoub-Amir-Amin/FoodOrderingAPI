@@ -16,7 +16,7 @@ namespace FoodOrderingAPI.Repository
             HubContext = hubContext;
         }
 
-        public void CreateNotificationTo(Guid userId, string message)
+        public void CreateNotificationTo(string userId, string message)
         {
             var notification = new Notification
             {
