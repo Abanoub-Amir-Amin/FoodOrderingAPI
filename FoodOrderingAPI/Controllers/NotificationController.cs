@@ -23,10 +23,15 @@ namespace FoodOrderingAPI.Controllers
         }
 
         [HttpPost("NotifyAll")]
-        public IActionResult SendNotificationToAll([FromBody] string message)
+        public IActionResult SendNotificationToAll([FromBody] mDTO dTO)
         {
-            NotificationRepo.CreateNotificationToAll(message);
-            return Ok(new { Message = message });
+            NotificationRepo.CreateNotificationToAll(dTO.Message);
+            return Ok(new { Message = dTO.Message });
         }
+
+    }
+    public class mDTO
+    {
+        public string Message { get; set; }
     }
 }
