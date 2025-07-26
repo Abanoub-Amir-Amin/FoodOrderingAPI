@@ -1,0 +1,177 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model FoodOrderingAPI.DTO.DashboardDto
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<div class="container-fluid mt-3">
+    <h1>@ViewData["Title"]</h1>
+
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar border-end" style="min-height:80vh;">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column nav-pills" id="dashboardTabs" role="tablist" aria-orientation="vertical">
+                    <!-- Add Admin nav item here if any admin-specific views -->
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" disabled>
+                            Admin Control (Coming Soon)
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="restaurant-tab" data-bs-toggle="pill" data-bs-target="#restaurant" type="button" role="tab" aria-controls="restaurant" aria-selected="true">
+                            Restaurant Control
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="customer-tab" data-bs-toggle="pill" data-bs-target="#customer" type="button" role="tab" aria-controls="customer" aria-selected="false">
+                            Customer Control
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="deliveryman-tab" data-bs-toggle="pill" data-bs-target="#deliveryman" type="button" role="tab" aria-controls="deliveryman" aria-selected="false">
+                            Delivery Man Control
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">
+            <div class="tab-content" id="dashboardTabsContent">
+
+                <!-- Restaurants tab -->
+                <div class="tab-pane fade show active" id="restaurant" role="tabpanel" aria-labelledby="restaurant-tab">
+                    <h2>Active Restaurants</h2>
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr><th>Name</th><th>Location</th><th>Open Hours</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var rest in Model.ActiveRestaurants)
+                            {
+                                <tr>
+                                    <td>@rest.RestaurantName</td>
+                                    <td>@rest.Location</td>
+                                    <td>@rest.OpenHours</td>
+                                    <td>
+                                        <form asp-action="DeactivateRestaurant" method="post" style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@rest.RestaurantId" />
+                                            <button class="btn btn-warning btn-sm" type="submit">Deactivate</button>
+                                        </form>
+
+                                        <form asp-action="DeleteRestaurant" method="post" style="display:inline;" onsubmit="return confirm('Confirm delete?');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@rest.RestaurantId" />
+                                            <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <h2>Inactive Restaurants</h2>
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr><th>Name</th><th>Location</th><th>Open Hours</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var rest in Model.InactiveRestaurants)
+                            {
+                                <tr>
+                                    <td>@rest.RestaurantName</td>
+                                    <td>@rest.Location</td>
+                                    <td>@rest.OpenHours</td>
+                                    <td>
+                                        <form asp-action="ActivateRestaurant" method="post" style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@rest.RestaurantId" />
+                                            <button class="btn btn-success btn-sm" type="submit">Activate</button>
+                                        </form>
+                                        <form asp-action="DeleteRestaurant" method="post" style="display:inline;" onsubmit="return confirm('Confirm delete?');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@rest.RestaurantId" />
+                                            <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Delivery Man tab -->
+                <div class="tab-pane fade" id="deliveryman" role="tabpanel" aria-labelledby="deliveryman-tab">
+                    <h2>Delivery Men</h2>
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>UserName</th>
+                                <th>Email</th>
+                                <th>Location</th>
+                                <th>Rank</th>
+                                <th>Available</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var dm in Model.DeliveryMen)
+                            {
+                                <tr>
+                                    <td>@dm.User.UserName</td>
+                                    <td>@dm.User.Email</td>
+                                    <td>@dm.Rank</td>
+                                    <td>@(dm.AvailabilityStatus ? "Yes" : "No")</td>
+                                    <td>
+                                        <form asp-action="DeleteDeliveryMan" method="post" onsubmit="return confirm('Confirm delete delivery man?');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@dm.DeliveryManId" />
+                                            <button class="btn btn-danger btn-sm">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Customers -->
+                <div class="tab-pane fade" id="customer" role="tabpanel" aria-labelledby="customer-tab">
+                    <h2>Customers</h2>
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>UserName</th>
+                                <th>Email</th>
+                                <th>Loyalty Points</th>
+                                <th>Total Orders</th>
+                                <!-- Add Actions column here if you have any actions for customers -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var customer in Model.Customers)
+                            {
+                                <tr>
+                                    @* <td>@customer.User.UserName</td>
+                                    <td>@customer.User.Email</td> *@
+                                    <td>@customer.LoyaltyPoints</td>
+                                    <td>@customer.TotalOrders</td>
+                                    <!-- Add actions, e.g., delete button if implemented -->
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
