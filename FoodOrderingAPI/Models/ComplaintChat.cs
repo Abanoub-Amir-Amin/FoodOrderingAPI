@@ -6,7 +6,7 @@ namespace FoodOrderingAPI.Models
     public class ComplaintChat
     {
         [Key]
-        public int ChatID { get; set; }
+        public Guid ChatID { get; set; }
 
         [ForeignKey(nameof(Customer))]
         public string CustomerID { get; set; }

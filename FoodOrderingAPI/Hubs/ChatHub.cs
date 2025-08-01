@@ -38,8 +38,22 @@ namespace FoodOrderingAPI.Hubs
             };
 
             DBContext.User_ConnectionId.Add(userConnectionId);
+            if(Context.User.IsInRole("Customer"))
+            {
+                var chatFound = DBContext.ComplaintChats.FirstOrDefault(c => c.CustomerID == id);
+                if (chatFound == null)
+                {
+                    var userChat = new ComplaintChat
+                    {
+                        AdminID = DBContext.Admins.FirstOrDefault().AdminID,
+                        StartedAt = DateTime.UtcNow,
+                        CustomerID = id,
+                    };
+                    DBContext.ComplaintChats.Add(userChat);
+                }
+            }
+           
             await DBContext.SaveChangesAsync();
-
             await base.OnConnectedAsync();
         }
         public override Task OnDisconnectedAsync(Exception? exception)
