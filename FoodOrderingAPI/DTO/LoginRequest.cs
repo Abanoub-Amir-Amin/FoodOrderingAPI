@@ -1,4 +1,4 @@
-﻿namespace FoodOrderingAPI.Models
+﻿namespace FoodOrderingAPI.DTO
 {
     public class LoginRequest
     {

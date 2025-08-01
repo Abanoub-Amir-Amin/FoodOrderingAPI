@@ -18,6 +18,7 @@ namespace FoodOrderingAPI.Repository
             _context = context;
         }
 
+        // ===== Items CRUD =====
         public async Task<Item> AddItemAsync(string restaurantId, Item item)
         {
             item.RestaurantID = restaurantId;
@@ -26,14 +27,12 @@ namespace FoodOrderingAPI.Repository
             return item;                      
         }
 
-
         public async Task<Item> UpdateItemAsync(Item item)
         {
             _context.Items.Update(item);        
             await _context.SaveChangesAsync();  
             return item;                        
         }
-
 
         public async Task<bool> DeleteItemAsync(Guid itemId, string restaurantId)
         {
@@ -67,6 +66,8 @@ namespace FoodOrderingAPI.Repository
         //        .ToListAsync();
         //}
 
+
+        // ===== Discounts CRUD =====
         public async Task<Discount> AddDiscountAsync(string restaurantId, Discount discount)
         {
             discount.RestaurantID = restaurantId;
@@ -93,6 +94,8 @@ namespace FoodOrderingAPI.Repository
             return true;
         }
 
+
+        // ===== Promo Codes CRUD =====
         public async Task<PromoCode> AddPromoCodeAsync(string restaurantId, PromoCode promoCode)
         {
             promoCode.RestaurantID = restaurantId;
@@ -119,18 +122,22 @@ namespace FoodOrderingAPI.Repository
             return true;
         }
 
-        public async Task<Order> UpdateOrderStatusAsync(Guid orderId, string status, string restaurantId)
+        public async Task<IEnumerable<PromoCode>> GetAllPromoCodesByRestaurantAsync(string restaurantId)
         {
-            var order = await _context.Orders
-                .FirstOrDefaultAsync(o => o.OrderID == orderId && o.RestaurantID == restaurantId);
-            if (order == null)
-                return null;
-
-            order.Status = status;
-            await _context.SaveChangesAsync();
-            return order;
+            return await _context.PromoCodes
+                .Where(p => p.RestaurantID.ToString() == restaurantId)
+                .ToListAsync();
         }
 
+        public async Task<IEnumerable<PromoCode>> SearchPromoCodesByCodeAsync(string restaurantId, string code)
+        {
+            return await _context.PromoCodes
+                .Where(p => p.RestaurantID.ToString() == restaurantId && p.Code.Contains(code))
+                .ToListAsync();
+        }
+
+
+        // ===== Restaurant Apply to Join =====
         public async Task<Restaurant> ApplyToJoinAsync(Restaurant restaurant)
         {
             if (restaurant == null)
@@ -139,9 +146,6 @@ namespace FoodOrderingAPI.Repository
                 throw new ArgumentException("User info must be provided");
             if (string.IsNullOrWhiteSpace(restaurant.User.Email))
                 throw new ArgumentException("User Email must be provided before Save.");
-
-            //// Tell EF that this User is already in the database, don't try to insert
-            //_context.Entry(restaurant.User).State = EntityState.Unchanged;
 
             restaurant.IsActive = false;
 
@@ -152,6 +156,8 @@ namespace FoodOrderingAPI.Repository
             return restaurant;
         }
 
+
+        // ===== Restaurant Profile =====
         public async Task<Restaurant> GetRestaurantByIdAsync(string userId)
         {
             if (userId == string.Empty)
@@ -167,27 +173,14 @@ namespace FoodOrderingAPI.Repository
             await _context.SaveChangesAsync();
             return restaurant;
         }
+
+
+        // ===== Orders =====
         public async Task<IEnumerable<Order>> GetAllOrdersByRestaurantAsync(string restaurantId)
         {
             return await _context.Orders
                 .Where(o => o.RestaurantID == restaurantId)
                 .ToListAsync();
-        }
-
-        public async Task<DashboardSummaryDto> GetDashboardSummaryAsync(string restaurantId)
-        {
-            var orders = await GetAllOrdersByRestaurantAsync(restaurantId);
-
-            var deliveredCount = orders.Count(o => o.Status == "Delivered");
-            var inProcessCount = orders.Count(o => o.Status == "Preparing" || o.Status == "Out for Delivery");
-            var cancelledCount = orders.Count(o => o.Status == "Cancelled");
-
-            return new DashboardSummaryDto
-            {
-                DeliveredOrders = deliveredCount,
-                InProcessOrders = inProcessCount,
-                CancelledOrders = cancelledCount
-            };
         }
 
         /*queries the database to find the top 10 most ordered items (topCount defaults to 10) for a given restaurant. 
@@ -211,6 +204,36 @@ namespace FoodOrderingAPI.Repository
 
             // Convert to List of Tuple<Item, int>
             return mostOrderedItems.Select(x => (x.Item, x.TotalQuantity)).ToList();
+        }
+
+        public async Task<Order> UpdateOrderStatusAsync(Guid orderId, string status, string restaurantId)
+        {
+            var order = await _context.Orders
+                .FirstOrDefaultAsync(o => o.OrderID == orderId && o.RestaurantID == restaurantId);
+            if (order == null)
+                return null;
+
+            order.Status = status;
+            await _context.SaveChangesAsync();
+            return order;
+        }
+
+
+        // ===== Dashboard Summary =====
+        public async Task<DashboardSummaryDto> GetDashboardSummaryAsync(string restaurantId)
+        {
+            var orders = await GetAllOrdersByRestaurantAsync(restaurantId);
+
+            var deliveredCount = orders.Count(o => o.Status == "Delivered");
+            var inProcessCount = orders.Count(o => o.Status == "Preparing" || o.Status == "Out for Delivery");
+            var cancelledCount = orders.Count(o => o.Status == "Cancelled");
+
+            return new DashboardSummaryDto
+            {
+                DeliveredOrders = deliveredCount,
+                InProcessOrders = inProcessCount,
+                CancelledOrders = cancelledCount
+            };
         }
     }
 }

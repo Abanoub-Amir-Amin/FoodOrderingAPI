@@ -2,7 +2,7 @@
 {
     public class PromoCodeDto
     {
-        public int? PromoCodeID { get; set; }
+        public Guid PromoCodeID { get; set; }
         public string Code { get; set; }
         public float DiscountPercentage { get; set; }
         public bool IsFreeDelivery { get; set; }

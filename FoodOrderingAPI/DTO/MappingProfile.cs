@@ -6,28 +6,40 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        // Map RestaurantDto → Restaurant
-        CreateMap<RestaurantDto, Restaurant>()
-            // Avoid mapping User.Restaurant to prevent cycles
-            .ForMember(dest => dest.User, opt => opt.Ignore());
+        // Map OrderItem → OrderItemDto
+        CreateMap<OrderItem, OrderItemDto>();
 
-        // Map Restaurant → RestaurantProfileDto
-        CreateMap<Restaurant, RestaurantProfileDto>().ReverseMap(); // Basic ReverseMap for profile updates
+        // Map Admin → AdminDto
+        CreateMap<Admin, AdminDto>();
+
+        // Map Customer → CustomerDTO
+        CreateMap<Customer, CustomerDTO>()
+            .ForMember(dest => dest.InProcessOrders, opt => opt.MapFrom(src => src.Orders.Where(o => o.Status == "In Process")));
+
+        // Map Restaurant → RestaurantDto
+        CreateMap<Restaurant, RestaurantDto>();
 
         // Map Order → OrderDto
-        CreateMap<Order, OrderDto>();
+        CreateMap<Order, OrderDto>()
+            .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems));
 
-        // Map from Item entity to ItemDto
-        CreateMap<Item, ItemDto>();
+
+        // Map Item to ItemDto
+        CreateMap<Item, ItemDto>()
+            .ForMember(dest => dest.ImageFile, opt => opt.MapFrom(src => src.ImageFile));
 
         // Map DeliveryManDto → DeliveryMan
         CreateMap<DeliveryManDto, DeliveryMan>()
              //Avoid mapping User.DeliveryMan to prevent cycles
             .ForMember(dest => dest.User, opt => opt.Ignore());
 
+        // Map mapping PromoCodeDto → PromoCode
+        CreateMap<PromoCodeDto, PromoCode>()//PromoCodeID
+            .ForMember(dest => dest.PromoCodeID, opt => opt.Ignore());
+
         // Map UserDto → User
         CreateMap<UserDto, User>()
-              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserID))
+              //.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserID))
               .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
               // Prevent EF cycles by ignoring navigation
               .ForMember(u => u.Restaurant, opt => opt.Ignore());
@@ -35,35 +47,38 @@ public class MappingProfile : Profile
         // Reverse mapping OrderDto → Order
         CreateMap<OrderDto, Order>();
 
-        // Reverse mapping ItemDto → Item
-        CreateMap<ItemDto, Item>();
+        // Reverse mapping AdminDto → Admin
+        CreateMap<AdminDto, Admin>();
 
-        // Reverse mapping DeliveryMan → DeliveryManDto
+        // Reverse mapping ItemDto to Item
+        CreateMap<ItemDto, Item>()
+            .ForMember(dest => dest.ImageFile, opt => opt.MapFrom(src => src.ImageFile))
+            // Ignore keys or IDs assigned explicitly
+            .ForMember(dest => dest.ItemID, opt => opt.Ignore())
+            .ForMember(dest => dest.RestaurantID, opt => opt.Ignore());
 
-        CreateMap<DeliveryMan, DeliveryManDto>();
-
-        // Reverse mapping Restaurant → RestaurantDto
-        CreateMap<Restaurant, RestaurantDto>();
-
-        // Reverse mapping RestaurantProfileDto → Restaurant
-        CreateMap<RestaurantProfileDto, Restaurant>()
-                .ForMember(dest => dest.RestaurantName, opt => opt.MapFrom(src => src.RestaurantName))
-                .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location))
-                .ForMember(dest => dest.OpenHours, opt => opt.MapFrom(src => src.OpenHours))
-                .ForMember(dest => dest.IsAvailable, opt => opt.MapFrom(src => src.IsAvailable)) 
-                .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.LogoUrl))
+        // Reverse Mapping RestaurantDto → Restaurant
+        CreateMap<RestaurantDto, Restaurant>()
                 // Ignore other fields that are not part of the update DTO or should not be updated directly                                                                     
                 .ForMember(dest => dest.RestaurantID, opt => opt.Ignore())
                 .ForMember(dest => dest.UserId, opt => opt.Ignore())
                 .ForMember(dest => dest.Rating, opt => opt.Ignore())
                 .ForMember(dest => dest.IsActive, opt => opt.Ignore())
-                .ForMember(dest => dest.User, opt => opt.Ignore())
                 .ForMember(dest => dest.Items, opt => opt.Ignore())
                 .ForMember(dest => dest.Discounts, opt => opt.Ignore())
                 .ForMember(dest => dest.PromoCodes, opt => opt.Ignore())
                 .ForMember(dest => dest.Orders, opt => opt.Ignore())
                 .ForMember(dest => dest.Reviews, opt => opt.Ignore());
 
+        // Reverse mapping DeliveryMan → DeliveryManDto
+        CreateMap<DeliveryMan, DeliveryManDto>();
+
+        // Reverse mapping PromoCode → PromoCodeDto
+        CreateMap<PromoCode, PromoCodeDto>()
+            .ForMember(dest => dest.PromoCodeID, opt => opt.Ignore());
+
+        // Reverse mapping Restaurant → RestaurantDto
+        CreateMap<Restaurant, RestaurantDto>();
 
         // Map User → UserDto
         CreateMap<User, UserDto>();

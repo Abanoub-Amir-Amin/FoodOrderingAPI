@@ -224,7 +224,7 @@ namespace FoodOrderingAPI.Controllers
                 AvailabilityStatus = deliveryMan.AvailabilityStatus,
                 User = new UserDto
                 {
-                    UserID = deliveryMan.User.Id,
+                    //UserID = deliveryMan.User.Id,
                     Email = deliveryMan.User.Email,
                     UserName = deliveryMan.User.UserName
                 }
