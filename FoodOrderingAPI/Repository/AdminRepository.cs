@@ -25,11 +25,11 @@ namespace FoodOrderingAPI.Repository
                 .ToListAsync();
         }
 
-        public async Task<Restaurant> GetRestaurantByIdAsync(string restaurantId)
+        public async Task<Restaurant> GetRestaurantByUserNameAsync(string userName)
         {
             return await _context.Restaurants
                 .Include(r => r.User)
-                .FirstOrDefaultAsync(r => r.RestaurantID == restaurantId);
+                .FirstOrDefaultAsync(r => r.User.UserName == userName);
         }
 
         public async Task UpdateRestaurantAsync(Restaurant restaurant)
@@ -38,9 +38,9 @@ namespace FoodOrderingAPI.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteRestaurantAsync(string restaurantId)
+        public async Task DeleteRestaurantAsync(string userName)
         {
-            var restaurant = await GetRestaurantByIdAsync(restaurantId);
+            var restaurant = await GetRestaurantByUserNameAsync(userName);
             if (restaurant != null)
             {
                 if (restaurant.User != null)
@@ -88,6 +88,53 @@ namespace FoodOrderingAPI.Repository
                 .Include(d => d.User)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Admin>> GetAllAdminsAsync()
+        {
+            return await _context.Admins
+                .Include(a => a.User)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(string customerId)
+        {
+            return await _context.Orders
+                .Include(o => o.OrderItems)  
+                .Where(o => o.RestaurantID == customerId)
+                .ToListAsync();
+        }
+
+        public async Task<Admin> GetAdminByUserNameAsync(string UserName)
+        {
+            return await _context.Admins
+                .Include(a => a.User)
+                .FirstOrDefaultAsync(a => a.User.UserName == UserName);
+        }
+
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+        {
+            return await _context.Orders.ToListAsync();
+
+        }
+        public async Task<IEnumerable<Order>> GetOrdersByStatusAsync(string status)
+        {
+            return await _context.Orders
+                .Where(o => o.Status == status)
+                .ToListAsync();
+        }
+
+        public async Task UpdateAdminAsync(Admin admin)
+        {
+            _context.Admins.Update(admin);
+
+            if (admin.User != null)
+            {
+                _context.Users.Update(admin.User);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
     }
 
 }

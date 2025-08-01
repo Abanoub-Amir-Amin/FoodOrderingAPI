@@ -23,18 +23,23 @@ namespace FoodOrderingAPI.Repository
         Task<PromoCode> AddPromoCodeAsync(string restaurantId, PromoCode promoCode);
         Task<PromoCode> UpdatePromoCodeAsync(PromoCode promoCode);
         Task<bool> DeletePromoCodeAsync(Guid promoCodeId, string restaurantId);
+        Task<IEnumerable<PromoCode>> GetAllPromoCodesByRestaurantAsync(string restaurantId);
+        Task<IEnumerable<PromoCode>> SearchPromoCodesByCodeAsync(string restaurantId, string code);
 
-        //Order-update
+
+        //Order
         Task<Order> UpdateOrderStatusAsync(Guid orderId, string status, string restaurantId);
-        Task<Restaurant> GetRestaurantByIdAsync(string userId);
+        Task<IEnumerable<Order>> GetAllOrdersByRestaurantAsync(string restaurantId);
+        Task<List<(Item Item, int TotalQuantity)>> GetMostOrderedItemsAsync(string restaurantId, int topCount = 10);
+
+        //Restaurant Apply to Join
         Task<Restaurant> ApplyToJoinAsync(Restaurant restaurantEntity);
 
         // updating restaurant itself
+        Task<Restaurant> GetRestaurantByIdAsync(string userId);
         Task<Restaurant> UpdateRestaurantAsync(Restaurant restaurant);
 
-        //Getting All Orders
-        Task<IEnumerable<Order>> GetAllOrdersByRestaurantAsync(string restaurantId);
+        //Dashboard Summary
         Task<DashboardSummaryDto> GetDashboardSummaryAsync(string restaurantId);
-        Task<List<(Item Item, int TotalQuantity)>> GetMostOrderedItemsAsync(string restaurantId, int topCount = 10);
     }
 }

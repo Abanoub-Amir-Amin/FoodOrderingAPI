@@ -3,6 +3,8 @@ using FoodOrderingAPI.DTO;
 using FoodOrderingAPI.Models;
 using FoodOrderingAPI.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,31 +13,36 @@ using System.Threading.Tasks;
 
 namespace FoodOrderingAPI.Controllers
 {
+    [EnableCors("AllowAngularDevClient")]
     [Authorize(Roles = "Restaurant")]
     [ApiController]
-    [Route("api/restaurants")]
+    [Route("api/[controller]")]
     public class RestaurantController : ControllerBase
     {
         private readonly ApplicationDBContext _context;  
         private readonly IRestaurantService _service;    
-        private readonly IMapper _mapper;                 
+        private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _environment;
 
-        
-        public RestaurantController(IRestaurantService service, ApplicationDBContext context, IMapper mapper)
+
+        public RestaurantController(IRestaurantService service, ApplicationDBContext context, IMapper mapper, IWebHostEnvironment environment)
         {
             _service = service;
             _context = context;
             _mapper = mapper;
+            _environment = environment;
         }
 
+
+        // ===== Items CRUD =====
+        [Consumes("multipart/form-data")]  // Ensure it accepts multipart/form-data
         [HttpPost("{restaurantId}/items")]
-        public async Task<IActionResult> AddItem(string restaurantId, [FromBody] ItemDto dto)
+        public async Task<IActionResult> AddItem(string restaurantId, [FromForm] ItemDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var restaurant = await _context.Restaurants
-                .FirstOrDefaultAsync(r => r.RestaurantID == restaurantId && r.User.Role == RoleEnum.Restaurant);
+            var restaurant = await _service.GetRestaurantByIdAsync(restaurantId);
 
             if (restaurant == null)
                 return NotFound($"Restaurant with ID '{restaurantId}' not found.");
@@ -70,28 +77,27 @@ namespace FoodOrderingAPI.Controllers
         }
 
 
-        //[HttpPut("{restaurantId}/items/{itemId}")]
-        //public async Task<IActionResult> UpdateItem(string restaurantId, Guid itemId, [FromBody] ItemDto dto)
-        //{
-        //    var restaurant = await _context.Restaurants
-        //        .FirstOrDefaultAsync(r => r.UserId == restaurantId && r.User.Role == RoleEnum.Restaurant);
+        [HttpPut("{restaurantId}/items/{itemId}")]
+        [Consumes("multipart/form-data")]  
+        public async Task<IActionResult> UpdateItem(string restaurantId, Guid itemId, [FromForm] ItemDto dto)
+        {
+            var restaurant = await _context.Restaurants
+                .FirstOrDefaultAsync(r => r.UserId == restaurantId && r.User.Role == RoleEnum.Restaurant);
 
-        //    if (restaurant == null)
-        //        return NotFound($"Restaurant with ID '{restaurantId}' not found.");
+            if (restaurant == null)
+                return NotFound($"Restaurant with ID '{restaurantId}' not found.");
 
-        //    if (!restaurant.IsActive)
-        //        return Forbid("Your restaurant account is not yet active.");
+            if (!restaurant.IsActive)
+                return Forbid("Your restaurant account is not yet active.");
 
+            var item = await _service.UpdateItemAsync(restaurantId, itemId, dto);
 
-        //    var item = await _service.UpdateItemAsync(restaurantId, dto);
+            if (item == null)
+                return NotFound($"Item with ID '{itemId}' not found.");
 
-        //    if (item == null)
-        //        return NotFound($"Item with ID '{itemId}' not found.");
+            return Ok(item);
+        }
 
-        //    return Ok(item);
-        //}
-
-       
         [HttpDelete("{restaurantId}/items/{itemId}")]
         public async Task<IActionResult> DeleteItem(string restaurantId, Guid itemId)
         {
@@ -126,12 +132,33 @@ namespace FoodOrderingAPI.Controllers
             return Ok(items);
         }
 
-        [HttpPost("{restaurantId}/discounts")]
-        public async Task<IActionResult> AddDiscount(string restaurantId, [FromBody] DiscountDto dto)
+        [HttpGet("{restaurantId}/items/most-ordered")]
+        public async Task<IActionResult> GetMostOrderedItems(string restaurantId)
         {
+            var restaurant = await _service.GetRestaurantByIdAsync(restaurantId);
+
+            if (restaurant == null)
+                return NotFound($"Restaurant with ID '{restaurantId}' not found.");
+
+            if (!restaurant.IsActive)
+                return Forbid("Your restaurant account is not yet active.");
+
+            var items = await _service.GetMostOrderedItemsAsync(restaurantId);
+
+            return Ok(items);
+        }
+
+
+        // ===== Discounts CRUD =====
+        [HttpPost("{restaurantId}/discounts/{itemId}")]
+        public async Task<IActionResult> AddDiscount(string restaurantId, Guid itemId, [FromBody] DiscountDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var discount = new Discount
             {
-                ItemID = dto.ItemID,
+                ItemID = itemId,
                 Percentage = dto.Percentage,
                 StartDate = dto.StartDate,
                 EndDate = dto.EndDate,
@@ -162,6 +189,7 @@ namespace FoodOrderingAPI.Controllers
         }
 
 
+        // ===== Promo Codes CRUD =====
         [HttpPost("{restaurantId}/promocodes")]
         public async Task<IActionResult> AddPromoCode(string restaurantId, [FromBody] PromoCodeDto dto)
         {
@@ -198,44 +226,39 @@ namespace FoodOrderingAPI.Controllers
             return NoContent();
         }
 
-
-        [HttpPut("{restaurantId}/orders/{orderId}/status")]
-        public async Task<IActionResult> UpdateOrderStatus(string restaurantId, Guid orderId, [FromBody] OrderStatusUpdateDto dto)
+        [HttpGet("{restaurantId}/promocodes")]
+        public async Task<IActionResult> GetPromoCodes([FromRoute] string restaurantId, [FromQuery] string? code)
         {
-            // Authentication/Authorization: Ensure the restaurant ID from the route matches the authenticated user's restaurant ID
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId != restaurantId)
-            {
-                return Forbid("You are not authorized to update orders for this restaurant.");
-            }
-            
+            var restaurant = await _context.Restaurants
+                .FirstOrDefaultAsync(r => r.UserId.ToString() == restaurantId && r.User.Role == RoleEnum.Restaurant);
 
-            try
-            {
-                var order = await _service.UpdateOrderStatusAsync(orderId, dto.Status, restaurantId);
+            if (restaurant == null)
+                return NotFound($"Restaurant with ID '{restaurantId}' not found.");
 
-                if (order == null)
-                    return NotFound();
+            if (!restaurant.IsActive)
+                return Forbid("Your restaurant account is not yet active.");
 
-                return Ok(order);
-            }
-            catch (InvalidOperationException ex) // Catches the IsAvailable check from service
+            IEnumerable<PromoCode> promoCodes;
+
+            if (string.IsNullOrWhiteSpace(code))
             {
-                return Forbid(ex.Message);
+                promoCodes = await _service.GetAllPromoCodesByRestaurantAsync(restaurantId);
             }
-            catch (ArgumentException ex)
+            else
             {
-                return BadRequest(ex.Message);
+                promoCodes = await _service.SearchPromoCodesByCodeAsync(restaurantId, code);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = "An error occurred while updating order status: " + ex.Message });
-            }
+
+            var dtoList = _mapper.Map<IEnumerable<PromoCodeDto>>(promoCodes);
+            return Ok(dtoList);
         }
 
+
+        // ===== Restaurant Apply to Join =====
         [HttpPost("apply")]
+        [Consumes("multipart/form-data")]  // Ensure it accepts multipart/form-data
         [AllowAnonymous]
-        public async Task<IActionResult> ApplyToJoin([FromBody] RestaurantDto dto)
+        public async Task<IActionResult> ApplyToJoin([FromForm] RestaurantDto dto)
         {
             try
             {
@@ -262,6 +285,8 @@ namespace FoodOrderingAPI.Controllers
             }
         }
 
+
+        // ===== Restaurant Profile =====
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRestaurantById(string id)
         {
@@ -285,8 +310,10 @@ namespace FoodOrderingAPI.Controllers
             }
         }
 
-        [HttpPut("update profile")]
-        public async Task<IActionResult> UpdateRestaurantProfile(string restaurantId, [FromBody] RestaurantProfileDto dto)
+
+        [HttpPut("{restaurantId}/update-profile")]
+        [Consumes("multipart/form-data")] 
+        public async Task<IActionResult> UpdateRestaurantProfile(string restaurantId, [FromForm] RestaurantUpdateDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -319,7 +346,9 @@ namespace FoodOrderingAPI.Controllers
             }
         }
 
-        [HttpGet("api/restaurants/{restaurantId}/orders")]
+
+        // ===== Orders =====
+        [HttpGet("{restaurantId}/orders")]
         public async Task<IActionResult> GetAllOrdersByRestaurantAsync(string restaurantId)
         {
             var restaurant = await _service.GetRestaurantByIdAsync(restaurantId);
@@ -372,6 +401,42 @@ namespace FoodOrderingAPI.Controllers
             return Ok(ordersDto);
         }
 
+        [HttpPut("{restaurantId}/orders/{orderId}/status")]
+        public async Task<IActionResult> UpdateOrderStatus(string restaurantId, Guid orderId, [FromBody] OrderStatusUpdateDto dto)
+        {
+            // Authentication/Authorization: Ensure the restaurant ID from the route matches the authenticated user's restaurant ID
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId != restaurantId)
+            {
+                return Forbid("You are not authorized to update orders for this restaurant.");
+            }
+
+
+            try
+            {
+                var order = await _service.UpdateOrderStatusAsync(orderId, dto.Status, restaurantId);
+
+                if (order == null)
+                    return NotFound();
+
+                return Ok(order);
+            }
+            catch (InvalidOperationException ex) // Catches the IsAvailable check from service
+            {
+                return Forbid(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while updating order status: " + ex.Message });
+            }
+        }
+
+
+        // ===== Dashboard Summary =====
         [HttpGet("{restaurantId}/dashboard-summary")]
         public async Task<IActionResult> GetDashboardSummary(string restaurantId)
         {
@@ -388,21 +453,23 @@ namespace FoodOrderingAPI.Controllers
             return Ok(summary);
         }
 
-        [HttpGet("{restaurantId}/items/most-ordered")]
-        public async Task<IActionResult> GetMostOrderedItems(string restaurantId)
+
+        // ===== Image Upload =====
+
+        // POST api/restaurants/logo-upload
+        [HttpPost("logo-upload")]
+        [AllowAnonymous]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UploadLogo([FromForm] FileUploadDto fileUpload)
         {
-            var restaurant = await _service.GetRestaurantByIdAsync(restaurantId);
+            var file = fileUpload?.File;
+            if (file == null || file.Length == 0)
+                return BadRequest(new { error = "No file provided" });
 
-            if (restaurant == null)
-                return NotFound($"Restaurant with ID '{restaurantId}' not found.");
-
-            if (!restaurant.IsActive)
-                return Forbid("Your restaurant account is not yet active.");
-
-            var items = await _service.GetMostOrderedItemsAsync(restaurantId);
-
-            return Ok(items);
+            var url = await _service.SaveImageAsync(file);
+            return Ok(new { url });
         }
+
 
     }
 }

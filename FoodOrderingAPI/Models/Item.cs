@@ -15,7 +15,7 @@ namespace FoodOrderingAPI.Models
         public string Name { get; set; }
 
         // For icon or thumbnail if needed
-        public string? ImageUrl { get; set; }
+        public string? ImageFile { get; set; }
 
         [MaxLength(500)]
         public string Description { get; set; }

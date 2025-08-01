@@ -25,50 +25,48 @@ namespace FoodOrderingAPI
             // Add MVC services with views support
             builder.Services.AddControllersWithViews();
             builder.Services.AddSingleton<IUserIdProvider, NameIdentifierUserIdProvider>();
-
-            // Register user password hasher and JWT token service
             builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             builder.Services.AddScoped<JwtTokenService>();
             builder.Services.AddScoped<INotificationRepo, NotificationRepo>();
             builder.Services.AddScoped<ICustomerRepo, CustomerRepo>();
             builder.Services.AddScoped<IAddressRepo, AddressRepo>();
 
-            // Register controllers with JSON options
-            builder.Services.AddControllers()
-                .AddJsonOptions(opts =>
-                {
-                    opts.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-                    opts.JsonSerializerOptions.MaxDepth = 64;
-                });
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularDevClient", policy =>
+                    policy.WithOrigins("https://localhost:7060", "http://localhost:4200")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader()
+                          .AllowCredentials());
+            });
 
-            // Register Restaurant services and repositories
+            //Register controllers with JSON options
+            builder.Services.AddControllers()
+                   .AddJsonOptions(opts =>
+                   {
+                       opts.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                       opts.JsonSerializerOptions.MaxDepth = 64;
+                   });
+
             builder.Services.AddScoped<IRestaurantService, RestaurantService>();
             builder.Services.AddScoped<IRestaurantRepository, RestaurantRepository>();
-
-            // Register Admin service and repository
             builder.Services.AddScoped<IAdminService, AdminService>();
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
-
-            // Register DeliveryMan services and repositories
             builder.Services.AddScoped<IDeliveryManService, DeliveryManService>();
             builder.Services.AddScoped<IDeliveryManRepository, DeliveryManRepository>();
             builder.Services.AddSignalR();
-            // Register AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-            // Register EF DbContext
             builder.Services.AddDbContext<ApplicationDBContext>(op =>
                 op.UseSqlServer(builder.Configuration.GetConnectionString("FoodOrderingDb")));
 
-            // Setup Identity with User and Role having string as key
             builder.Services.AddIdentity<User, IdentityRole<string>>(options =>
             {
-                options.SignIn.RequireConfirmedAccount = true;
+                options.SignIn.RequireConfirmedAccount = true; // Set false if no email confirmation in dev
             })
             .AddEntityFrameworkStores<ApplicationDBContext>()
             .AddDefaultTokenProviders();
 
-            // Configure JWT Authentication
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -77,7 +75,7 @@ namespace FoodOrderingAPI
             })
             .AddJwtBearer(options =>
             {
-                options.RequireHttpsMetadata = false; // For dev only; set true in production
+                options.RequireHttpsMetadata = false; // true in production
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -98,14 +96,11 @@ namespace FoodOrderingAPI
                         {
                             context.Token = accessToken;
                         }
-
                         return Task.CompletedTask;
                     }
-                }
-                ;
+                };
             });
 
-            // Register Role-based authorization policies
             builder.Services.AddAuthorization(options =>
             {
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
@@ -115,7 +110,7 @@ namespace FoodOrderingAPI
 
             builder.Services.AddSwaggerGen(options =>
             {
-                // Define the Bearer authentication scheme to be used in Swagger UI
+                options.EnableAnnotations();
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
@@ -126,61 +121,53 @@ namespace FoodOrderingAPI
                     Description = "Enter JWT token in the format: Bearer {your token}"
                 });
 
-                // Apply the security scheme globally to all endpoints in Swagger
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
                 {
-                   {
-                      new OpenApiSecurityScheme
-                      {
-                         Reference = new OpenApiReference
-                         {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer" // Must match the scheme defined above
-                         }
-                      },
-                      Array.Empty<string>() // No specific scopes required
-                   }
-                });
+                    Reference = new OpenApiReference
+                    {
+                       Type = ReferenceType.SecurityScheme,
+                       Id = "Bearer"
+                    },
+                    Scheme = "Bearer",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                },
+                new List<string>()
+            }
+        });
             });
 
-            // Register OpenAPI/Swagger services
-            builder.Services.AddOpenApi();
-            builder.Services.AddCors(op =>
-            {
-                op.AddPolicy("public", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed(_ => true));
-                //op.AddPolicy("subscription", policy =>
-                //{
-                //    policy.WithOrigins("127.0.0.1").WithHeaders("token", "role").WithMethods("get");
-                //});
-            });
             var app = builder.Build();
 
-            // Seed default roles before processing requests
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
                 await SeedRolesAsync(services);
             }
 
-            // Configure middleware pipeline
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI();
-                app.UseDeveloperExceptionPage();
-                app.UseStaticFiles(); // To serve wwwroot content for MVC views, CSS, JS etc.
+                app.UseStaticFiles();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
+                app.UseStaticFiles();
             }
 
-            app.UseStaticFiles();
+            app.Urls.Clear();
+            app.Urls.Add("https://localhost:7060");
 
             app.UseHttpsRedirection();
-            app.UseCors("public");
+
+            app.UseCors("AllowAngularDevClient");
 
             app.UseAuthentication();
             app.UseAuthorization();
@@ -194,10 +181,11 @@ namespace FoodOrderingAPI
 
             app.MapHub<ChatHub>("/chathub");
             app.MapHub<NotificationHub>("/notificationhub");
+
             await app.RunAsync();
         }
 
-        
+
         /// Seeds default roles into the system if they don't exist.
         public static async Task SeedRolesAsync(IServiceProvider serviceProvider)
         {

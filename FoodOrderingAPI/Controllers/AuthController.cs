@@ -1,4 +1,5 @@
 ﻿using FoodOrderingAPI;
+using FoodOrderingAPI.DTO;
 using FoodOrderingAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -32,8 +33,10 @@ public class AuthController : ControllerBase
         if (passwordVerificationResult != PasswordVerificationResult.Success)
             return Unauthorized("Invalid username or password");
 
-
+        // Generate JWT token with claims
         var token = _jwtTokenService.GenerateToken(user.Id, user.UserName, user.Role.ToString());
+
+        // Return JWT, role, and userId to client for authentication and routing
         // Return role for client-side redirection (For angular redirection pages)
         return Ok(new
         {
@@ -41,6 +44,12 @@ public class AuthController : ControllerBase
             Role = user.Role.ToString(),
             UserId = user.Id
         });
+
+        /*No server-side logout needed in typical JWT scenarios because JWTs are self-contained and stateless.
+          Logout means:
+          On frontend: remove the token and user data from client storage (localStorage/sessionStorage).
+          Optionally on backend: implement a token blacklist or token revocation policy (advanced).
+          Your backend AuthController typically does NOT implement a logout endpoint unless you maintain a token blacklist.*/
     }
 
 
