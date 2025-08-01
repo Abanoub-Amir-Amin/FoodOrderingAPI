@@ -101,7 +101,7 @@ namespace FoodOrderingAPI.Repository
             using var transaction = await dbContext.Database.BeginTransactionAsync();
             User user = new User();
             user.UserName = dto.UserName;
-            user.PhoneNumber = dto.Phone;
+            user.PhoneNumber = dto.PhoneNumber;
             user.Email = dto.Email;
             user.Role = RoleEnum.Customer;
             user.CreatedAt = DateTime.Now;

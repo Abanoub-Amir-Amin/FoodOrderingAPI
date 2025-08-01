@@ -4,7 +4,7 @@ namespace FoodOrderingAPI.DTO
 {
     public class UserDto
     {
-        public UserDto() { }
+        public string UserID { get; set; }  
         public string UserName { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
