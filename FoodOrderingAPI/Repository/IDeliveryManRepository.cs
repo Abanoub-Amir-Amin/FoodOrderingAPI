@@ -4,11 +4,11 @@ namespace FoodOrderingAPI.Repository
 {
     public interface IDeliveryManRepository
     {
-        Task<DeliveryMan> ApplyToJoinAsync (DeliveryMan deliveryManEntity);
+        Task<DeliveryMan> ApplyToJoinAsync(DeliveryMan deliveryManEntity);
 
         Task<bool> GetAvailabilityStatusAsync(string userId);
 
-        Task<bool> UpdateAvailabilityStatusAsync(string userId , bool AvailabilityStatus);
+        Task<bool> UpdateAvailabilityStatusAsync(string userId, bool AvailabilityStatus);
 
         Task<DeliveryMan> GetDeliveryManByIdAsync(string userId);
 
@@ -16,5 +16,7 @@ namespace FoodOrderingAPI.Repository
 
         Task<List<DeliveryMan>> GetAvailableDeliveryMenAsync();
         Task<DeliveryMan?> GetClosestDeliveryManAsync(double orderLatitude, double orderLongitude);
+
+        Task<Order> UpdateOrderStatusAsync(Guid OrderId, string status, string deliveryManId);
     }
 }
