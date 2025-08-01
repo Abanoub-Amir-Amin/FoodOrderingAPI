@@ -5,16 +5,18 @@ namespace FoodOrderingAPI.Services
 {
     public interface IDeliveryManService
     {
-        Task<DeliveryMan> ApplyToJoinAsync (DeliveryManDto  dto);
+        Task<DeliveryMan> ApplyToJoinAsync(DeliveryManApplyDto dto);
 
         Task<bool> GetAvailabilityStatusAsync(string userId);
 
         Task<bool> UpdateAvailabilityStatusAsync(string userId, bool AvailabilityStatus);
-        Task<DeliveryManDto> GetProfileAsync(string userId);
+        Task<DeliveryManProfileDto> GetProfileAsync(string userId);
 
-        Task<DeliveryManDto> UpdateProfileAsync(string userId, DeliveryManDto dto);
+        Task<DeliveryMan> UpdateProfileAsync(string userId, DeliveryManProfileUpdateDTO dto);
 
         Task<DeliveryMan?> GetBestAvailableDeliveryManAsync();
         Task<DeliveryMan?> GetClosestDeliveryManAsync(double orderLatitude, double orderLongitude);
+
+        Task<Order> UpdateOrderStatusAsync(Guid OrderId, string newStatus, string deliveryManId);
     }
 }
