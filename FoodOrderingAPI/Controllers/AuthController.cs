@@ -4,6 +4,7 @@ using FoodOrderingAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -35,8 +36,14 @@ public class AuthController : ControllerBase
 
         // Generate JWT token with claims
         var token = _jwtTokenService.GenerateToken(user.Id, user.UserName, user.Role.ToString());
-
-        // Return JWT, role, and userId to client for authentication and routing
+        
+        Response.Cookies.Append("AuthToken", token, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(30)
+        });
         // Return role for client-side redirection (For angular redirection pages)
         return Ok(new
         {

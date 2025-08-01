@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FoodOrderingAPI.DTO;
+using FoodOrderingAPI.Interfaces;
 using FoodOrderingAPI.Models;
 using FoodOrderingAPI.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -23,14 +24,17 @@ namespace FoodOrderingAPI.Controllers
         private readonly IRestaurantService _service;    
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _environment;
-
+        private readonly IItemRepo itemRepo;
 
         public RestaurantController(IRestaurantService service, ApplicationDBContext context, IMapper mapper, IWebHostEnvironment environment)
+        
         {
             _service = service;
             _context = context;
             _mapper = mapper;
             _environment = environment;
+            this.itemRepo = itemRepo;
+
         }
 
 
@@ -51,7 +55,7 @@ namespace FoodOrderingAPI.Controllers
                 return Forbid("Your restaurant account is not yet active.");
 
             var item = await _service.AddItemAsync(restaurantId, dto);
-
+            await itemRepo.CreateItemAsync(restaurantId, dto); ///RecieveItem event must be subscribed by Angular to get latest items in real time in addition to GetItem end point.
             return CreatedAtAction(nameof(GetItem), new { restaurantId, itemId = item.ItemID }, item);
         }
 
