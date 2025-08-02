@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FoodOrderingAPI.DTO;
 using FoodOrderingAPI.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 public class MappingProfile : Profile
 {
@@ -67,5 +68,95 @@ public class MappingProfile : Profile
 
         // Map User → UserDto
         CreateMap<User, UserDto>();
+
+
+
+        //CreateMap<RegisterCustomerDTO, User>()
+        //   .ForMember(dest => dest.Role, opt => opt.MapFrom(src => RoleEnum.Customer))
+        //   .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now));
+
+       
+
+          CreateMap<RegisterCustomerDTO, User>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => RoleEnum.Customer));
+
+        CreateMap<RegisterCustomerDTO, Customer>()
+                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+                 .ForMember(dest => dest.CustomerID, opt => opt.Ignore()) 
+                 .ForMember(dest => dest.UserID, opt => opt.Ignore())     
+                 .ForMember(dest => dest.User, opt => opt.Ignore())
+                 .ForMember(dest => dest.Gender, opt => opt.Ignore())     
+                 .ForMember(dest => dest.Addresses, opt => opt.Ignore())
+                 .ForMember(dest => dest.RewardHistories, opt => opt.Ignore())
+                 .ForMember(dest => dest.Orders, opt => opt.Ignore())
+                 .ForMember(dest => dest.Reviews, opt => opt.Ignore())
+                 .ForMember(dest => dest.ComplaintChats, opt => opt.Ignore())
+                 .ForMember(dest => dest.ShoppingCart, opt => opt.Ignore())
+                 .ForMember(dest => dest.PaymentMethods, opt => opt.Ignore());
+
+        CreateMap<UpdateCustomerDTO, Customer>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender))
+                .ForPath(dest => dest.User.PhoneNumber, opt => opt.MapFrom(src => src.Phone))
+                .ForMember(dest => dest.CustomerID, opt => opt.Ignore())
+                .ForMember(dest => dest.UserID, opt => opt.Ignore())
+                .ForMember(dest => dest.User, opt => opt.Ignore())
+                .ForMember(dest => dest.Addresses, opt => opt.Ignore())
+                .ForMember(dest => dest.RewardHistories, opt => opt.Ignore())
+                .ForMember(dest => dest.Orders, opt => opt.Ignore())
+                .ForMember(dest => dest.Reviews, opt => opt.Ignore())
+                .ForMember(dest => dest.ComplaintChats, opt => opt.Ignore())
+                .ForMember(dest => dest.ShoppingCart, opt => opt.Ignore())
+                .ForMember(dest => dest.PaymentMethods, opt => opt.Ignore());
+
+        CreateMap<Customer, CustomerDTO>()
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+            .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.User.PhoneNumber))
+            .ForMember(dest => dest.Addresses, opt => opt.MapFrom(src =>
+                src.Addresses.Select(a => $"{a.Label} - {a.Street}, {a.City} (Location: {a.LatLng})").ToList()))
+            .ForMember(dest => dest.TotalOrders, opt => opt.MapFrom(src => src.Orders.Count))
+            .ForMember(dest => dest.Rewards, opt => opt.MapFrom(src => src.RewardHistories.Select(r => r.Reason).ToList()))
+            .ForMember(dest => dest.TotalRewardspoints, opt => opt.MapFrom(src => src.RewardHistories.Sum(r => r.PointsEarned)));
+
+
+
+
+        CreateMap<ShoppingCartItemAddedDTO, ShoppingCartItem>()
+            .ForMember(dest => dest.CartID, opt => opt.MapFrom(src => src.CartID))
+            .ForMember(dest => dest.ItemID, opt => opt.MapFrom(src => src.ItemID))
+            .ForMember(dest => dest.Preferences, opt => opt.MapFrom(src => src.Preferences))
+            .ForMember(dest => dest.Quantity, opt => opt.Ignore())
+            .ForMember(dest => dest.ShoppingCart, opt => opt.Ignore())
+            .ForMember(dest => dest.TotalPrice, opt => opt.Ignore());
+
+        CreateMap<ShoppingCartItem, ShoppingCartItemDto>()
+            .ForMember(dest => dest.ShoppingCartItemId, opt => opt.MapFrom(src => src.CartItemID))
+            .ForMember(dest => dest.Preferences, opt => opt.MapFrom(src => src.Preferences))
+            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+            .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Item.Name))
+            .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
+
+        CreateMap<ShoppingCart, ShoppingCartDTO>()
+            .ForMember(dest => dest.RestaurantName, opt => opt.MapFrom(src => src.Restaurant != null ? src.Restaurant.RestaurantName : null))
+            .ForMember(dest => dest.TotalAfterDiscount, opt => opt.Ignore()) // لإنه محسوب تلقائيًا في DTO
+            .ForMember(dest => dest.ShoppingCartItems, opt => opt.MapFrom(src => src.ShoppingCartItems))
+            .ForMember(dest => dest.CartID, opt => opt.MapFrom(src => src.CartID))
+            .ForMember(dest => dest.DelivaryPrice, opt => opt.MapFrom(src => src.DelivaryPrice))
+            .ForMember(dest => dest.RestaurantID, opt => opt.MapFrom(src => src.RestaurantID))
+            .ForMember(dest => dest.DiscountAmount, opt => opt.MapFrom(src => src.DiscountAmount))
+            .ForMember(dest => dest.SubTotal, opt => opt.MapFrom(src => src.SubTotal));
+
+
+
+
+
+
     }
 }

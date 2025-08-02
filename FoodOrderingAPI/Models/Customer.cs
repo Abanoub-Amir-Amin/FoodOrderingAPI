@@ -12,7 +12,7 @@ namespace FoodOrderingAPI.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public GenderEnum ?Gender { get; set; }
-        public int LoyaltyPoints { get; set; } = 0;
+        //public int LoyaltyPoints { get; set; } = 0;
 
         //public int TotalOrders { get; set; } = 0;
         [ForeignKey(nameof(User))]

@@ -43,6 +43,36 @@ namespace FoodOrderingAPI
                 .WithOne(d => d.User)
                 .HasForeignKey<DeliveryMan>(d => d.UserId);
 
+            modelBuilder.Entity<Admin>()
+                .HasOne(a => a.User)
+                .WithOne(u => u.Admin) 
+                .HasForeignKey<Admin>(a => a.UserId) 
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Restaurant>()
+                .HasOne(R => R.User)
+                .WithOne(u => u.Restaurant)
+                .HasForeignKey<Restaurant>(R => R.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<DeliveryMan>()
+                .HasOne(D => D.User)
+                .WithOne(u => u.DeliveryMan)
+                .HasForeignKey<DeliveryMan>(D => D.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Customer>()
+                .HasOne(c => c.User)
+                .WithOne(u => u.Customer)
+                .HasForeignKey<Customer>(c => c.UserID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Customer>()
+                .HasOne(c => c.User)
+                .WithOne(u => u.Customer)
+                .HasForeignKey<Customer>(c => c.UserID)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<ComplaintChat>()
                 .HasOne(cc => cc.Admin)
                 .WithMany(a => a.ComplaintChats)
