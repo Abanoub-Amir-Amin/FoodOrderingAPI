@@ -314,6 +314,30 @@ namespace FoodOrderingAPI.Controllers
             }
         }
 
+        [HttpGet("GetRestaurants")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllRestaurants()
+        {
+            try
+            {
+                var restaurant = await _service.GetAllRestaurantsAsync();
+
+                if (restaurant == null)
+                    return NotFound();
+
+                var dto = _mapper.Map<List<RestaurantDto>>(restaurant);
+                return Ok(dto);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
 
         [HttpPut("{restaurantId}/update-profile")]
         [Consumes("multipart/form-data")] 

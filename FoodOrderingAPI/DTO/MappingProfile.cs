@@ -48,7 +48,6 @@ public class MappingProfile : Profile
 
         // Map UserDto → User
         CreateMap<UserDto, User>()
-          .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.UserID))
           .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
           // Prevent EF cycles by ignoring navigation
           .ForMember(u => u.Restaurant, opt => opt.Ignore());
@@ -84,7 +83,7 @@ public class MappingProfile : Profile
 
         // Map User → UserDto
         CreateMap<User, UserDto>();
-
+        CreateMap<Admin, AdminDto>();
         CreateMap<Customer, CustomerDTO>();
     }
 }

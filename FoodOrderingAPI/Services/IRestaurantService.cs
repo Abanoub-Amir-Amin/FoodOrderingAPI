@@ -32,6 +32,8 @@ namespace FoodOrderingAPI.Services
 
         //updating restaurant itself
         Task<Restaurant> GetRestaurantByIdAsync(string userId);
+        Task<IEnumerable<Restaurant>> GetAllRestaurantsAsync();
+
         Task<Restaurant> UpdateRestaurantProfileAsync(string restaurantId, RestaurantUpdateDto dto);
 
         //Order-CRUD

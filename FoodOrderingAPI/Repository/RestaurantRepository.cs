@@ -174,6 +174,12 @@ namespace FoodOrderingAPI.Repository
             return restaurant;
         }
 
+        public async Task<IEnumerable<Restaurant>> GetAllRestaurantsAsync()
+        {
+            return await _context.Restaurants
+                .Include(r => r.User)
+                .ToListAsync();
+        }
 
         // ===== Orders =====
         public async Task<IEnumerable<Order>> GetAllOrdersByRestaurantAsync(string restaurantId)

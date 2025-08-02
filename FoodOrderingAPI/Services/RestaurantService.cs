@@ -14,12 +14,12 @@ namespace FoodOrderingAPI.Services
     public class RestaurantService : IRestaurantService
     {
         private readonly IWebHostEnvironment _environment;
-        private readonly ApplicationDBContext _context;       
-        private readonly IRestaurantRepository _repository;    
-        private readonly IMapper _mapper;                       
-        private readonly UserManager<User> _userManager;       
+        private readonly ApplicationDBContext _context;
+        private readonly IRestaurantRepository _repository;
+        private readonly IMapper _mapper;
+        private readonly UserManager<User> _userManager;
 
-        
+
         public RestaurantService(IRestaurantRepository repository, ApplicationDBContext context, IMapper mapper, UserManager<User> userManager, IWebHostEnvironment environment)
         {
             _repository = repository;
@@ -86,7 +86,7 @@ namespace FoodOrderingAPI.Services
 
         public async Task<IEnumerable<Item>> GetItemsByCategoryAsync(string restaurantId, string category)
         {
-            return await _repository.GetItemsByCategoryAsync(restaurantId,category);
+            return await _repository.GetItemsByCategoryAsync(restaurantId, category);
         }
 
         public async Task<IEnumerable<ItemDto>> GetMostOrderedItemsAsync(string restaurantId, int topCount = 10)
@@ -247,6 +247,11 @@ namespace FoodOrderingAPI.Services
                 throw new ArgumentException("UserId is invalid", nameof(userId));
 
             return await _repository.GetRestaurantByIdAsync(userId);
+        }
+
+        public async Task<IEnumerable<Restaurant>> GetAllRestaurantsAsync()
+        {
+            return await _repository.GetAllRestaurantsAsync();
         }
 
         public async Task<Restaurant> UpdateRestaurantProfileAsync(string restaurantId, RestaurantUpdateDto dto)

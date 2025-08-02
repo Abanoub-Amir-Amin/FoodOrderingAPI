@@ -37,6 +37,7 @@ namespace FoodOrderingAPI.Repository
 
         // updating restaurant itself
         Task<Restaurant> GetRestaurantByIdAsync(string userId);
+        Task<IEnumerable<Restaurant>> GetAllRestaurantsAsync();
         Task<Restaurant> UpdateRestaurantAsync(Restaurant restaurant);
 
         //Dashboard Summary
