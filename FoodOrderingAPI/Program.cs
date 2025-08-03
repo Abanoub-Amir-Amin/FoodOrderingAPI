@@ -189,7 +189,7 @@ namespace FoodOrderingAPI
 
             app.UseStaticFiles();
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseCors("public");
 
             app.UseAuthentication();

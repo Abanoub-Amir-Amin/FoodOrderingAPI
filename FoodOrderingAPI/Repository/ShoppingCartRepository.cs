@@ -12,11 +12,11 @@ namespace FoodOrderingAPI.Repository
         }
         public async Task<ShoppingCart> getByCustomer(string CustomerId)
         {
-            return dbContext.ShoppingCarts
+            return await dbContext.ShoppingCarts
                 ?.Include(sc => sc.ShoppingCartItems)
                 ?.ThenInclude(sci =>sci.Item)
                 ?.ThenInclude(item => item.Discounts)
-                ?.FirstOrDefault(sh => sh.CustomerID==CustomerId);
+                ?.FirstOrDefaultAsync(sh => sh.CustomerID==CustomerId);
         }
         public async Task<ShoppingCart> getById(Guid shoppingcartid)
         {

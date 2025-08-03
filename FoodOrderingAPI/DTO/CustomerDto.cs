@@ -8,7 +8,7 @@ namespace FoodOrderingAPI.DTO
         public string LastName { set; get; }
         public string UserName { set; get; }
         public string Email { set; get; }
-        public string Phone { set; get; }
+        public string PhoneNumber { set; get; }
         public GenderEnum? Gender { set; get; }
         public List<string> Addresses { set; get; }
         public int LoyaltyPoints { get; set; } = 0;

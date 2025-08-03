@@ -80,7 +80,7 @@ public class MappingProfile : Profile
           CreateMap<RegisterCustomerDTO, User>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => RoleEnum.Customer));
 
@@ -118,7 +118,7 @@ public class MappingProfile : Profile
         CreateMap<Customer, CustomerDTO>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
-            .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.User.PhoneNumber))
+            .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.User.PhoneNumber))
             .ForMember(dest => dest.Addresses, opt => opt.MapFrom(src =>
                 src.Addresses.Select(a => $"{a.Label} - {a.Street}, {a.City} (Location: {a.LatLng})").ToList()))
             .ForMember(dest => dest.TotalOrders, opt => opt.MapFrom(src => src.Orders.Count))

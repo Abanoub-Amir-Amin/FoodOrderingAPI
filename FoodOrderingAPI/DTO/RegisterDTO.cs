@@ -13,8 +13,8 @@ namespace FoodOrderingAPI.DTO
         [Required]
         public string Email { get; set; }
         [Compare("Email")]
-        public string EmailConfirmation { get; set; }//leh email confirmation
-        public string? Phone { get; set; }
+        public string EmailConfirmed { get; set; }//leh email confirmation
+        public string? PhoneNumber { get; set; }
         //[EnumDataType(typeof(RoleEnum))]
         //public RoleEnum Role { get; set; }
         //will not enter his  in register
