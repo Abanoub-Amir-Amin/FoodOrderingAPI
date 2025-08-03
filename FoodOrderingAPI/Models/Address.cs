@@ -27,6 +27,6 @@ namespace FoodOrderingAPI.Models
 
         public Customer Customer { get; set; }
 
-        //public ICollection<Order> Orders { get; set; }
+        public ICollection<Order>? Orders { get; set; }
     }
 }

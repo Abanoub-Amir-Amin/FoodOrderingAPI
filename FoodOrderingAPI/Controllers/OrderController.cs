@@ -60,7 +60,7 @@ namespace FoodOrderingAPI.Controllers
             if (!restaurant.IsActive)
                 return Forbid("Your restaurant account is not yet active.");
 
-            var allowedStatuses = new[] { "Preparing", "Out for Delivery", "Delivered", "Cancelled" };
+            var allowedStatuses = new[] { "Preparing", "Out_for_Delivery", "Delivered"};
             string[] requestedStatuses;
 
             if (string.IsNullOrWhiteSpace(status))

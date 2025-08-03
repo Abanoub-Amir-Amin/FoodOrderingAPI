@@ -20,7 +20,7 @@ namespace FoodOrderingAPI.Repository
                 .ToListAsync();
         }
 
-        public async Task<Order> UpdateOrderStatusAsync(Guid orderId, string status, string restaurantId)
+        public async Task<Order> UpdateOrderStatusAsync(Guid orderId, StatusEnum status, string restaurantId)
         {
             var order = await _context.Orders
                 .FirstOrDefaultAsync(o => o.OrderID == orderId && o.RestaurantID == restaurantId);
@@ -37,15 +37,15 @@ namespace FoodOrderingAPI.Repository
         {
             var orders = await GetAllOrdersByRestaurantAsync(restaurantId);
 
-            var deliveredCount = orders.Count(o => o.Status == "Delivered");
-            var inProcessCount = orders.Count(o => o.Status == "Preparing" || o.Status == "Out for Delivery");
-            var cancelledCount = orders.Count(o => o.Status == "Cancelled");
+            var deliveredCount = orders.Count(o => o.Status == StatusEnum.Delivered);
+            var inProcessCount = orders.Count(o => o.Status == StatusEnum.Preparing || o.Status == StatusEnum.Out_for_Delivery);
+            //var cancelledCount = orders.Count(o => o.Status == "Cancelled");
 
             return new DashboardSummaryDto
             {
                 DeliveredOrders = deliveredCount,
                 InProcessOrders = inProcessCount,
-                CancelledOrders = cancelledCount
+                //CancelledOrders = cancelledCount
             };
         }
     }

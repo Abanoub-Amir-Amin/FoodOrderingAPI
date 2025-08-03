@@ -6,7 +6,7 @@ namespace FoodOrderingAPI.Repository
     public interface IOrderRepo
     {
         //Order
-        Task<Order> UpdateOrderStatusAsync(Guid orderId, string status, string restaurantId);
+        Task<Order> UpdateOrderStatusAsync(Guid orderId, StatusEnum status, string restaurantId);
         Task<IEnumerable<Order>> GetAllOrdersByRestaurantAsync(string restaurantId);
 
         //Dashboard Summary

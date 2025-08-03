@@ -21,7 +21,7 @@ namespace FoodOrderingAPI.Models
         public string? DeliveryManID { get; set; }
 
         [MaxLength(50)]
-        public string Status { get; set; }
+        public StatusEnum Status { get; set; }
 
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
