@@ -31,7 +31,17 @@ namespace FoodOrderingAPI
             builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             builder.Services.AddScoped<JwtTokenService>();
             builder.Services.AddScoped<INotificationRepo, NotificationRepo>();
+
             builder.Services.AddScoped<ICustomerRepo, CustomerRepo>();
+            builder.Services.AddScoped<ICustomerServices, CustomerService>();
+
+            builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+            builder.Services.AddScoped<IShoppingCartServices, ShoppingCartServices>();
+
+            builder.Services.AddScoped<IShoppingCartItemsRepository, ShoppingCartItemsRepository>();
+            builder.Services.AddScoped<IShoppingCartIemService, ShoppingCartItemService>();
+
+
             builder.Services.AddScoped<IAddressRepo, AddressRepo>();
 
             // Register controllers with JSON options

@@ -17,10 +17,10 @@ namespace FoodOrderingAPI.Models
         public int Quantity { get; set; } = 1;
 
         [MaxLength(255)]
-        public string Preferences { get; set; }
+        public string? Preferences { get; set; }
 
         [Column(TypeName = "decimal(10,2)")]
-        public decimal PriceAtAddition { get; set; }
+        public decimal TotalPrice { get; set; }
 
         public ShoppingCart ShoppingCart { get; set; }
 
