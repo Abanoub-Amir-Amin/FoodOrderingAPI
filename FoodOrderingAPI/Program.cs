@@ -53,6 +53,15 @@ namespace FoodOrderingAPI
             // Register DeliveryMan services and repositories
             builder.Services.AddScoped<IDeliveryManService, DeliveryManService>();
             builder.Services.AddScoped<IDeliveryManRepository, DeliveryManRepository>();
+
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IOrderRepo, OrderRepo>();
+
+            builder.Services.AddScoped<IItemService, ItemService>();
+            builder.Services.AddScoped<IItemRepo, ItemRepo>();
+
+            builder.Services.AddScoped<IDiscountService, DiscountService>();
+            builder.Services.AddScoped<IDiscountRepo, DiscountRepo>();
             builder.Services.AddSignalR();
             // Register AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -190,7 +199,7 @@ namespace FoodOrderingAPI
 
             app.UseStaticFiles();
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseCors("public");
 
             app.UseAuthentication();
