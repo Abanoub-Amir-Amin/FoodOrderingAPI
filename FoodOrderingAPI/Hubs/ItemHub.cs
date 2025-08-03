@@ -7,7 +7,7 @@ namespace FoodOrderingAPI.Hubs
     {
         public async Task PublishItem(ItemDto item)
         {
-            //await Clients.All.SendAsync("ReceivePublicNotification", message);
+            await Clients.All.SendAsync("ReceiveItem", item);
         }
     }
 }

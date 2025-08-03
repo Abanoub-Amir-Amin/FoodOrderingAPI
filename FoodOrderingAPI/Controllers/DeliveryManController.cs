@@ -26,7 +26,7 @@ namespace FoodOrderingAPI.Controllers
 
         [HttpPost("apply")]
         [AllowAnonymous]
-        public async Task<IActionResult> ApplyToJoin([FromBody] DeliveryManDto dto)
+        public async Task<IActionResult> ApplyToJoin([FromBody] DeliveryManApplyDto dto)
         {
             try
             {
@@ -151,15 +151,24 @@ namespace FoodOrderingAPI.Controllers
 
         [Authorize(Roles = "DeliveryMan")]
         [HttpPut("profile")]
-        public async Task<IActionResult> UpdateProfile([FromBody] DeliveryManDto deliveryManDto)
+        public async Task<IActionResult> UpdateProfile([FromBody] DeliveryManProfileUpdateDTO deliveryManDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             try
             {
                 // Get deliveryMan Id from token payLoad
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 var updatedProfile = await _service.UpdateProfileAsync(userId, deliveryManDto);
-                return Ok(updatedProfile);
+
+                // Map the updated entity back to a DTO for the response
+                var responseDto = _mapper.Map<DeliveryManProfileUpdateDTO>(updatedProfile);
+
+                return Ok(responseDto);
             }
             catch (InvalidOperationException ex) when (ex.Message.Contains("already exists"))
             {
@@ -186,8 +195,6 @@ namespace FoodOrderingAPI.Controllers
         }
 
         [HttpGet("best-delivery-man")]
-        [ProducesResponseType(typeof(DeliveryManDto), 200)]
-        [ProducesResponseType(404)]
         public async Task<ActionResult<DeliveryManDto>> GetBestAvailableDeliveryMan()
         {
             var deliveryMan = await _service.GetBestAvailableDeliveryManAsync();
@@ -200,8 +207,6 @@ namespace FoodOrderingAPI.Controllers
         }
 
         [HttpGet("closest-delivery-man")]
-        [ProducesResponseType(typeof(DeliveryManDto), 200)]
-        [ProducesResponseType(404)]
         public async Task<ActionResult<DeliveryManDto>> GetClosestDeliveryMan(double orderLatitude, double orderLongitude)
         {
             var deliveryMan = await _service.GetClosestDeliveryManAsync(orderLatitude, orderLongitude);
@@ -224,11 +229,44 @@ namespace FoodOrderingAPI.Controllers
                 AvailabilityStatus = deliveryMan.AvailabilityStatus,
                 User = new UserDto
                 {
-                    UserID = deliveryMan.User.Id,
                     Email = deliveryMan.User.Email,
                     UserName = deliveryMan.User.UserName
                 }
             };
+        }
+
+        [Authorize(Roles = "DeliveryMan")]
+        [HttpPatch("UpdateOrderStatus")]
+        public async Task<IActionResult> UpdateOrderStatus([FromBody] DeliveryManOrderStatusDto dto)
+        {
+            // Get deliveryMan Id from token payLoad
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId != dto.DeliveryManId)
+            {
+                return Forbid("You are not authorized to update this order.");
+            }
+            try
+            {
+                var order = await _service.UpdateOrderStatusAsync(dto.OrderID, dto.Status, dto.DeliveryManId);
+
+                if (order == null)
+                    return NotFound();
+
+                return Ok(order);// Have to be NoContent() or Ok(order) based on the requirement
+            }
+            catch (InvalidOperationException ex) // Catches the IsAvailable check from service
+            {
+                return Forbid(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while updating order status: " + ex.Message });
+            }
+
         }
     }
 }

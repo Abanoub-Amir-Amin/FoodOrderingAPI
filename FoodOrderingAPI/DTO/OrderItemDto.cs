@@ -2,10 +2,10 @@
 {
     public class OrderItemDto
     {
-        public int OrderItemID { get; set; }
-        public int OrderID { get; set; }
-        public int ItemID { get; set; }
+        public Guid OrderID { get; set; }
+        public string itemName {  get; set; }
         public int Quantity { get; set; }
         public string Preferences { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

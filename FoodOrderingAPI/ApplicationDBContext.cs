@@ -91,8 +91,6 @@ namespace FoodOrderingAPI
                 .HasForeignKey(o => o.CustomerID)
                 .OnDelete(DeleteBehavior.Restrict);  
 
-            
-
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.Restaurant)
                 .WithMany(r => r.Orders)
@@ -149,6 +147,23 @@ namespace FoodOrderingAPI
 
             modelBuilder.Entity<User_ConnectionId>()
                .HasKey(uc => new { uc.UserId, uc.ConnectionId });
+
+            modelBuilder.Entity<Restaurant>()
+               .Property(r => r.RestaurantID)
+               .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Item>()
+               .Property(i => i.ItemID)
+               .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Discount>()
+               .Property(d => d.DiscountID)
+               .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<PromoCode>()
+               .Property(p => p.PromoCodeID)
+               .ValueGeneratedOnAdd();
+
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Customer> Customers { get; set; }
