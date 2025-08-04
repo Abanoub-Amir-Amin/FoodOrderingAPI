@@ -10,7 +10,7 @@ namespace FoodOrderingAPI.Repository
     public class ItemRepo : IItemRepo
     {
         public ApplicationDBContext _context { get; }
-        string stripeKey = "sk_test_51RnFfeRxaBxeNU6sg87fDZWBd37Ssyrk6WsZ8ZS6w69SwZ7yxYaMZxJklKfkLtLnsy6OZA0ay2dEjkQrXqkjlH7b00P9ZiIWxf";
+        string stripeKey = "put your key!!";
         public ItemRepo(ApplicationDBContext dBContext)
         {
             _context = dBContext;
