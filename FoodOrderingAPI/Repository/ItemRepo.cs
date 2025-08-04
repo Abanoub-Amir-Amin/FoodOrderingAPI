@@ -3,13 +3,14 @@ using FoodOrderingAPI.Hubs;
 using FoodOrderingAPI.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 namespace FoodOrderingAPI.Repository
 {
     public class ItemRepo : IItemRepo
     {
         public ApplicationDBContext _context { get; }
-
+        string stripeKey = "sk_test_51RnFfeRxaBxeNU6sg87fDZWBd37Ssyrk6WsZ8ZS6w69SwZ7yxYaMZxJklKfkLtLnsy6OZA0ay2dEjkQrXqkjlH7b00P9ZiIWxf";
         public ItemRepo(ApplicationDBContext dBContext)
         {
             _context = dBContext;
@@ -17,6 +18,24 @@ namespace FoodOrderingAPI.Repository
         // ===== Items CRUD =====
         public async Task<Item> AddItemAsync(string restaurantId, Item item)
         {
+            StripeConfiguration.ApiKey = stripeKey;
+            var productOptions = new ProductCreateOptions
+            {
+                Name = item.Name,
+                Description = item.Description,
+            };
+            var productService = new ProductService();
+            var product = await productService.CreateAsync(productOptions);
+            var priceOptions = new PriceCreateOptions
+            {
+                UnitAmount = (long)(item.Price * 100), // Convert to cents
+                Currency = "egp",
+                Product = product.Id,
+            };
+            var priceService = new PriceService();
+            var price = await priceService.CreateAsync(priceOptions);
+            item.StripePriceId = price.Id; // Store the Stripe Price ID in the Item entity
+            item.StripeProductId = product.Id; // Store the Stripe Product ID in the Item entity
             item.RestaurantID = restaurantId;
             _context.Items.Add(item);
             await _context.SaveChangesAsync();
@@ -25,6 +44,32 @@ namespace FoodOrderingAPI.Repository
 
         public async Task<Item> UpdateItemAsync(Item item)
         {
+            StripeConfiguration.ApiKey = stripeKey;
+            // Update the product details in Stripe
+            var options = new ProductUpdateOptions 
+            {
+                Name = item.Name,
+                Description = item.Description
+            };
+            var service = new ProductService();
+            Product product = service.Update(item.StripeProductId, options);
+            
+            // Deactivate the old price
+            var priceOptions = new PriceUpdateOptions { Active = false };
+            var priceService = new PriceService();
+            Price price = priceService.Update(item.StripePriceId, priceOptions);
+            
+            // Create a new price for the updated item
+            var newPriceOptions = new PriceCreateOptions
+            {
+                UnitAmount = (long)(item.Price * 100),
+                Currency = "egp",
+                Product = item.StripeProductId,
+            };
+            var newPriceService = new PriceService();
+            var newPrice = await newPriceService.CreateAsync(newPriceOptions);
+            item.StripePriceId = newPrice.Id; // Update the Stripe Price ID in the Item entity
+
             _context.Items.Update(item);
             await _context.SaveChangesAsync();
             return item;
@@ -36,6 +81,11 @@ namespace FoodOrderingAPI.Repository
                 .FirstOrDefaultAsync(i => i.ItemID == itemId);
             if (item == null)
                 return false;
+            // Deactivate the product and price in Stripe
+            StripeConfiguration.ApiKey = stripeKey;
+            var options = new ProductUpdateOptions { Active = false };
+            var service = new ProductService();
+            Product product = service.Update(item.StripeProductId, options);
 
             _context.Items.Remove(item);
             await _context.SaveChangesAsync();

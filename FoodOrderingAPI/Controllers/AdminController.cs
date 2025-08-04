@@ -10,9 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-[Authorize(Roles = "Admin")]
-[EnableCors("AllowAngularDevClient")]
 
+[EnableCors("AllowAngularDevClient")]
+//[Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
     private readonly IAdminService _adminService;
@@ -86,7 +86,7 @@ public class AdminController : Controller
         }
     }
 
- 
+
     [HttpPost]
     public async Task<IActionResult> DeleteRestaurant(string id)
     {
@@ -94,7 +94,7 @@ public class AdminController : Controller
         return RedirectToAction(nameof(Dashboard));
     }
 
-  
+
     [HttpPost]
     public async Task<IActionResult> DeleteDeliveryMan(string id)
     {
@@ -116,8 +116,14 @@ public class AdminController : Controller
 
         var model = _mapper.Map<AdminDto>(admin);
 
+        if (model.User == null)
+        {
+            model.User = new UserDto();
+        }
+
         return View(model);
     }
+
 
     // POST: Save admin update changes
     [HttpPost]
@@ -127,7 +133,11 @@ public class AdminController : Controller
         {
             return View(model);
         }
-
+        if (model.User == null || string.IsNullOrEmpty(model.User.UserName))
+        {
+            ModelState.AddModelError("", "User information is missing.");
+            return View(model);
+        }
         try
         {
             await _adminService.UpdateAdminAsync(model);
@@ -143,5 +153,6 @@ public class AdminController : Controller
             return View(model);
         }
     }
+
 
 }

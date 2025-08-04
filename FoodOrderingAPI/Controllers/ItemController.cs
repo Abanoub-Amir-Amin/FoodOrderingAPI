@@ -111,6 +111,7 @@ namespace FoodOrderingAPI.Controllers
         }
 
         [HttpGet("items")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllItems()
         {
             return Ok(await _ItemService.GetAllItemsAsync());

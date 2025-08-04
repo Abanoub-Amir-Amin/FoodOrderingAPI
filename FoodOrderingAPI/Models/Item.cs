@@ -27,6 +27,8 @@ namespace FoodOrderingAPI.Models
 
         [MaxLength(50)]
         public string Category { get; set; }
+        public string StripePriceId { get; set; }
+        public string StripeProductId { get; set; }
 
         public Restaurant Restaurant { get; set; }
 

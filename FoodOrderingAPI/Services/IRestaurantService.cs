@@ -8,9 +8,9 @@ namespace FoodOrderingAPI.Services
 {
     public interface IRestaurantService
     {
-       
+
         ////Restaurant Apply to Join
-        Task<Restaurant> ApplyToJoinAsync(RestaurantDto dto, IFormFile logoFile = null);
+        Task<Restaurant> ApplyToJoinAsync(RestaurantUpdateDto dto);
 
         //updating restaurant itself
         Task<Restaurant> GetRestaurantByIdAsync(string userId);
