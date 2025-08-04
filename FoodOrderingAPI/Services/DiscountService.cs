@@ -28,9 +28,9 @@ namespace FoodOrderingAPI.Services
             return await _repository.UpdateDiscountAsync(discount);
         }
 
-        public async Task<bool> DeleteDiscountAsync(int discountId, string restaurantId)
+        public async Task<bool> DeleteDiscountAsync(int discountId)
         {
-            return await _repository.DeleteDiscountAsync(discountId, restaurantId);
+            return await _repository.DeleteDiscountAsync(discountId);
         }
     }
 }

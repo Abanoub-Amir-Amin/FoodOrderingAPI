@@ -51,21 +51,27 @@ namespace FoodOrderingAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPut("{restaurantId}/discounts/{discountId}")]
-        public async Task<IActionResult> UpdateDiscount(string restaurantId, int discountId, [FromBody] DiscountDto dto)
+        [HttpPut("discounts/{discountId}")]
+        public async Task<IActionResult> UpdateDiscount(int discountId, [FromBody] DiscountDto dto)
         {
-            var discount = _mapper.Map<Discount>(dto);
-            discount.DiscountID = discountId;
-            discount.RestaurantID = restaurantId;
+            //var discount = _mapper.Map<Discount>(dto);
+            var discount = _context.Discounts.FirstOrDefault(d => d.DiscountID == discountId);
+            if (discount == null)
+                return NotFound();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            discount.Percentage = dto.Percentage;
+            discount.StartDate = dto.StartDate;
+            discount.EndDate = dto.EndDate;
 
             var updatedDiscount = await _service.UpdateDiscountAsync(discount);
             return Ok(updatedDiscount);
         }
 
-        [HttpDelete("{restaurantId}/discounts/{discountId}")]
-        public async Task<IActionResult> DeleteDiscount(string restaurantId, int discountId)
+        [HttpDelete("discounts/{discountId}")]
+        public async Task<IActionResult> DeleteDiscount(int discountId)
         {
-            var success = await _service.DeleteDiscountAsync(discountId, restaurantId);
+            var success = await _service.DeleteDiscountAsync(discountId);
             if (!success) return NotFound();
             return NoContent();
         }

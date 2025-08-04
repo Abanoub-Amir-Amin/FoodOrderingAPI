@@ -44,6 +44,8 @@ namespace FoodOrderingAPI
 
             builder.Services.AddScoped<IAddressRepo, AddressRepo>();
 
+            builder.Services.AddScoped<IStripeService, StripeService>();
+
             // Register controllers with JSON options
             builder.Services.AddControllers()
                 .AddJsonOptions(opts =>
