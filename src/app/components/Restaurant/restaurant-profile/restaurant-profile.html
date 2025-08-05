@@ -1,0 +1,71 @@
+<!-- profile.component.html -->
+<div class="profile-container" *ngIf="profileForm">
+  <h2>Your Profile</h2>
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Restaurant Name</mat-label>
+      <input matInput
+             formControlName="restaurantName"
+             placeholder="Enter your restaurant's name"
+             title="Restaurant Name" />
+      <mat-error *ngIf="profileForm.get('restaurantName')?.invalid">Restaurant name is required.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Location</mat-label>
+      <input matInput
+             formControlName="location"
+             placeholder="Enter the location"
+             title="Location" />
+      <mat-error *ngIf="profileForm.get('location')?.invalid">Location is required.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Open Hours</mat-label>
+      <input matInput
+             formControlName="openHours"
+             placeholder="e.g., 9 AM - 10 PM"
+             title="Open Hours" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Email</mat-label>
+      <input matInput
+             formControlName="email"
+             type="email"
+             placeholder="Enter your email address"
+             title="Email" />
+      <mat-error *ngIf="profileForm.get('email')?.invalid">Valid email is required.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Phone</mat-label>
+      <input matInput
+             formControlName="phone"
+             type="tel"
+             placeholder="Enter your phone number"
+             title="Phone Number" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Logo URL</mat-label>
+      <input matInput
+             formControlName="logoUrl"
+             placeholder="Enter the logo URL"
+             title="Logo URL" />
+    </mat-form-field>
+
+    <mat-checkbox formControlName="isAvailable" aria-label="Accept Orders (Is Available)">
+      Accept Orders (Is Available)
+    </mat-checkbox>
+
+    <button mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="isSubmitting || profileForm.invalid"
+            aria-label="Save Changes">
+      {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
+    </button>
+  </form>
+</div>

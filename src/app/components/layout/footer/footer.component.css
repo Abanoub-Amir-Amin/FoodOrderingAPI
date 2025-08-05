@@ -1,0 +1,88 @@
+
+        
+        .footer-top {
+            background-color: #f5e4d7;
+            padding: 40px 0;
+            border-radius: 10px; 
+        }
+        .footer-bottom {
+            background-color: #333; 
+            color: #fff;
+            padding: 20px 0;
+            border-radius: 10px; 
+            margin-top: auto;
+        }
+        .footer-logo {
+            width: 100px; 
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .social-icons a {
+            color: #000;
+            font-size: 24px;
+            margin-right: 15px;
+            transition: color 0.3s ease;
+        }
+        .social-icons a:hover {
+            color: #ff6f00; /* Example hover color */
+        }
+        .footer-link {
+            color: #000;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+        .footer-link:hover {
+            color: #ff6f00; /* Example hover color */
+            text-decoration: underline;
+        }
+        .subscribe-input {
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            
+            width:60%;
+          
+}
+        .subscribe-btn {
+            background-color: #e07a5f; 
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: inline;
+        }
+        .subscribe-btn:hover {
+            background-color: #c7654d; 
+        }
+        .email-policy {
+            font-size: 0.85em;
+            color: #555;
+            margin-top: 10px;
+        }
+        .footer-bottom-link {
+            color: #fff;
+            text-decoration: none;
+            margin-right: 20px;
+            transition: color 0.3s ease;
+        }
+        .footer-bottom-link:hover {
+            color: #ff6f00;
+        }
+       
+        @media (max-width: 768px) {
+            .footer-top .row > div {
+                margin-bottom: 30px;
+            }
+            .footer-top .row > div:last-child {
+                margin-bottom: 0;
+            }
+            .footer-bottom .text-center.text-md-end {
+                text-align: center !important;
+                margin-top: 15px;
+            }
+        }
+  

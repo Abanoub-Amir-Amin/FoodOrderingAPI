@@ -1,0 +1,33 @@
+import { Component, signal } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+
+import { Router, NavigationError } from '@angular/router';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HomeComponent } from './components/pages/home/home.component';
+//import { AuthInterceptor } from './services/auth-token-interceptor';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet,  RouterLink, RouterLinkActive],
+  templateUrl: './app.html',
+  styleUrls: ['./app.css'],
+  // providers: [
+  //   {
+  //     provide: HTTP_INTERCEPTORS,
+  //     useClass: AuthInterceptor,
+  //     multi: true,
+  //   },
+  // ],
+})
+export class AppComponent {
+  protected readonly title = signal('my-food-ordering-app');
+
+  constructor(private router: Router) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationError) {
+        console.error('Navigation Error:', event.error);
+      }
+    });
+  }
+}

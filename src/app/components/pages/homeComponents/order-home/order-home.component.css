@@ -1,0 +1,104 @@
+
+    
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter font */
+            background-color: #fcebe3; /* Light peach background */
+            padding: 2rem; /* Overall padding for the section */
+        }
+        .section-header {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .section-title {
+            font-size: 1.75rem; /* Large font size for the title */
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem; /* Add margin for wrapping */
+        }
+        .category-buttons .btn {
+            border-radius: 2rem; /* Pill-shaped buttons */
+            padding: 0.5rem 1.25rem;
+            margin-left: 0.75rem; /* Space between buttons */
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid #e67e22; /* Orange border for all buttons */
+            color: #e67e22; /* Orange text for all buttons */
+            background-color: transparent; /* Transparent background by default */
+            transition: all 0.2s ease-in-out;
+        }
+        .category-buttons .btn:hover {
+            background-color: rgba(230, 126, 34, 0.1); /* Light orange background on hover */
+        }
+        .category-buttons .btn.active {
+            background-color: #e67e22; /* Active button has orange background */
+            color: white; /* Active button has white text */
+        }
+
+        /* Food Card Styling */
+        .food-card {
+            background-color: white;
+            border-radius: 1rem; /* Rounded corners for the card */
+            overflow: hidden; /* Hide overflow for image border-radius */
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+            margin-bottom: 1.5rem; /* Space between cards */
+            position: relative; /* For discount badge positioning */
+        }
+        .food-card img {
+            width: 100%;
+            height: 250px; /* Fixed height for images */
+            object-fit: cover; /* Cover the area, crop if necessary */
+        }
+        .food-card-body {
+            padding: 1rem;
+        }
+        .food-card-body .restaurant-tag {
+           color: #e67e22; /* Orange background for "Restaurant" tag */
+           
+           
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        .food-card-body .restaurant-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: white;
+        }
+        .discount-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: rgba(0, 0, 0, 0.6); /* Dark translucent background */
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+.food-card-body{
+      position: absolute;
+      bottom: 0%;
+
+}
+        /* Responsive adjustments for category buttons */
+        @media (max-width: 767.98px) {
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .category-buttons {
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                margin-top: 1rem;
+            }
+            .category-buttons .btn {
+                margin-left: 0;
+                margin-right: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+   

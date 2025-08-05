@@ -1,0 +1,24 @@
+/* profile.component.scss */
+.profile-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 10px;
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  button {
+    align-self: flex-start;
+  }
+}

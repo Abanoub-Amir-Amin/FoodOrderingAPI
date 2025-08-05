@@ -1,0 +1,187 @@
+<div class="container">
+  <div class="registration-wrapper">
+    <div class="card">
+      <div class="header">
+        <h1 class="title">Join Our Delivery Team</h1>
+        <p class="subtitle">
+          Register as a delivery partner and start earning today!
+        </p>
+      </div>
+
+      <form
+        [formGroup]="registrationForm"
+        (ngSubmit)="onSubmit()"
+        class="registration-form"
+      >
+        <!-- Username Field -->
+        <div class="form-group">
+          <label class="form-label" for="userName">Username *</label>
+          <input
+            type="text"
+            id="userName"
+            formControlName="userName"
+            class="form-input"
+            [class.error]="isFieldInvalid('userName')"
+            [class.success]="isFieldValid('userName')"
+            placeholder="Enter your username"
+          />
+          <span *ngIf="isFieldInvalid('userName')" class="error-message">
+            <span *ngIf="registrationForm.get('userName')?.errors?.['required']"
+              >Username is required</span
+            >
+            <span
+              *ngIf="registrationForm.get('userName')?.errors?.['minlength']"
+              >Username must be at least 3 characters</span
+            >
+          </span>
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address *</label>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            class="form-input"
+            [class.error]="isFieldInvalid('email')"
+            [class.success]="isFieldValid('email')"
+            placeholder="your@email.com"
+          />
+          <span *ngIf="isFieldInvalid('email')" class="error-message">
+            <span *ngIf="registrationForm.get('email')?.errors?.['required']"
+              >Email is required</span
+            >
+            <span
+              *ngIf="registrationForm.get('email')?.errors?.['invalidEmail']"
+              >Please enter a valid email address</span
+            >
+          </span>
+        </div>
+
+        <!-- Phone Field -->
+        <div class="form-group">
+          <label class="form-label" for="phoneNumber">Phone Number *</label>
+          <input
+            type="tel"
+            id="phoneNumber"
+            formControlName="phoneNumber"
+            class="form-input"
+            [class.error]="isFieldInvalid('phoneNumber')"
+            [class.success]="isFieldValid('phoneNumber')"
+            placeholder="01xxxxxxxxx"
+          />
+          <span *ngIf="isFieldInvalid('phoneNumber')" class="error-message">
+            <span
+              *ngIf="registrationForm.get('phoneNumber')?.errors?.['required']"
+              >Phone number is required</span
+            >
+            <span
+              *ngIf="registrationForm.get('phoneNumber')?.errors?.['invalidPhone']"
+              >Phone must start with 01 and be 11 digits</span
+            >
+          </span>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <label class="form-label" for="password">Password *</label>
+          <div class="password-input-wrapper">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              formControlName="password"
+              class="form-input"
+              [class.error]="isFieldInvalid('password')"
+              [class.success]="isFieldValid('password')"
+              placeholder="Enter secure password"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="togglePasswordVisibility()"
+            >
+              {{ showPassword ? "🙈" : "👁️" }}
+            </button>
+          </div>
+          <div class="password-requirements">
+            <small class="requirement" [class.met]="hasUpperCase"
+              >✓ At least one uppercase letter</small
+            >
+            <small class="requirement" [class.met]="hasSpecialChar"
+              >✓ At least one special character</small
+            >
+            <small class="requirement" [class.met]="hasMinLength"
+              >✓ At least 8 characters</small
+            >
+          </div>
+          <span *ngIf="isFieldInvalid('password')" class="error-message">
+            <span *ngIf="registrationForm.get('password')?.errors?.['required']"
+              >Password is required</span
+            >
+          </span>
+        </div>
+
+        <!-- Location Section -->
+        <div class="form-group">
+          <label class="form-label">Your Location *</label>
+          <p class="location-info">
+            Click on the map to set your delivery location
+          </p>
+          <div id="map" class="map-container"></div>
+          <div class="location-display" *ngIf="selectedLocation">
+            <p><strong>Selected Location:</strong></p>
+            <p>Latitude: {{ selectedLocation.lat | number : "1.4-4" }}</p>
+            <p>Longitude: {{ selectedLocation.lng | number : "1.4-4" }}</p>
+          </div>
+          <span
+            *ngIf="!selectedLocation && formSubmitted"
+            class="error-message"
+          >
+            Please select your location on the map
+          </span>
+        </div>
+
+        <!-- Terms Agreement -->
+        <div class="checkbox-container">
+          <input
+            type="checkbox"
+            id="agreeTerms"
+            formControlName="agreeTerms"
+            class="checkbox-input"
+          />
+          <label for="agreeTerms" class="checkbox-label">
+            I agree to the
+            <a href="#" class="terms-link">Terms and Conditions</a> and
+            <a href="#" class="terms-link">Privacy Policy</a> *
+          </label>
+        </div>
+        <span *ngIf="isFieldInvalid('agreeTerms')" class="error-message">
+          You must agree to the terms and conditions
+        </span>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="btn btn-primary submit-btn"
+          [disabled]="
+            registrationForm.invalid || !selectedLocation || isSubmitting
+          "
+        >
+          <span *ngIf="isSubmitting" class="loading-spinner"></span>
+          {{ isSubmitting ? "Registering..." : "Register as Deliveryman" }}
+        </button>
+
+        <!-- Success/Error Messages -->
+        <div
+          *ngIf="submitMessage"
+          class="submit-message"
+          [class.success]="submitSuccess"
+          [class.error]="!submitSuccess"
+        >
+          {{ submitMessage }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
