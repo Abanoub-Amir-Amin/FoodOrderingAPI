@@ -100,7 +100,7 @@ namespace FoodOrderingAPI.Controllers
             var items = await _ItemService.GetItemsByCategoryAsync(category);
             return Ok(items);
         }
-
+        [AllowAnonymous]
         [HttpGet("items/byrestaurantname")]
         public async Task<IActionResult> GetItemsByRestaurantName([FromQuery] string restaurantName)
         {

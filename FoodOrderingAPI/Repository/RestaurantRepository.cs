@@ -56,7 +56,7 @@ namespace FoodOrderingAPI.Repository
 
         public async Task<IEnumerable<Restaurant>> GetAllRestaurantsAsync()
         {
-            return await _context.Restaurants
+            return await _context.Restaurants.Where(r => r.IsActive)
                 .Include(r => r.User)
                 .ToListAsync();
         }
