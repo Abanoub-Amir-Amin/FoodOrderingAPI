@@ -1,13 +1,14 @@
 ﻿using FoodOrderingAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace FoodOrderingAPI.Repository
 {
     public class DeliveryManRepository : IDeliveryManRepository
     {
         private readonly ApplicationDBContext _context;
-        
+
 
         public DeliveryManRepository(ApplicationDBContext context)
         {
@@ -29,13 +30,13 @@ namespace FoodOrderingAPI.Repository
             return deliveryMan;
         }
 
-        public async Task<DeliveryMan> ApplyToJoinAsync (DeliveryMan deliveryManEntity)
+        public async Task<DeliveryMan> ApplyToJoinAsync(DeliveryMan deliveryManEntity)
         {
-            if(deliveryManEntity == null) 
+            if (deliveryManEntity == null)
                 throw new ArgumentNullException(nameof(deliveryManEntity));
-            if(deliveryManEntity.User == null)
+            if (deliveryManEntity.User == null)
                 throw new ArgumentException("User info must be provided");
-            if(string.IsNullOrEmpty(deliveryManEntity.User.Email))
+            if (string.IsNullOrEmpty(deliveryManEntity.User.Email))
                 throw new ArgumentException("User Email must be provided before Save.");
 
             deliveryManEntity.AvailabilityStatus = true;
@@ -48,10 +49,10 @@ namespace FoodOrderingAPI.Repository
         {
             var deliveryMan = await DeliveryManEntityAsync(userId);
 
-            return deliveryMan?.AvailabilityStatus ?? false; 
+            return deliveryMan?.AvailabilityStatus ?? false;
         }
 
-        public async Task<bool> UpdateAvailabilityStatusAsync(string userId , bool AvailabilityStatus)
+        public async Task<bool> UpdateAvailabilityStatusAsync(string userId, bool AvailabilityStatus)
         {
 
             var deliveryMan = await DeliveryManEntityAsync(userId);
@@ -71,7 +72,7 @@ namespace FoodOrderingAPI.Repository
                 throw new ArgumentException("Invalid user ID format. Expected a valid string.", nameof(userId));
 
             var deliveryMan = await _context.DeliveryMen.Include(dm => dm.User)
-                                              .FirstOrDefaultAsync(dm => dm.DeliveryManID == userId);
+                                              .FirstOrDefaultAsync(dm => dm.UserId == userId);
 
             if (deliveryMan == null)
                 throw new InvalidOperationException("Delivery man not found.");
@@ -88,34 +89,81 @@ namespace FoodOrderingAPI.Repository
 
         public async Task<List<DeliveryMan>> GetAvailableDeliveryMenAsync()
         {
-           return await _context.DeliveryMen
-                .Include(dm => dm.User)
-                .Where(dm => dm.AvailabilityStatus
-                && dm.User != null 
-                && dm.User.Role == RoleEnum.DeliveryMan)
-                .ToListAsync();
+            return await _context.DeliveryMen
+                 .Include(dm => dm.User)
+                 .Where(dm => dm.AvailabilityStatus
+                 && dm.User != null
+                 && dm.User.Role == RoleEnum.DeliveryMan)
+                 .ToListAsync();
         }
 
         public async Task<DeliveryMan?> GetClosestDeliveryManAsync(double orderLatitude, double orderLongitude)
         {
-            return await _context.DeliveryMen
+            var orderLocation = new Point(orderLongitude, orderLatitude) { SRID = 4326 };
+
+            var closestDeliveryMan = await _context.DeliveryMen
+                .Include(dm => dm.User)
                 .Where(dm => dm.AvailabilityStatus && dm.User != null && dm.User.Role == RoleEnum.DeliveryMan)
-                .OrderBy(dm => CalculateDistance(dm.Latitude, dm.Longitude, orderLatitude, orderLongitude))
+                .OrderBy(dm => dm.Location.Distance(orderLocation))
                 .FirstOrDefaultAsync();
+            return closestDeliveryMan;
         }
 
-        private double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
+        private async Task UpdateDeliveryManAfterDeliveryAsync(string deliveryManId)
         {
-            // Haversine formula to calculate the distance between two points on the Earth
-            var R = 6371; // Radius of the Earth in kilometers
-            var dLat = (lat2 - lat1) * (Math.PI / 180);
-            var dLon = (lon2 - lon1) * (Math.PI / 180);
-            var a =
-                Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
-                Math.Cos(lat1 * (Math.PI / 180)) * Math.Cos(lat2 * (Math.PI / 180)) *
-                Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
-            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-            return R * c; // Distance in kilometers
+            var deliveryMan = await DeliveryManEntityAsync(deliveryManId);
+            if (deliveryMan != null)
+            {
+                deliveryMan.LastOrderDate = DateTime.UtcNow;
+                deliveryMan.AvailabilityStatus = true;
+            }
+        }
+
+        public async Task<Order> UpdateOrderStatusAsync(Guid OrderId, StatusEnum newStatus, string deliveryManId)
+        {
+
+            var UpdateOrder = await _context.Orders
+                .FirstOrDefaultAsync(or => or.OrderID == OrderId && or.DeliveryManID == deliveryManId);
+
+            if (UpdateOrder == null)
+                return null;
+
+            //var validTransitions = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
+            //{
+            //    {"Preparing"  , new List<string> { "PickedUp"} },
+            //    {"PickedUp"   , new List<string> {"InRoute"} },
+            //    {"InRoute"    , new List<string> {"Delivered" } }
+            //};
+            var validTransitions = new Dictionary<StatusEnum, List<StatusEnum>>
+            {
+                {StatusEnum.Preparing  , new List<StatusEnum> { StatusEnum.Out_for_Delivery} },
+                {StatusEnum.Out_for_Delivery    , new List < StatusEnum > { StatusEnum.Delivered } }
+            };
+            var CurrentStatus = UpdateOrder.Status;
+
+            // Check if the transition from current to new status is allowed
+            if (!validTransitions.TryGetValue(CurrentStatus, out var allowedStatus) ||
+                !allowedStatus.Contains(newStatus))
+            {
+                throw new InvalidOperationException(
+                $"Invalid status transition from '{CurrentStatus}' to '{newStatus}'");
+            }
+
+            if (newStatus == StatusEnum.Delivered)
+            {
+                DeliveryMan deliveryMan = await DeliveryManEntityAsync(deliveryManId);
+
+                if (deliveryMan != null)
+                {
+                    deliveryMan.LastOrderDate = DateTime.UtcNow;
+                    await UpdateDeliveryManAfterDeliveryAsync(deliveryManId);
+                }
+                UpdateOrder.DeliveredAt = DateTime.Now;
+            }
+
+            UpdateOrder.Status = newStatus;
+            await _context.SaveChangesAsync();
+            return UpdateOrder;
         }
     }
 }

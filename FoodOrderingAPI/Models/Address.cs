@@ -21,12 +21,11 @@ namespace FoodOrderingAPI.Models
         public string City { get; set; }
 
         [MaxLength(100)]
-        public string LatLng { get; set; }
 
         public bool IsDefault { get; set; } = false;
-
-        public Customer Customer { get; set; }
-
-        //public ICollection<Order> Orders { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public Customer? Customer { get; set; }
+        public ICollection<Order>? Orders { get; set; }
     }
 }

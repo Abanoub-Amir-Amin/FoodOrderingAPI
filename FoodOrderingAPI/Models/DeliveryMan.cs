@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NetTopologySuite.Geometries;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Drawing;
 
 namespace FoodOrderingAPI.Models
 {
@@ -15,8 +17,10 @@ namespace FoodOrderingAPI.Models
         public string DeliveryManID { get; set; }
         public string UserId { get; set; }
         public double Latitude { get; set; }
-        public double Longitude { get; set; } 
-       
+        public double Longitude { get; set; }
+        //will be build by lon/lat
+        public NetTopologySuite.Geometries.Point? Location { get; set; }
+        [Range(1,5)]
         public float? Rank { get; set; } = 0;
 
         public bool AvailabilityStatus { get; set; } = true;
@@ -26,10 +30,10 @@ namespace FoodOrderingAPI.Models
 
         public DateTime? LastOrderDate { get; set; }
 
-        public  User User { get; set; }
+        public User User { get; set; }
 
-        public  ICollection<Order> Orders { get; set; } = new List<Order>();
-        
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
+
     }
 
 }

@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
+
 namespace FoodOrderingAPI
 {
     public class Program
@@ -62,6 +63,20 @@ namespace FoodOrderingAPI
             // Register DeliveryMan services and repositories
             builder.Services.AddScoped<IDeliveryManService, DeliveryManService>();
             builder.Services.AddScoped<IDeliveryManRepository, DeliveryManRepository>();
+
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IOrderRepo, OrderRepo>();
+
+            builder.Services.AddScoped<IPromoCodeRepo, PromoCodeRepo>();
+            builder.Services.AddScoped<IPromoCodeService, PromoCodeService>();
+
+            builder.Services.AddScoped<IOpenRouteService, OpenRouteService>();//to get duration between two locations
+
+            builder.Services.AddScoped<IItemService, ItemService>();
+            builder.Services.AddScoped<IItemRepo, ItemRepo>();
+
+            builder.Services.AddScoped<IDiscountService, DiscountService>();
+            builder.Services.AddScoped<IDiscountRepo, DiscountRepo>();
             builder.Services.AddSignalR();
             // Register AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -163,6 +178,16 @@ namespace FoodOrderingAPI
                 //    policy.WithOrigins("127.0.0.1").WithHeaders("token", "role").WithMethods("get");
                 //});
             });
+
+
+            // It configures EF Core to use SQL Server as the database provider,
+            // and enables support for spatial data types (like geography, geometry) using NetTopologySuite.
+            builder.Services.AddDbContext<ApplicationDBContext>(options =>
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("FoodOrderingDb"),
+                    x => x.UseNetTopologySuite() // Enables spatial (GIS) data support
+                ));
+
             var app = builder.Build();
 
             // Seed default roles before processing requests
@@ -207,7 +232,7 @@ namespace FoodOrderingAPI
             await app.RunAsync();
         }
 
-        
+
         /// Seeds default roles into the system if they don't exist.
         public static async Task SeedRolesAsync(IServiceProvider serviceProvider)
         {

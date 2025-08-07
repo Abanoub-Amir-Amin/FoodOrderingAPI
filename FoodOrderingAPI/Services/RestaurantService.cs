@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FoodOrderingAPI.DTO;
 using FoodOrderingAPI.DTO.FoodOrderingAPI.DTO;
+using Microsoft.AspNetCore.Http;
 using FoodOrderingAPI.Models;
 using FoodOrderingAPI.Repository;
 using Microsoft.AspNetCore.Identity;
@@ -12,112 +13,24 @@ namespace FoodOrderingAPI.Services
 {
     public class RestaurantService : IRestaurantService
     {
-        private readonly ApplicationDBContext _context;       
-        private readonly IRestaurantRepository _repository;    
-        private readonly IMapper _mapper;                       
-        private readonly UserManager<User> _userManager;       
+        private readonly IWebHostEnvironment _environment;
+        private readonly ApplicationDBContext _context;
+        private readonly IRestaurantRepository _repository;
+        private readonly IMapper _mapper;
+        private readonly UserManager<User> _userManager;
 
-        
-        public RestaurantService(IRestaurantRepository repository, ApplicationDBContext context, IMapper mapper, UserManager<User> userManager)
+
+        public RestaurantService(IRestaurantRepository repository, ApplicationDBContext context, IMapper mapper, UserManager<User> userManager, IWebHostEnvironment environment)
         {
             _repository = repository;
             _context = context;
             _mapper = mapper;
             _userManager = userManager;
-        }
-
-        public async Task<Item> AddItemAsync(string restaurantId, ItemDto dto)
-        {
-            if (string.IsNullOrWhiteSpace(dto.Category))
-                throw new ArgumentException("Category is required.");
-
-            var item = new Item
-            {
-                RestaurantID = restaurantId,
-                Name = dto.Name,
-                Description = dto.Description,
-                Price = dto.Price,
-                Category = dto.Category,
-                IsAvailable = dto.IsAvailable,
-                ImageUrl = dto.ImgUrl,
-            };
-
-            return await _repository.AddItemAsync(restaurantId, item);
-        }
-
-        //public async Task<Item> UpdateItemAsync(string restaurantId, ItemDto dto)
-        //{
-        //    var existingItem = await _repository.GetItemByIdAsync(dto.ItemID.Value, restaurantId);
-        //    if (existingItem == null)
-        //        return null;
-
-        //    existingItem.Name = dto.Name;
-        //    existingItem.Description = dto.Description;
-        //    existingItem.Price = dto.Price;
-        //    existingItem.Category = dto.Category;
-        //    existingItem.IsAvailable = dto.IsAvailable;
-
-        //    return await _repository.UpdateItemAsync(existingItem);
-        //}
-
-        public async Task<bool> DeleteItemAsync(Guid itemId, string restaurantId)
-        {
-            return await _repository.DeleteItemAsync(itemId, restaurantId);
-        }
-
-        public async Task<Item> GetItemByIdAsync(string restaurantId, Guid itemId)
-        {
-            return await _repository.GetItemByIdAsync(itemId, restaurantId);
-        }
-
-        public async Task<IEnumerable<Item>> GetItemsByCategoryAsync(string restaurantId, string category)
-        {
-            return await _repository.GetItemsByCategoryAsync(restaurantId,category);
-        }
-
-        public async Task<Discount> AddDiscountAsync(string restaurantId, Discount discount)
-        {
-            discount.RestaurantID = restaurantId;
-            return await _repository.AddDiscountAsync(restaurantId, discount);
-        }
-
-        public async Task<Discount> UpdateDiscountAsync(Discount discount)
-        {
-            return await _repository.UpdateDiscountAsync(discount);
-        }
-
-        public async Task<bool> DeleteDiscountAsync(int discountId, string restaurantId)
-        {
-            return await _repository.DeleteDiscountAsync(discountId, restaurantId);
-        }
-
-        public async Task<PromoCode> AddPromoCodeAsync(string restaurantId, PromoCode promoCode)
-        {
-            promoCode.RestaurantID = restaurantId;
-            return await _repository.AddPromoCodeAsync(restaurantId, promoCode);
-        }
-
-        public async Task<PromoCode> UpdatePromoCodeAsync(PromoCode promoCode)
-        {
-            return await _repository.UpdatePromoCodeAsync(promoCode);
-        }
-
-        public async Task<bool> DeletePromoCodeAsync(Guid promoCodeId, string restaurantId)
-        {
-            return await _repository.DeletePromoCodeAsync(promoCodeId, restaurantId);
-        }
-
-        public async Task<Order> UpdateOrderStatusAsync(Guid orderId, string status, string restaurantId)
-        {
-            var allowedStatuses = new[] { "Preparing", "Out for Delivery" };
-            if (!allowedStatuses.Contains(status))
-                throw new ArgumentException("Invalid order status.");
-
-            return await _repository.UpdateOrderStatusAsync(orderId, status, restaurantId);
+            _environment = environment ?? throw new ArgumentNullException(nameof(environment));
         }
 
         // Create User + Restaurant when applying to join
-        public async Task<Restaurant> ApplyToJoinAsync(RestaurantDto dto)
+        public async Task<Restaurant> ApplyToJoinAsync(RestaurantDto dto, IFormFile logoFile = null)
         {
             // 1. Validate DTO and nested user info
             if (dto == null)
@@ -166,8 +79,24 @@ namespace FoodOrderingAPI.Services
 
             // 7. Map Restaurant DTO to entity and link to created user
             var restaurantEntity = _mapper.Map<Restaurant>(dto);
-            restaurantEntity.UserId = newUser.Id;
+            restaurantEntity.RestaurantID = newUser.Id;
             restaurantEntity.User = newUser;
+            //update to restaurant to get order time
+            restaurantEntity.Longitude = dto.Longitude;
+            restaurantEntity.Latitude = dto.Latitude;
+            restaurantEntity.orderTime = dto.orderTime;
+            restaurantEntity.DelivaryPrice=dto.DelivaryPrice;
+            // Assign new Guid if RestaurantID is empty
+            if (string.IsNullOrWhiteSpace(restaurantEntity.RestaurantID))
+            {
+                restaurantEntity.RestaurantID = Guid.NewGuid().ToString();
+            }
+
+            // 8. Save logo file if provided, assign relative URL to LogoUrl property
+            if (logoFile != null && logoFile.Length > 0)
+            {
+                restaurantEntity.LogoUrl = await SaveImageAsync(logoFile);
+            }
 
             // 8. Initialize restaurant inactive pending approval
             restaurantEntity.IsActive = false;
@@ -177,6 +106,8 @@ namespace FoodOrderingAPI.Services
             return await _repository.ApplyToJoinAsync(restaurantEntity);
         }
 
+
+        //updating restaurant itself
         public async Task<Restaurant> GetRestaurantByIdAsync(string userId)
         {
             if (userId == string.Empty)
@@ -185,79 +116,76 @@ namespace FoodOrderingAPI.Services
             return await _repository.GetRestaurantByIdAsync(userId);
         }
 
-        public async Task<Restaurant> UpdateRestaurantProfileAsync(string restaurantId, RestaurantProfileDto dto)
+        public async Task<IEnumerable<Restaurant>> GetAllRestaurantsAsync()
+        {
+            return await _repository.GetAllRestaurantsAsync();
+        }
+
+        public async Task<Restaurant> UpdateRestaurantProfileAsync(string restaurantId, RestaurantUpdateDto dto)
         {
             var existingRestaurant = await _repository.GetRestaurantByIdAsync(restaurantId);
 
             if (existingRestaurant == null)
-            {
                 return null;
-            }
 
             if (!string.IsNullOrWhiteSpace(dto.RestaurantName))
-            {
                 existingRestaurant.RestaurantName = dto.RestaurantName;
-            }
+
             if (!string.IsNullOrWhiteSpace(dto.Location))
-            {
                 existingRestaurant.Location = dto.Location;
-            }
+
             if (!string.IsNullOrWhiteSpace(dto.OpenHours))
-            {
                 existingRestaurant.OpenHours = dto.OpenHours;
-            }
-            if (!string.IsNullOrWhiteSpace(dto.LogoUrl))
-            {
-                existingRestaurant.LogoUrl = dto.LogoUrl;
-            }
+
+            if (dto.LogoFile != null && dto.LogoFile.Length > 0)
+                existingRestaurant.LogoUrl = await SaveImageAsync(dto.LogoFile);
+
             if (dto.IsAvailable.HasValue)
-            {
                 existingRestaurant.IsAvailable = dto.IsAvailable.Value;
-            }
+
             if (!string.IsNullOrWhiteSpace(dto.Email))
-            {
                 existingRestaurant.User.Email = dto.Email;
-            }
+
             if (!string.IsNullOrWhiteSpace(dto.Phone))
-            {
                 existingRestaurant.User.PhoneNumber = dto.Phone;
-            }
+
             return await _repository.UpdateRestaurantAsync(existingRestaurant);
         }
-        public async Task<IEnumerable<Order>> GetAllOrdersByRestaurantAsync(string restaurantId)
+
+        //Image Upload
+        public async Task<string> SaveImageAsync(IFormFile file)
         {
-            return await _repository.GetAllOrdersByRestaurantAsync(restaurantId);
-        }
-        public async Task<IEnumerable<OrderDto>> GetOrdersByStatusAsync(string restaurantId, string[] statuses)
-        {
-            var orders = await _repository.GetAllOrdersByRestaurantAsync(restaurantId);
+            if (file == null || file.Length == 0)
+                throw new ArgumentException("No file provided");
 
-            // Filter by status using case-insensitive comparison
-            var filteredOrders = orders.Where(o => statuses.Contains(o.Status, StringComparer.OrdinalIgnoreCase));
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (string.IsNullOrEmpty(ext) || !allowedExtensions.Contains(ext))
+                throw new InvalidOperationException("Unsupported file format.");
 
-            return _mapper.Map<IEnumerable<OrderDto>>(filteredOrders);
-        }
+            var uniqueFileName = Guid.NewGuid().ToString() + ext;
+            var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
 
-        public async Task<DashboardSummaryDto> GetDashboardSummaryAsync(string restaurantId)
-        {
-            return await _repository.GetDashboardSummaryAsync(restaurantId);
-        }
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
 
-        public async Task<IEnumerable<ItemDto>> GetMostOrderedItemsAsync(string restaurantId, int topCount = 10)
-        {
-            // Call repository to get most ordered items with quantities
-            var mostOrderedItems = await _repository.GetMostOrderedItemsAsync(restaurantId, topCount);
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-            // Map each Item entity to ItemDto
-            var itemDtos = mostOrderedItems.Select(x =>
+            try
             {
-                var dto = _mapper.Map<ItemDto>(x.Item);
-                return dto;
-            });
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to save uploaded file: {ex.Message}");
+            }
 
-            return itemDtos;
+            // Return relative URL 
+            return $"/uploads/{uniqueFileName}";
         }
-
 
     }
 }

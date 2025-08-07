@@ -9,7 +9,7 @@ namespace FoodOrderingAPI.Repository
     public interface IAdminRepository
     {
         Task<IEnumerable<Restaurant>> GetRestaurantsByActiveStatusAsync(bool isActive);
-        Task<Restaurant> GetRestaurantByIdAsync(string restaurantId);
+        Task<Restaurant> GetRestaurantByUserNameAsync(string userName);
         Task UpdateRestaurantAsync(Restaurant restaurant);
         Task DeleteRestaurantAsync(string restaurantId);
 
@@ -17,5 +17,14 @@ namespace FoodOrderingAPI.Repository
         Task<DeliveryMan> GetDeliveryManByIdAsync(string deliveryManId);
         Task DeleteDeliveryManAsync(string deliveryManId);
         Task<IEnumerable<Customer>> GetAllCustomerAsync();
+
+        Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(string customerId);
+        Task<IEnumerable<Admin>> GetAllAdminsAsync();
+        Task<Admin> GetAdminByUserNameAsync(string UserName);
+        Task<IEnumerable<Order>> GetAllOrdersAsync();
+        Task<IEnumerable<Order>> GetOrdersByStatusAsync(StatusEnum status);
+
+        Task UpdateAdminAsync(Admin admin);
+
     }
 }
