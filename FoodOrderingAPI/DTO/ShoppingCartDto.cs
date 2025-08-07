@@ -18,15 +18,13 @@ namespace FoodOrderingAPI.DTO
         [Column(TypeName = "decimal(10,2)")]
         public decimal SubTotal { get; set; } = 0;
 
-        [Column(TypeName = "decimal(10,2)")]
-        public decimal DiscountAmount { get; set; } = 0;
 
         [Column(TypeName = "decimal(10,2)")]
         public decimal DelivaryPrice { get; set; } = 0;
 
         [Column(TypeName = "decimal(10,2)")]
         
-        public decimal TotalAfterDiscount => SubTotal + DelivaryPrice - DiscountAmount;
+        public decimal TotalAfterDiscount => SubTotal + DelivaryPrice ;
 
         public List<ShoppingCartItemDto> ShoppingCartItems { get; set; } = new List<ShoppingCartItemDto>();
     }

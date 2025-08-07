@@ -81,7 +81,11 @@ namespace FoodOrderingAPI.Services
             var restaurantEntity = _mapper.Map<Restaurant>(dto);
             restaurantEntity.RestaurantID = newUser.Id;
             restaurantEntity.User = newUser;
-
+            //update to restaurant to get order time
+            restaurantEntity.Longitude = dto.Longitude;
+            restaurantEntity.Latitude = dto.Latitude;
+            restaurantEntity.orderTime = dto.orderTime;
+            restaurantEntity.DelivaryPrice=dto.DelivaryPrice;
             // Assign new Guid if RestaurantID is empty
             if (string.IsNullOrWhiteSpace(restaurantEntity.RestaurantID))
             {

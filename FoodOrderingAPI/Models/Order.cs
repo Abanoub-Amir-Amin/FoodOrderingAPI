@@ -10,6 +10,7 @@ namespace FoodOrderingAPI.Models
 
         [ForeignKey(nameof(Customer))]
         public string CustomerID { get; set; }
+        public int OrderNumber { get; set; }
 
         [ForeignKey(nameof(Address))]
         public Guid AddressID { get; set; }
@@ -22,13 +23,23 @@ namespace FoodOrderingAPI.Models
 
         [MaxLength(50)]
         public StatusEnum Status { get; set; }
+        public TimeSpan OrderTimeToComplete { get; set; }
 
         public DateTime OrderDate { get; set; } = DateTime.Now;
-
+        public string PhoneNumber { get; set; }
         public DateTime? DeliveredAt { get; set; }
 
         [Column(TypeName = "decimal(10,2)")]
-        public decimal TotalPrice { get; set; }
+        public decimal SubTotal { get; set; } = 0;
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal DelivaryPrice { get; set; } = 0;
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal DiscountAmount { get; set; } = 0;
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal TotalPrice => SubTotal + DelivaryPrice - DiscountAmount;
 
         [ForeignKey(nameof(PromoCode))]
         public Guid? PromoCodeID { get; set; }
@@ -41,7 +52,7 @@ namespace FoodOrderingAPI.Models
 
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
-        public ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
+        //public ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
     }
 
 }

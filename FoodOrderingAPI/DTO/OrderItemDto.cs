@@ -7,5 +7,7 @@
         public int Quantity { get; set; }
         public string Preferences { get; set; }
         public string ImageUrl { get; set; }
+        public decimal TotalPrice { get; set; }
+
     }
 }
