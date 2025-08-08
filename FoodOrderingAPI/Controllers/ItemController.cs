@@ -100,7 +100,7 @@ namespace FoodOrderingAPI.Controllers
             var items = await _ItemService.GetItemsByCategoryAsync(category);
             return Ok(items);
         }
-
+        [AllowAnonymous]
         [HttpGet("items/byrestaurantname")]
         public async Task<IActionResult> GetItemsByRestaurantName([FromQuery] string restaurantName)
         {
@@ -111,6 +111,7 @@ namespace FoodOrderingAPI.Controllers
         }
 
         [HttpGet("items")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllItems()
         {
             return Ok(await _ItemService.GetAllItemsAsync());

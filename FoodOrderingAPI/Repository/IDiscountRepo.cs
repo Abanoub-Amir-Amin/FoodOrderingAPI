@@ -7,6 +7,6 @@ namespace FoodOrderingAPI.Repository
         //Discount-CRUD
         Task<Discount> AddDiscountAsync(string restaurantId, Discount discount);
         Task<Discount> UpdateDiscountAsync(Discount discount);
-        Task<bool> DeleteDiscountAsync(int discountId, string restaurantId);
+        Task<bool> DeleteDiscountAsync(int discountId);
     }
 }

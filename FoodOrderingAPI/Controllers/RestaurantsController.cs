@@ -41,8 +41,15 @@ namespace FoodOrderingAPI.Controllers
         [HttpPost("apply")]
         [Consumes("multipart/form-data")]  // Ensure it accepts multipart/form-data
         [AllowAnonymous]
-        public async Task<IActionResult> ApplyToJoin([FromForm] RestaurantDto dto)
+        public async Task<IActionResult> ApplyToJoin([FromForm] RestaurantUpdateDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage)
+                                              .ToList();
+                return BadRequest(new { error = "Validation failed", details = errors });
+            }
             try
             {
                 // Call service to apply and create restaurant user
@@ -103,7 +110,7 @@ namespace FoodOrderingAPI.Controllers
                 if (restaurant == null)
                     return NotFound();
 
-                var dto = _mapper.Map<List<RestaurantDto>>(restaurant);
+                var dto = _mapper.Map<List<AllRestaurantsDTO>>(restaurant);
                 return Ok(dto);
             }
             catch (ArgumentException ex)
@@ -118,7 +125,7 @@ namespace FoodOrderingAPI.Controllers
 
 
         [HttpPut("{restaurantId}/update-profile")]
-        [Consumes("multipart/form-data")] 
+        [Consumes("multipart/form-data")]
         public async Task<IActionResult> UpdateRestaurantProfile(string restaurantId, [FromForm] RestaurantUpdateDto dto)
         {
             if (!ModelState.IsValid)

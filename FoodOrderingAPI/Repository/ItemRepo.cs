@@ -1,23 +1,32 @@
 ﻿using FoodOrderingAPI.DTO;
 using FoodOrderingAPI.Hubs;
 using FoodOrderingAPI.Models;
+using FoodOrderingAPI.Services;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 namespace FoodOrderingAPI.Repository
 {
     public class ItemRepo : IItemRepo
     {
         public ApplicationDBContext _context { get; }
+        public IStripeService StripeService { get; }
 
-        public ItemRepo(ApplicationDBContext dBContext)
+        public ItemRepo(ApplicationDBContext dBContext, IStripeService stripeService)
         {
             _context = dBContext;
+            StripeService = stripeService;
         }
         // ===== Items CRUD =====
         public async Task<Item> AddItemAsync(string restaurantId, Item item)
         {
+            var productId = await StripeService.CreateProductStripeAsync(item);
+            var priceId = await StripeService.CreatePriceStripeAsync(item, productId, 0); // 0 is discount percentage for new items
+            item.StripePriceId = priceId; // Store the Stripe Price ID in the Item entity
+            item.StripeProductId = productId; // Store the Stripe Product ID in the Item entity
             item.RestaurantID = restaurantId;
+            item.DiscountedPrice = item.Price; // Initialize DiscountedPrice to Price
             _context.Items.Add(item);
             await _context.SaveChangesAsync();
             return item;
@@ -25,6 +34,15 @@ namespace FoodOrderingAPI.Repository
 
         public async Task<Item> UpdateItemAsync(Item item)
         {
+            await StripeService.UpdateProductStripeAsync(item);
+            // Deactivate the old price
+            await StripeService.DeletePriceStripeAsync(item);
+            
+            var discount = _context.Discounts.FirstOrDefault(d => d.ItemID == item.ItemID);
+            // Create a new price for the updated item
+            var priceId = await StripeService.CreatePriceStripeAsync(item, item.StripeProductId, discount?.Percentage ?? 0);
+            item.StripePriceId = priceId; // Update the Stripe Price ID in the Item entity
+            item.DiscountedPrice = item.Price * (1 - (discount?.Percentage ?? 0) / 100); // Update DiscountedPrice based on the discount percentage
             _context.Items.Update(item);
             await _context.SaveChangesAsync();
             return item;
@@ -36,6 +54,8 @@ namespace FoodOrderingAPI.Repository
                 .FirstOrDefaultAsync(i => i.ItemID == itemId);
             if (item == null)
                 return false;
+            // Deactivate the product and price in Stripe
+            await StripeService.DeleteProductStripeAsync(item);
 
             _context.Items.Remove(item);
             await _context.SaveChangesAsync();

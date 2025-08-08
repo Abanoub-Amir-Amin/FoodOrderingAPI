@@ -31,8 +31,8 @@ namespace FoodOrderingAPI.Models
         public bool IsAvailable { get; set; } = true; // Default to true
 
         // URL for the restaurant's logo
-        [MaxLength(500)] 
-        public string LogoUrl { get; set; }
+        [MaxLength(500)]
+        public string? ImageFile { get; set; }
 
         public User User { get; set; }
 

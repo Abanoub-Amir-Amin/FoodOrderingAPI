@@ -7,10 +7,20 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
+
+        // Reverse mapping Restaurant → RestaurantDto
+        CreateMap<Restaurant, RestaurantDto>()
+            .ForMember(dest => dest.ImageFile, opt => opt.Ignore());
+
         // Map RestaurantDto → Restaurant
         CreateMap<RestaurantDto, Restaurant>()
             // Avoid mapping User.Restaurant to prevent cycles
             .ForMember(dest => dest.User, opt => opt.Ignore());
+
+        // Reverse mapping Restaurant → AllRestaurantsDTO
+        CreateMap<Restaurant, AllRestaurantsDTO>()
+            .ForMember(dest => dest.ImageFile, opt => opt.MapFrom(src => src.ImageFile))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.RestaurantID));
 
         // Map Restaurant → RestaurantProfileDto
         CreateMap<Restaurant, RestaurantUpdateDto>().ReverseMap(); // Basic ReverseMap for profile updates
@@ -59,8 +69,6 @@ public class MappingProfile : Profile
         // Reverse mapping ItemDto → Item
         CreateMap<ItemDto, Item>();
 
-        // Reverse mapping Restaurant → RestaurantDto
-        CreateMap<Restaurant, RestaurantDto>();
 
         // Reverse mapping RestaurantProfileDto → Restaurant
         CreateMap<RestaurantUpdateDto, Restaurant>()
@@ -68,11 +76,10 @@ public class MappingProfile : Profile
                 .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location))
                 .ForMember(dest => dest.OpenHours, opt => opt.MapFrom(src => src.OpenHours))
                 .ForMember(dest => dest.IsAvailable, opt => opt.MapFrom(src => src.IsAvailable))
-                .ForMember(dest => dest.LogoUrl, opt => opt.MapFrom(src => src.LogoFile))
                 .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Latitude))
                 .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Longitude))
                 .ForMember(dest => dest.orderTime, opt => opt.MapFrom(src => src.orderTime))
-
+                .ForMember(dest => dest.ImageFile, opt => opt.MapFrom(src => src.LogoFile))
                 // Ignore other fields that are not part of the update DTO or should not be updated directly                                                                     
                 .ForMember(dest => dest.RestaurantID, opt => opt.Ignore())
                 .ForMember(dest => dest.UserId, opt => opt.Ignore())
@@ -262,6 +269,7 @@ public class MappingProfile : Profile
         .ForMember(dest => dest.PaymentMethod, opt => opt.Ignore())//untill implement payment
         .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
         .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
+
 
     }
 }

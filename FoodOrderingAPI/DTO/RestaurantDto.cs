@@ -9,7 +9,7 @@ namespace FoodOrderingAPI.DTO
         public string OpenHours { get; set; }
         public bool IsActive { get; set; } = false;
         public bool IsAvailable { get; set; } = true;
-        public string LogoUrl { get; set; }
+        public IFormFile ImageFile { get; set; }
         public UserDto User { get; set; }
         //update to restaurant to get time of order to deliver to customer
         public double Latitude { get; set; }

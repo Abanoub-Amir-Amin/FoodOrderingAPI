@@ -44,6 +44,8 @@ namespace FoodOrderingAPI
 
             builder.Services.AddScoped<IAddressRepo, AddressRepo>();
 
+            builder.Services.AddScoped<IStripeService, StripeService>();
+
             // Register controllers with JSON options
             builder.Services.AddControllers()
                 .AddJsonOptions(opts =>
@@ -170,13 +172,14 @@ namespace FoodOrderingAPI
 
             // Register OpenAPI/Swagger services
             builder.Services.AddOpenApi();
-            builder.Services.AddCors(op =>
+            // Add CORS policy to allow Angular frontend
+            builder.Services.AddCors(options =>
             {
-                op.AddPolicy("public", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed(_ => true));
-                //op.AddPolicy("subscription", policy =>
-                //{
-                //    policy.WithOrigins("127.0.0.1").WithHeaders("token", "role").WithMethods("get");
-                //});
+                options.AddPolicy("AllowAngularDevClient", policy =>
+                    policy.WithOrigins("http://localhost:4200", "http://localhost:62532")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials());
             });
 
 
@@ -215,7 +218,7 @@ namespace FoodOrderingAPI
             app.UseStaticFiles();
 
             //app.UseHttpsRedirection();
-            app.UseCors("public");
+            app.UseCors("AllowAngularDevClient");
 
             app.UseAuthentication();
             app.UseAuthorization();
