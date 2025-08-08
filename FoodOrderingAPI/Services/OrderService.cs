@@ -65,46 +65,48 @@ namespace FoodOrderingAPI.Services
         }
         public async Task<Order> UpdateOrderStatusAsync(Guid orderId, StatusEnum status, string restaurantId)
         {
-            var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery, StatusEnum.Cancelled };
+            //var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery, StatusEnum.Cancelled };
+            var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery };
+
             if (!allowedStatuses.Contains(status))
                 throw new ArgumentException("Invalid order status.");
 
             return await _repository.UpdateOrderStatusAsync(orderId, status, restaurantId);
         }
         //cancel order from restaurant
-        public async Task<bool> CancelOrder(Order order,string reason)
-        {
+        //public async Task<bool> CancelOrder(Order order,string reason)
+        //{
 
-            if (order == null || order.Status != StatusEnum.WaitingToConfirm)
-                return false;
+        //    if (order == null || order.Status != StatusEnum.WaitingToConfirm)
+        //        return false;
 
-            await _repository.CancelOrder(order);
+        //    await _repository.CancelOrder(order);
 
-            //this code to return payment to customer
-            // if order payment method visa
-            //var options = new RefundCreateOptions
-            //{
-            //    PaymentIntent = order.PaymentIntentId,
-            //};
-            //var service = new RefundService();
-            //Refund refund = await service.CreateAsync(options);
+        //    //this code to return payment to customer
+        //    // if order payment method visa
+        //    //var options = new RefundCreateOptions
+        //    //{
+        //    //    PaymentIntent = order.PaymentIntentId,
+        //    //};
+        //    //var service = new RefundService();
+        //    //Refund refund = await service.CreateAsync(options);
 
-            _notificationRepo.CreateNotificationTo(order.CustomerID,
-                $"Order number {order.OrderNumber} cancelled,\n Reason: {reason}");
+        //    _notificationRepo.CreateNotificationTo(order.CustomerID,
+        //        $"Order number {order.OrderNumber} cancelled,\n Reason: {reason}");
 
-            return true;
-        }
-        public async Task<bool> ConfirmOrder(Order order)
-        {
-            if (order == null || order.Status != StatusEnum.WaitingToConfirm)
-                return false;
+        //    return true;
+        //}
+        //public async Task<bool> ConfirmOrder(Order order)
+        //{
+        //    if (order == null || order.Status != StatusEnum.WaitingToConfirm)
+        //        return false;
 
-            await _repository.ConfirmOrder(order);
+        //    await _repository.ConfirmOrder(order);
 
-            _notificationRepo.CreateNotificationTo(order.CustomerID,
-               $"Order number {order.OrderNumber} Confirmed");
-            return true;
-        }
+        //    _notificationRepo.CreateNotificationTo(order.CustomerID,
+        //       $"Order number {order.OrderNumber} Confirmed");
+        //    return true;
+        //}
         
 
 
@@ -202,6 +204,10 @@ namespace FoodOrderingAPI.Services
                 // await _paymentService.ChargeAsync(order);
 
                 await _repository.saveChangesAsync();
+                bool Assigned = await assignDelivaryManToOrder(order);
+                if (!Assigned)
+                    throw new ArgumentException("there are not available DelivaryMen Now");
+
                 await transaction.CommitAsync();
             }
             catch(Exception ex) 

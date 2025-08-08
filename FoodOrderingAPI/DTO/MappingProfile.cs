@@ -202,7 +202,7 @@ public class MappingProfile : Profile
 
 
         CreateMap<NewOrderDTO, Order>()
-        .ForMember(dest => dest.Status, opt => opt.MapFrom(src => StatusEnum.WaitingToConfirm))
+        .ForMember(dest => dest.Status, opt => opt.MapFrom(src => StatusEnum.Preparing))
         .ForMember(dest => dest.AddressID, opt => opt.MapFrom(src => src.AddressID))
         .ForMember(dest => dest.DeliveredAt, opt => opt.Ignore()) //determine it after order reach to customer+ 
         .ForMember(dest => dest.DeliveryManID, opt => opt.Ignore())//get it by function assignDelivaryMantoOrder+

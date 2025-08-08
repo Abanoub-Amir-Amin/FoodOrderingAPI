@@ -43,19 +43,19 @@ namespace FoodOrderingAPI.Repository
 
             var deliveredCount = orders.Count(o => o.Status == StatusEnum.Delivered);
             var inProcessCount = orders.Count(o => o.Status == StatusEnum.Preparing || o.Status == StatusEnum.Out_for_Delivery);
-            var cancelledCount = orders.Count(o => o.Status == StatusEnum.Cancelled);
+            //var cancelledCount = orders.Count(o => o.Status == StatusEnum.Cancelled);
 
             return new DashboardSummaryDto
             {
                 DeliveredOrders = deliveredCount,
                 InProcessOrders = inProcessCount,
-                CancelledOrders = cancelledCount
+                //CancelledOrders = cancelledCount
             };
         }
         //========operation of order by restaurant==========
         public async Task CancelOrder(Order order)
         {
-                order.Status = StatusEnum.Cancelled;
+                //order.Status = StatusEnum.Cancelled;
                 await _context.SaveChangesAsync();
         }
         public async Task ConfirmOrder(Order order)

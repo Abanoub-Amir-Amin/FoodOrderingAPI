@@ -77,7 +77,8 @@ namespace FoodOrderingAPI.Services
 
                 var totalOrders = orders.Count();
                 var deliveredOrders = orders.Count(o => o.Status == StatusEnum.Delivered);
-                var cancelledOrders = orders.Count(o => o.Status == StatusEnum.Cancelled);
+                //var cancelledOrders = orders.Count(o => o.Status == StatusEnum.Cancelled);
+
 
                 var inProcessOrders = _mapper.Map<List<OrderDto>>(orders.Where(o => o.Status == StatusEnum.Preparing||o.Status == StatusEnum.Out_for_Delivery).ToList());
 
@@ -85,7 +86,7 @@ namespace FoodOrderingAPI.Services
 
                 customerDto.TotalOrders = totalOrders;
                 customerDto.TotalDeliveredOrders = deliveredOrders;
-                customerDto.TotalCancelledOrders = cancelledOrders;
+                //customerDto.TotalCancelledOrders = cancelledOrders;
                 customerDto.InProcessOrders = inProcessOrders;
 
                 result.Add(customerDto);

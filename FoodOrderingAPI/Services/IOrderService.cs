@@ -16,8 +16,8 @@ namespace FoodOrderingAPI.Services
         Task<DashboardSummaryDto> GetDashboardSummaryAsync(string restaurantId);
 
         //operation of restaurant to order
-        public Task<bool> CancelOrder(Order order,string reason);
-        public Task<bool> ConfirmOrder(Order order);
+        //public Task<bool> CancelOrder(Order order,string reason);
+        //public Task<bool> ConfirmOrder(Order order);
         public Task<bool> assignDelivaryManToOrder(Order order);
 
         //customer
