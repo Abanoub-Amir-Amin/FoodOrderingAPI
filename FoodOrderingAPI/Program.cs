@@ -74,6 +74,11 @@ namespace FoodOrderingAPI
 
             builder.Services.AddScoped<IDiscountService, DiscountService>();
             builder.Services.AddScoped<IDiscountRepo, DiscountRepo>();
+
+            builder.Services.AddScoped<IEmailSender, EmailSenderService>();
+
+            builder.Services.AddScoped<IConfirmationEmail, ConfirmationEmail>();
+
             builder.Services.AddSignalR();
             // Register AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -89,7 +94,10 @@ namespace FoodOrderingAPI
             })
             .AddEntityFrameworkStores<ApplicationDBContext>()
             .AddDefaultTokenProviders();
-
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.SignIn.RequireConfirmedEmail = true;
+            });
             // Configure JWT Authentication
             builder.Services.AddAuthentication(options =>
             {

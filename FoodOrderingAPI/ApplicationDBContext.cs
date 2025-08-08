@@ -12,6 +12,52 @@ namespace FoodOrderingAPI
         {
             
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSeeding((context, _) =>
+            {
+                var admin = context.Set<User>().FirstOrDefault(u => u.Id == "Admin0");
+                if (admin == null)
+                {
+                    admin = new User
+                    {
+                        Id = "Admin0",
+                        UserName = "Admin",
+                        PasswordHash = new PasswordHasher<User>().HashPassword(null, "AS_AS_s1"),
+                        EmailConfirmed = true,
+                        Role = RoleEnum.Admin,
+                        CreatedAt = DateTime.UtcNow,
+                        LockoutEnabled = false,
+                        AccessFailedCount = 0,
+                        PhoneNumberConfirmed = true,
+                    };
+                    context.Set<User>().Add(admin);
+                    context.SaveChanges();
+                }
+            })
+            .UseAsyncSeeding(async (context, _, cancellationToken) =>
+            {
+                var admin = await context.Set<User>().FirstOrDefaultAsync(u => u.Id == "Admin0", cancellationToken);
+                if (admin == null)
+                {
+                    admin = new User
+                    {
+                        Id = "Admin0",
+                        UserName = "Admin",
+                        PasswordHash = new PasswordHasher<User>().HashPassword(null, "AS_AS_s1"),
+                        EmailConfirmed = true,
+                        Role = RoleEnum.Admin,
+                        CreatedAt = DateTime.UtcNow,
+                        LockoutEnabled = false,
+                        AccessFailedCount = 0,
+                        PhoneNumberConfirmed = true,
+                    };
+                    context.Set<User>().Add(admin);
+                    await context.SaveChangesAsync(cancellationToken);
+                }
+            });
+
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

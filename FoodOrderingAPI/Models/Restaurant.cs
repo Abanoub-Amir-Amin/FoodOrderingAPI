@@ -14,7 +14,12 @@ namespace FoodOrderingAPI.Models
 
         [MaxLength(255)]
         public string Location { get; set; }
-
+        //update to restaurant to get time of order to deliver to customer
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public TimeSpan orderTime { get; set; }
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal DelivaryPrice { get; set; } = 0;
         public float? Rating { get; set; }
 
         [MaxLength(100)]
