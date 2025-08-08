@@ -12,7 +12,6 @@ namespace FoodOrderingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Restaurant")]
 
     public class OrderController : ControllerBase
     {
@@ -38,6 +37,8 @@ namespace FoodOrderingAPI.Controllers
 
         }
         // ===== Orders =====
+        [Authorize(Roles = "Restaurant")]
+
         [HttpGet("{restaurantId}/orders")]
         public async Task<IActionResult> GetAllOrdersByRestaurantAsync(string restaurantId)
         {
@@ -55,6 +56,7 @@ namespace FoodOrderingAPI.Controllers
 
             return Ok(ordersDto);
         }
+        [Authorize(Roles = "Restaurant")]
 
         [HttpGet("{restaurantId}/orders/status")]
         public async Task<IActionResult> GetOrdersByStatus(string restaurantId, [FromQuery] StatusEnum[] status)
@@ -90,6 +92,8 @@ namespace FoodOrderingAPI.Controllers
         }
 
         [HttpPut("{restaurantId}/orders/{orderId}/status")]
+        [Authorize(Roles = "Restaurant")]
+
         public async Task<IActionResult> UpdateOrderStatus(string restaurantId, Guid orderId, [FromBody] OrderStatusUpdateDto dto)
         {
             // Authentication/Authorization: Ensure the restaurant ID from the route matches the authenticated user's restaurant ID
@@ -126,6 +130,7 @@ namespace FoodOrderingAPI.Controllers
 
         // ===== Dashboard Summary =====
         [HttpGet("{restaurantId}/dashboard-summary")]
+        [Authorize(Roles = "Restaurant")]
         public async Task<IActionResult> GetDashboardSummary(string restaurantId)
         {
             var restaurant = await _RestaurantService.GetRestaurantByIdAsync(restaurantId);
@@ -184,8 +189,9 @@ namespace FoodOrderingAPI.Controllers
         [HttpGet("Checkout")]
         public async Task<IActionResult> Checkout()
         {
-            var CustomerUserName = User.FindFirstValue(ClaimTypes.Name);
-            ShoppingCart cart = await _shoppingCartRepository.getByCustomer(CustomerUserName);
+            var CustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            ShoppingCart cart = await _shoppingCartRepository.getByCustomer(CustomerId);
             if (cart == null) return NotFound("customer or shopping car Not found");
 
             CheckoutViewDTO checkout = await _OrderService.Checkout(cart);
@@ -195,8 +201,9 @@ namespace FoodOrderingAPI.Controllers
         [HttpPost("PlaceOrder")]
         public async Task<IActionResult> PlaceOrder(NewOrderDTO newOrder)
         {
-            var CustomerUserName = User.FindFirstValue(ClaimTypes.Name);
-            ShoppingCart cart = await _shoppingCartRepository.getByCustomer(CustomerUserName);
+            var CustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            ShoppingCart cart = await _shoppingCartRepository.getByCustomer(CustomerId);
             if (cart == null) return NotFound("customer or shopping car Not found");
             try
             {

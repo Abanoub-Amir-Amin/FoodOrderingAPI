@@ -149,6 +149,16 @@ namespace FoodOrderingAPI.Services
             if (!string.IsNullOrWhiteSpace(dto.Phone))
                 existingRestaurant.User.PhoneNumber = dto.Phone;
 
+            if (dto.Longitude==0)
+                existingRestaurant.Longitude = dto.Longitude;
+
+            if (dto.Latitude == 0)
+                existingRestaurant.Latitude = dto.Latitude;
+
+            if (dto.orderTime != TimeSpan.Zero)
+                existingRestaurant.orderTime = dto.orderTime;
+
+
             return await _repository.UpdateRestaurantAsync(existingRestaurant);
         }
 

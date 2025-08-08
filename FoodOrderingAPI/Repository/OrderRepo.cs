@@ -109,6 +109,7 @@ namespace FoodOrderingAPI.Repository
             return await _context.Orders
                 .Include(o => o.Restaurant)
                 .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Item)
                 //.Include(o => o.PaymentTransactions)
                 .Where(o => o.CustomerID==customerId)
                 .ToListAsync();
@@ -118,10 +119,12 @@ namespace FoodOrderingAPI.Repository
         {
             return await _context.Orders
                 .Include(o => o.Restaurant)
+                .ThenInclude(R => R.User)
                 .Include(o => o.OrderItems)
                 //.Include(o => o.PaymentTransactions)
                 .Include(o => o.Address)
                 .Include(o => o.DeliveryMan)
+                .ThenInclude(D => D.User)
                 .Include(o => o.PromoCode)
                 .FirstOrDefaultAsync(o => o.OrderID == orderId);
         }
