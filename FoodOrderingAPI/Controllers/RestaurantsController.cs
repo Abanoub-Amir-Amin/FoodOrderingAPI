@@ -5,12 +5,9 @@ using FoodOrderingAPI.Repository;
 using FoodOrderingAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace FoodOrderingAPI.Controllers
 {
@@ -19,22 +16,19 @@ namespace FoodOrderingAPI.Controllers
     [ApiController]
     [Route("api/[controller]")]
     public class RestaurantController : ControllerBase
-    {
-        private readonly ApplicationDBContext _context;  
+    { 
         private readonly IRestaurantService _service;    
         private readonly IMapper _mapper;
-        private readonly IWebHostEnvironment _environment;
-        private readonly IItemRepo itemRepo;
+        private readonly IConfirmationEmail confirmationEmail;
+        private readonly UserManager<User> userManager;
 
-        public RestaurantController(IRestaurantService service, ApplicationDBContext context, IMapper mapper, IWebHostEnvironment environment)
+        public RestaurantController(IRestaurantService service, ApplicationDBContext context, IMapper mapper, IWebHostEnvironment environment, IConfirmationEmail confirmationEmail, UserManager<User> userManager)
         
         {
             _service = service;
-            _context = context;
             _mapper = mapper;
-            _environment = environment;
-            this.itemRepo = itemRepo;
-
+            this.confirmationEmail = confirmationEmail;
+            this.userManager = userManager;
         }
 
         // ===== Restaurant Apply to Join =====
@@ -56,6 +50,7 @@ namespace FoodOrderingAPI.Controllers
                 var result = await _service.ApplyToJoinAsync(dto);
 
                 // Return 201 Created with route to newly created resource
+                await confirmationEmail.SendConfirmationEmail(dto.User.Email, await userManager.FindByEmailAsync(dto.User.Email));
                 return CreatedAtAction(nameof(GetRestaurantById), new { id = result.UserId }, result);
             }
             catch (InvalidOperationException ex) when (ex.Message.Contains("already exists"))
@@ -175,6 +170,32 @@ namespace FoodOrderingAPI.Controllers
             return Ok(new { url });
         }
 
+        [AllowAnonymous]
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string UserId, string Token)
+        {
+            if (string.IsNullOrEmpty(UserId) || string.IsNullOrEmpty(Token))
+            {
+                // Provide a descriptive error message for the view
+                return BadRequest("The link is invalid or has expired. Please request a new one if needed.");
+            }
+            //Find the User by Id
+            var user = await userManager.FindByIdAsync(UserId);
+            if (user == null)
+            {
+                // Provide a descriptive error for a missing user scenario
+                return NotFound("We could not find a user associated with the given link.");
 
+            }
+            // Attempt to confirm the email
+            var result = await userManager.ConfirmEmailAsync(user, Token);
+            if (result.Succeeded)
+            {
+                return Ok("Thank you for confirming your email address. Your account is now verified!");
+            }
+            // If confirmation fails
+            return BadRequest("We were unable to confirm your email address. Please try again or request a new link.");
+
+        }
     }
 }

@@ -7,20 +7,10 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-
-        // Reverse mapping Restaurant → RestaurantDto
-        CreateMap<Restaurant, RestaurantDto>()
-            .ForMember(dest => dest.ImageFile, opt => opt.Ignore());
-
         // Map RestaurantDto → Restaurant
         CreateMap<RestaurantDto, Restaurant>()
             // Avoid mapping User.Restaurant to prevent cycles
             .ForMember(dest => dest.User, opt => opt.Ignore());
-
-        // Reverse mapping Restaurant → AllRestaurantsDTO
-        CreateMap<Restaurant, AllRestaurantsDTO>()
-            .ForMember(dest => dest.ImageFile, opt => opt.MapFrom(src => src.ImageFile))
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.RestaurantID));
 
         // Map Restaurant → RestaurantProfileDto
         CreateMap<Restaurant, RestaurantUpdateDto>().ReverseMap(); // Basic ReverseMap for profile updates
@@ -69,6 +59,8 @@ public class MappingProfile : Profile
         // Reverse mapping ItemDto → Item
         CreateMap<ItemDto, Item>();
 
+        // Reverse mapping Restaurant → RestaurantDto
+        CreateMap<Restaurant, RestaurantDto>();
 
         // Reverse mapping RestaurantProfileDto → Restaurant
         CreateMap<RestaurantUpdateDto, Restaurant>()
@@ -76,10 +68,11 @@ public class MappingProfile : Profile
                 .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location))
                 .ForMember(dest => dest.OpenHours, opt => opt.MapFrom(src => src.OpenHours))
                 .ForMember(dest => dest.IsAvailable, opt => opt.MapFrom(src => src.IsAvailable))
+                .ForMember(dest => dest.ImageFile, opt => opt.MapFrom(src => src.LogoFile))
                 .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Latitude))
                 .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Longitude))
                 .ForMember(dest => dest.orderTime, opt => opt.MapFrom(src => src.orderTime))
-                .ForMember(dest => dest.ImageFile, opt => opt.MapFrom(src => src.LogoFile))
+
                 // Ignore other fields that are not part of the update DTO or should not be updated directly                                                                     
                 .ForMember(dest => dest.RestaurantID, opt => opt.Ignore())
                 .ForMember(dest => dest.UserId, opt => opt.Ignore())
@@ -118,7 +111,7 @@ public class MappingProfile : Profile
                  .ForMember(dest => dest.User, opt => opt.Ignore())
                  .ForMember(dest => dest.Gender, opt => opt.Ignore())     
                  .ForMember(dest => dest.Addresses, opt => opt.Ignore())
-                 .ForMember(dest => dest.RewardHistories, opt => opt.Ignore())
+                 //.ForMember(dest => dest.RewardHistories, opt => opt.Ignore())
                  .ForMember(dest => dest.Orders, opt => opt.Ignore())
                  .ForMember(dest => dest.Reviews, opt => opt.Ignore())
                  .ForMember(dest => dest.ComplaintChats, opt => opt.Ignore())
@@ -134,7 +127,7 @@ public class MappingProfile : Profile
                 .ForMember(dest => dest.UserID, opt => opt.Ignore())
                 .ForMember(dest => dest.User, opt => opt.Ignore())
                 .ForMember(dest => dest.Addresses, opt => opt.Ignore())
-                .ForMember(dest => dest.RewardHistories, opt => opt.Ignore())
+                //.ForMember(dest => dest.RewardHistories, opt => opt.Ignore())
                 .ForMember(dest => dest.Orders, opt => opt.Ignore())
                 .ForMember(dest => dest.Reviews, opt => opt.Ignore())
                 .ForMember(dest => dest.ComplaintChats, opt => opt.Ignore())
@@ -144,12 +137,16 @@ public class MappingProfile : Profile
         CreateMap<Customer, CustomerDTO>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
-            .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.User.PhoneNumber))
+            .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.User.PhoneNumber))
             .ForMember(dest => dest.Addresses, opt => opt.MapFrom(src =>
                 src.Addresses.Select(a => $"{a.Label} - {a.Street}, {a.City}").ToList()))
             .ForMember(dest => dest.TotalOrders, opt => opt.MapFrom(src => src.Orders.Count))
-            .ForMember(dest => dest.Rewards, opt => opt.MapFrom(src => src.RewardHistories.Select(r => r.Reason).ToList()))
-            .ForMember(dest => dest.TotalRewardspoints, opt => opt.MapFrom(src => src.RewardHistories.Sum(r => r.PointsEarned)));
+            .ForMember(dest => dest.TotalCancelledOrders, opt => opt.MapFrom(src => src.Orders.Where(o => o.Status==StatusEnum.Cancelled).Count()))
+            .ForMember(dest => dest.TotalDeliveredOrders, opt => opt.MapFrom(src => src.Orders.Where(O=>O.Status==StatusEnum.Delivered).Count()))
+            .ForMember(dest => dest.InProcessOrders, opt => opt.MapFrom(src => src.Orders.Where(o=> o.Status==StatusEnum.Preparing||o.Status==StatusEnum.WaitingToConfirm).ToList()));
+
+        //.ForMember(dest => dest.Rewards, opt => opt.MapFrom(src => src.RewardHistories.Select(r => r.Reason).ToList()))
+        //.ForMember(dest => dest.TotalRewardspoints, opt => opt.MapFrom(src => src.RewardHistories.Sum(r => r.PointsEarned)));
 
 
 
@@ -209,7 +206,7 @@ public class MappingProfile : Profile
 
 
         CreateMap<NewOrderDTO, Order>()
-        .ForMember(dest => dest.Status, opt => opt.MapFrom(src => StatusEnum.WaitingToConfirm))
+        .ForMember(dest => dest.Status, opt => opt.MapFrom(src => StatusEnum.Preparing))
         .ForMember(dest => dest.AddressID, opt => opt.MapFrom(src => src.AddressID))
         .ForMember(dest => dest.DeliveredAt, opt => opt.Ignore()) //determine it after order reach to customer+ 
         .ForMember(dest => dest.DeliveryManID, opt => opt.Ignore())//get it by function assignDelivaryMantoOrder+
@@ -237,6 +234,19 @@ public class MappingProfile : Profile
         .ForMember(dest => dest.OrderID, opt => opt.MapFrom(src => src.OrderID))
         .ForMember(dest => dest.Preferences, opt => opt.MapFrom(src => src.Preferences))
         .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+        .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
+
+
+        CreateMap<Order, OrderDto>()
+        .ForMember(dest => dest.AddressID, opt => opt.MapFrom(src =>src.AddressID))
+        .ForMember(dest => dest.RestaurantID, opt => opt.MapFrom(src => src.RestaurantID))
+        .ForMember(dest => dest.PromoCodeID, opt => opt.MapFrom(src => src.PromoCodeID))
+        .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems))
+        .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+        .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
+        .ForMember(dest => dest.Customer, opt => opt.MapFrom(src => src.Customer))
+        .ForMember(dest => dest.DeliveredAt, opt => opt.MapFrom(src => src.DeliveredAt))
+        .ForMember(dest => dest.DeliveryManID, opt => opt.MapFrom(src => src.DeliveryManID))
         .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
 
 
@@ -269,7 +279,6 @@ public class MappingProfile : Profile
         .ForMember(dest => dest.PaymentMethod, opt => opt.Ignore())//untill implement payment
         .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
         .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
-
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using FoodOrderingAPI;
 using FoodOrderingAPI.DTO;
 using FoodOrderingAPI.Models;
+using FoodOrderingAPI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,53 +13,88 @@ public class AuthController : ControllerBase
 {
     private readonly JwtTokenService _jwtTokenService;
     private readonly ApplicationDBContext _dbContext;
-    private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly UserManager<User> _userManager;
+    private readonly IConfiguration _configuration;
+    private readonly IEmailSender _emailSender;
 
-    public AuthController(JwtTokenService jwtTokenService, ApplicationDBContext dbContext, IPasswordHasher<User> passwordHasher)
+    public AuthController(
+        JwtTokenService jwtTokenService,
+        ApplicationDBContext dbContext,
+        UserManager<User> userManager,
+        IConfiguration configuration,
+        IEmailSender emailSender)
     {
-        _dbContext = dbContext;
         _jwtTokenService = jwtTokenService;
-        _passwordHasher = passwordHasher;
+        _dbContext = dbContext;
+        _userManager = userManager;
+        this._configuration = configuration;
+        this._emailSender = emailSender;
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == request.Username );
+        var user = await _userManager.FindByNameAsync(request.Username);
 
         if (user == null)
             return Unauthorized("Invalid username or password");
 
-        var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
+        // Allow login for Admins without email confirmation
+        if (!(user.Role.ToString() == "Admin") && !await _userManager.IsEmailConfirmedAsync(user))
+            return Unauthorized("Email not confirmed. Please check your inbox.");
 
-        if (passwordVerificationResult != PasswordVerificationResult.Success)
+        // Check password
+        if (!await _userManager.CheckPasswordAsync(user, request.Password))
             return Unauthorized("Invalid username or password");
 
-        // Generate JWT token with claims
+        // Generate token
         var token = _jwtTokenService.GenerateToken(user.Id, user.UserName, user.Role.ToString());
-        
+
         Response.Cookies.Append("AuthToken", token, new CookieOptions
         {
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.None,
-            Expires = DateTimeOffset.UtcNow.AddMinutes(30)
+            Expires = DateTimeOffset.UtcNow.AddDays(5)
         });
-        // Return role for client-side redirection (For angular redirection pages)
+
         return Ok(new
         {
             Token = token,
             Role = user.Role.ToString(),
             UserId = user.Id
         });
-
-        /*No server-side logout needed in typical JWT scenarios because JWTs are self-contained and stateless.
-          Logout means:
-          On frontend: remove the token and user data from client storage (localStorage/sessionStorage).
-          Optionally on backend: implement a token blacklist or token revocation policy (advanced).
-          Your backend AuthController typically does NOT implement a logout endpoint unless you maintain a token blacklist.*/
+    }
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO model)
+    {
+        if (string.IsNullOrEmpty(model.Email))
+            return BadRequest("Email is required");
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null)
+            return NotFound("User not found");
+        // Generate password reset token
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var resetLink = $"{_configuration["AppSettings:FrontendUrl"]}/new-password?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(model.Email)}";
+        // Send email with reset link (implementation not shown)
+        await _emailSender.SendEmailAsync(model.Email, "Reset Password", $"Click here to reset your password: {resetLink}");
+        return Ok("Password reset link sent to your email");
     }
 
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
+    {
+        if (string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Token) || string.IsNullOrEmpty(model.NewPassword))
+            return BadRequest("Invalid request");
 
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null)
+            return NotFound("User not found");
+
+        var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+        if (!result.Succeeded)
+            return BadRequest(result.Errors.FirstOrDefault()?.Description);
+
+        return Ok("Password has been reset successfully");
+    }
 }
-

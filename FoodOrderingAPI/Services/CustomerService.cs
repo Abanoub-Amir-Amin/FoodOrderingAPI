@@ -1,10 +1,15 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using FoodOrderingAPI.DTO;
 using FoodOrderingAPI.Interfaces;
 using FoodOrderingAPI.Models;
 using FoodOrderingAPI.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Net;
+using System.Net.Mail;
+using System.Text.Encodings.Web;
 
 namespace FoodOrderingAPI.Services
 {
@@ -14,15 +19,18 @@ namespace FoodOrderingAPI.Services
         ICustomerRepo customerRepo;
         IShoppingCartRepository shoppingCartRepo;
         IMapper _mapper;
+        private readonly IConfiguration _configuration;
+
         UserManager<User> userManager { get; }
 
-        public CustomerService(ApplicationDBContext dbContext,ICustomerRepo customerRepo,IShoppingCartRepository shoppingCartRepository, IMapper _mapper, UserManager<User> userManager)
+        public CustomerService(ApplicationDBContext dbContext,ICustomerRepo customerRepo,IShoppingCartRepository shoppingCartRepository, IMapper _mapper, UserManager<User> userManager, IConfiguration configuration)
         {
             _dbContext = dbContext;
             this.customerRepo = customerRepo;
             this.shoppingCartRepo = shoppingCartRepository;
             this._mapper = _mapper;
             this.userManager = userManager;
+            this._configuration = configuration;
         }
 
         public async Task<CustomerDTO> GetCusomerDashboardDataById(string id) 
@@ -102,46 +110,53 @@ namespace FoodOrderingAPI.Services
         {
             using var transaction = await _dbContext.Database.BeginTransactionAsync();
             User user = new User();
-            if(await IsEmailTaken(dto.Email))
+
+            // Check for existing email
+            if (await IsEmailTaken(dto.Email))
             {
                 return IdentityResult.Failed(new IdentityError { Description = "A user with this Email already exists." });
-
             }
+
+            // Map registration DTO to User entity
             _mapper.Map(dto, user);
-            //user.UserName = dto.UserName;
-            //user.PhoneNumber = dto.Phone;
-            //user.Email = dto.Email;
-            //user.Role = RoleEnum.Customer;
-            //user.CreatedAt = DateTime.Now;
+
+            // Create user with password using Identity
             IdentityResult result = await userManager.CreateAsync(user, dto.Password);
+
             if (result.Succeeded)
             {
                 try
                 {
-                    Customer customer = new Customer();
-                    customer.CustomerID = user.Id;
-                    customer.UserID = user.Id;
+                    // Create related Customer entity
+                    Customer customer = new Customer
+                    {
+                        CustomerID = user.Id,
+                        UserID = user.Id
+                    };
                     _mapper.Map(dto, customer);
+
                     await customerRepo.Add(customer);
                     await customerRepo.Save();
-                    #region create shopping cart
-                    ShoppingCart cart = new ShoppingCart();
-                    await shoppingCartRepo.Create(cart,customer.CustomerID);
-                    await shoppingCartRepo.Save();
-                    await transaction.CommitAsync();
 
+                    // Create Shopping Cart
+                    ShoppingCart cart = new ShoppingCart();
+                    await shoppingCartRepo.Create(cart, customer.CustomerID);
+                    await shoppingCartRepo.Save();
+
+                    // Commit transaction if everything succeeded
+                    await transaction.CommitAsync();
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
                     await userManager.DeleteAsync(user);
-                    return IdentityResult.Failed(new IdentityError { Description = "Registration failed while creating customer or shopping cart." });
-
+                    return IdentityResult.Failed(new IdentityError { Description = $"Registration failed: {ex.Message}" });
                 }
-                #endregion
             }
             return result;
         }
+
+        
         public async Task Save()
         {
             await customerRepo.Save();

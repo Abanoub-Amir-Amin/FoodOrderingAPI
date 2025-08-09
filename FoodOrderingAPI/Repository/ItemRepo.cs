@@ -116,5 +116,14 @@ namespace FoodOrderingAPI.Repository
             // Convert to List of Tuple<Item, int>
             return mostOrderedItems.Select(x => (x.Item, x.TotalQuantity)).ToList();
         }
+        public async Task<List<string>> GetAllCategoriesAsync()
+        {
+            var categories = await _context.Items
+                .Where(i => i.IsAvailable)
+                .Select(i => i.Category)
+                .Distinct()
+                .ToListAsync();
+            return categories;
+        }
     }
 }
