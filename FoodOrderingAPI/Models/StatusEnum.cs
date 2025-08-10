@@ -3,10 +3,10 @@
     public enum StatusEnum
     {
         All,
-        //WaitingToConfirm,
+        WaitingToConfirm,
         Preparing,
         Out_for_Delivery,
         Delivered,
-        //Cancelled
+        Cancelled
     }
 }
