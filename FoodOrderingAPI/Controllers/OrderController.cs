@@ -164,27 +164,27 @@ namespace FoodOrderingAPI.Controllers
         //    return BadRequest("order Status not correct");
         //}
         [HttpPut("ConfirmOrder")]
-        //public async Task<IActionResult> ConfirmOrder(Guid OrderId)
-        //{
-        //    Order order = await _OrderService.getOrder(OrderId);
-        //    if (order == null) return NotFound("this orderid dosen't meet any order");
+        public async Task<IActionResult> ConfirmOrder(Guid OrderId)
+        {
+            Order order = await _OrderService.getOrder(OrderId);
+            if (order == null) return NotFound("this orderid dosen't meet any order");
 
-        //    //check authersity of restaurant
-        //    var restaurantId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    if (restaurantId != order.RestaurantID)
-        //        return Unauthorized($"this user with userId{restaurantId} not autherized to confirm this orderId");
+            //check authersity of restaurant
+            var restaurantId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (restaurantId != order.RestaurantID)
+                return Unauthorized($"this user with userId{restaurantId} not autherized to confirm this orderId");
 
-        //    bool Assigned = await _OrderService.assignDelivaryManToOrder(order);
-        //    if (!Assigned)
-        //        return BadRequest("there are not available DelivaryMen Now");
+            bool Assigned = await _OrderService.assignDelivaryManToOrder(order);
+            if (!Assigned)
+                return BadRequest("there are not available DelivaryMen Now");
 
-        //    bool confirmed = await _OrderService.ConfirmOrder(order);
+            bool confirmed = await _OrderService.ConfirmOrder(order);
 
-        //    if (confirmed)
-        //        return Ok("Order confirmed Sucessfully");
-        //    return BadRequest("order Status not correct");
+            if (confirmed)
+                return Ok("Order confirmed Sucessfully");
+            return BadRequest("order Status not correct");
 
-        //}
+        }
 
         [Authorize(Roles = "Customer")]
         [HttpGet("Checkout")]

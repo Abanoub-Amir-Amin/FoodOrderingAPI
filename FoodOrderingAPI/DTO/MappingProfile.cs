@@ -141,7 +141,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Addresses, opt => opt.MapFrom(src =>
                 src.Addresses.Select(a => $"{a.Label} - {a.Street}, {a.City}").ToList()))
             .ForMember(dest => dest.TotalOrders, opt => opt.MapFrom(src => src.Orders.Count))
-            .ForMember(dest => dest.TotalCancelledOrders, opt => opt.MapFrom(src => src.Orders.Where(o => o.Status==StatusEnum.Cancelled).Count()))
+            //.ForMember(dest => dest.TotalCancelledOrders, opt => opt.MapFrom(src => src.Orders.Where(o => o.Status==StatusEnum.Cancelled).Count()))
             .ForMember(dest => dest.TotalDeliveredOrders, opt => opt.MapFrom(src => src.Orders.Where(O=>O.Status==StatusEnum.Delivered).Count()))
             .ForMember(dest => dest.InProcessOrders, opt => opt.MapFrom(src => src.Orders.Where(o=> o.Status==StatusEnum.Preparing||o.Status==StatusEnum.WaitingToConfirm).ToList()));
 

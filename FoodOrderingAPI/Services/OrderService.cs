@@ -65,7 +65,9 @@ namespace FoodOrderingAPI.Services
         }
         public async Task<Order> UpdateOrderStatusAsync(Guid orderId, StatusEnum status, string restaurantId)
         {
-            var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery, StatusEnum.Cancelled };
+            //var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery, StatusEnum.Cancelled };
+            var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery };
+
             if (!allowedStatuses.Contains(status))
                 throw new ArgumentException("Invalid order status.");
 
@@ -167,7 +169,7 @@ namespace FoodOrderingAPI.Services
             using var transaction = await _repository.BeginTransactionAsync();
             try
             {
-                //crete order using shoppingcart and data from frontend
+                //create order using shoppingcart and data from frontend
                 Order order = _mapper.Map<Order>(cart);
                 _mapper.Map(orderdto, order); // apply dto overrides
 

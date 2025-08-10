@@ -14,7 +14,7 @@ namespace FoodOrderingAPI.DTO
         //public int LoyaltyPoints { get; set; } = 0;
         public int TotalOrders { get; set; } = 0;
         public int TotalDeliveredOrders { get; set; } = 0;
-        public int TotalCancelledOrders { get; set; } = 0;
+        //public int TotalCancelledOrders { get; set; } = 0;
 
         // List of in process orders:
         public List<OrderDto> InProcessOrders { get; set; }
