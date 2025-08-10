@@ -142,7 +142,7 @@ namespace FoodOrderingAPI.Services
                 existingRestaurant.OpenHours = dto.OpenHours;
 
             if (dto.LogoFile != null && dto.LogoFile.Length > 0)
-                existingRestaurant.LogoUrl = await SaveImageAsync(dto.LogoFile);
+                existingRestaurant.ImageFile = await SaveImageAsync(dto.LogoFile);
 
             if (dto.IsAvailable.HasValue)
                 existingRestaurant.IsAvailable = dto.IsAvailable.Value;
