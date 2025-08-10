@@ -276,8 +276,20 @@ public class MappingProfile : Profile
         .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber))
         .ForMember(dest => dest.itemNames, opt => opt.MapFrom(src => src.OrderItems.Select(oi => oi.Item.Name)))
         .ForMember(dest => dest.RestaurantName, opt => opt.MapFrom(src => src.Restaurant.RestaurantName))
-        .ForMember(dest => dest.PaymentMethod, opt => opt.Ignore())//untill implement payment
         .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+        .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
+
+        CreateMap<Order, DelivaryOrderDTO>()
+        .ForMember(dest => dest.OrderID, opt => opt.MapFrom(src => src.OrderID))
+        .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
+        .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber))
+        .ForMember(dest => dest.itemNames, opt => opt.MapFrom(src => src.OrderItems.Select(oi => oi.Item.Name)))
+        .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FirstName+" "+src.Customer.LastName))
+        .ForMember(dest => dest.CustomerAddress, opt => opt.MapFrom(src => $"{src.Address.Label} - {src.Address.Street}, {src.Address.City}"))
+        .ForMember(dest => dest.CustomerPhone, opt => opt.MapFrom(src => src.PhoneNumber))
+        .ForMember(dest => dest.RestaurantName, opt => opt.MapFrom(src => src.Restaurant.RestaurantName))
+        .ForMember(dest => dest.RestaurantAddress, opt => opt.MapFrom(src => src.Restaurant.Location))
+        .ForMember(dest => dest.RestaurantPhone, opt => opt.MapFrom(src => src.Restaurant.User.PhoneNumber))
         .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
 
     }

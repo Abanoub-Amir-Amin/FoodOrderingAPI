@@ -132,6 +132,8 @@ namespace FoodOrderingAPI.Services
         //customer
         public async Task<CheckoutViewDTO> Checkout (ShoppingCart shoppingCart)
         {
+            var priceids = shoppingCart.ShoppingCartItems.Select(SC => SC.Item.StripePriceId).ToList();
+            shoppingCart.ShoppingCartItems.Select(sc => sc.Quantity);
             CheckoutViewDTO checkout = _mapper.Map<CheckoutViewDTO>(shoppingCart);
             checkout.Address = await _addressRepo.getDafaultAddress(shoppingCart.CustomerID);
             return checkout;
@@ -145,7 +147,7 @@ namespace FoodOrderingAPI.Services
                 await _repository.AddOrderItem(orderitem);
             }
         }
-        public async Task PlaceOrder(NewOrderDTO orderdto, ShoppingCart cart)
+        public async Task PlaceOrder( ShoppingCart cart)
         {
             // التأكد من صحة البيانات المدخلة
             Address add = await _addressRepo.GetAddress(orderdto.AddressID);
@@ -235,6 +237,11 @@ namespace FoodOrderingAPI.Services
             Order order = await _repository.getOrderDetails(orderId);
             return order;
         }
-
+        public async Task<List<DelivaryOrderDTO>> getOrdersForDelivarMan(string DelivaryId)
+        {
+            List<Order> orders = await _repository.getOrdersDelivaryMan(DelivaryId);
+            List<DelivaryOrderDTO> orderResult = _mapper.Map<List<DelivaryOrderDTO>>(orders);
+            return orderResult;
+        }
     }
 }

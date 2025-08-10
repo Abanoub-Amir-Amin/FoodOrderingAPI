@@ -237,5 +237,16 @@ namespace FoodOrderingAPI.Controllers
             var orders = await _OrderService.GetOrdersByStatusAsyncForCustomer(CustomerId, status);
             return Ok(orders);
         }
+
+        //---------------DelivaryMan-------------
+
+        [Authorize(Roles = "DeliveryMan")]
+        [HttpGet("PreparingOrdersForDelivary")]
+        public async Task<IActionResult> GetOrdersForDelivary()
+        {
+            var DelivaryId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var orders = await _OrderService.getOrdersForDelivarMan(DelivaryId);
+            return Ok(orders);
+        }
     }
 }

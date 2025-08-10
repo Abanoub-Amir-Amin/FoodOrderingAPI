@@ -114,6 +114,19 @@ namespace FoodOrderingAPI.Repository
                 .ToListAsync();
 
         }
+        public async Task<List<Order>> getOrdersDelivaryMan(string DelivaryId)
+        {
+            return await _context.Orders
+                .Include(o => o.Restaurant)
+                .ThenInclude(R => R.User)
+                .Include(o => o.OrderItems)
+                .Include(o => o.Customer)
+                .ThenInclude(C => C.User)
+                //.Include(o => o.PaymentTransactions)
+                .Where(o => o.DeliveryManID == DelivaryId && o.Status== StatusEnum.Preparing)
+                .ToListAsync();
+
+        }
         public async Task<Order?> getOrderDetails(Guid orderId)
         {
             return await _context.Orders
