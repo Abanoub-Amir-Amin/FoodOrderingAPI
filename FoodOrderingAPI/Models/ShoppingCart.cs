@@ -24,7 +24,7 @@ namespace FoodOrderingAPI.Models
 
 
         [Column(TypeName = "decimal(10,2)")]
-        public decimal TotalAfterDiscount => SubTotal + Restaurant.DelivaryPrice; 
+        public decimal TotalAfterDiscount => SubTotal + (Restaurant?.DelivaryPrice ?? 0);
 
         public Customer Customer { get; set; }
         public Restaurant Restaurant { get; set; }

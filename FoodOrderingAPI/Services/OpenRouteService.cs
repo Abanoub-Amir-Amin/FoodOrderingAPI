@@ -38,9 +38,13 @@
             );
 
             _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.Add("Authorization", _apiKey);
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _apiKey);
 
             var response = await _httpClient.PostAsync(url, jsonContent);
+            var responseBody = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(response.StatusCode);
+            Console.WriteLine(responseBody);
             response.EnsureSuccessStatusCode();
 
             using var stream = await response.Content.ReadAsStreamAsync();
@@ -49,10 +53,9 @@
             var root = doc.RootElement;
 
             var summary = root
-                .GetProperty("features")[0]
-                .GetProperty("properties")
+                .GetProperty("routes")[0]
                 .GetProperty("summary");
-
+            
             double durationInSeconds = summary.GetProperty("duration").GetDouble();
             TimeSpan durationspan = TimeSpan.FromSeconds(durationInSeconds);
             return durationspan;

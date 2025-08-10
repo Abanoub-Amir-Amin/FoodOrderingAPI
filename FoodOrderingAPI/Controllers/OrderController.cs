@@ -12,7 +12,6 @@ namespace FoodOrderingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Restaurant")]
 
     public class OrderController : ControllerBase
     {
@@ -38,6 +37,8 @@ namespace FoodOrderingAPI.Controllers
 
         }
         // ===== Orders =====
+        [Authorize(Roles = "Restaurant")]
+
         [HttpGet("{restaurantId}/orders")]
         public async Task<IActionResult> GetAllOrdersByRestaurantAsync(string restaurantId)
         {
@@ -55,6 +56,7 @@ namespace FoodOrderingAPI.Controllers
 
             return Ok(ordersDto);
         }
+        [Authorize(Roles = "Restaurant")]
 
         [HttpGet("{restaurantId}/orders/status")]
         public async Task<IActionResult> GetOrdersByStatus(string restaurantId, [FromQuery] StatusEnum[] status)
@@ -67,7 +69,8 @@ namespace FoodOrderingAPI.Controllers
             if (!restaurant.IsActive)
                 return Forbid("Your restaurant account is not yet active.");
 
-            var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery, StatusEnum.Cancelled };
+            //var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery, StatusEnum.Cancelled };
+            var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery };
             StatusEnum[] requestedStatuses;
 
             if (!status.Any())
@@ -90,6 +93,8 @@ namespace FoodOrderingAPI.Controllers
         }
 
         [HttpPut("{restaurantId}/orders/{orderId}/status")]
+        [Authorize(Roles = "Restaurant")]
+
         public async Task<IActionResult> UpdateOrderStatus(string restaurantId, Guid orderId, [FromBody] OrderStatusUpdateDto dto)
         {
             // Authentication/Authorization: Ensure the restaurant ID from the route matches the authenticated user's restaurant ID
@@ -126,6 +131,7 @@ namespace FoodOrderingAPI.Controllers
 
         // ===== Dashboard Summary =====
         [HttpGet("{restaurantId}/dashboard-summary")]
+        [Authorize(Roles = "Restaurant")]
         public async Task<IActionResult> GetDashboardSummary(string restaurantId)
         {
             var restaurant = await _RestaurantService.GetRestaurantByIdAsync(restaurantId);
@@ -140,52 +146,53 @@ namespace FoodOrderingAPI.Controllers
 
             return Ok(summary);
         }
-        [HttpPut("CancelOrder")]
-        public async Task<IActionResult> CancelOrder(Guid OrderId, [FromBody] string reson)
-        {
-            //check orderid exist
-            Order order = await _OrderService.getOrder(OrderId);
-            if (order == null) return NotFound("this orderid dosen't meet any order");
+        //[HttpPut("CancelOrder")]
+        //public async Task<IActionResult> CancelOrder(Guid OrderId, [FromBody] string reson)
+        //{
+        //    //check orderid exist
+        //    Order order = await _OrderService.getOrder(OrderId);
+        //    if (order == null) return NotFound("this orderid dosen't meet any order");
 
-            //check authersity of restaurant
-            var restaurantId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (restaurantId != order.RestaurantID)
-                return Unauthorized($"this user with userId{restaurantId} not autherized to cancel this orderId");
+        //    //check authersity of restaurant
+        //    var restaurantId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    if (restaurantId != order.RestaurantID)
+        //        return Unauthorized($"this user with userId{restaurantId} not autherized to cancel this orderId");
 
-            bool cancelled = await _OrderService.CancelOrder(order, reson);
-            if (cancelled)
-                return Ok("Order Cancelled Sucessfully");
-            return BadRequest("order Status not correct");
-        }
+        //    bool cancelled = await _OrderService.CancelOrder(order, reson);
+        //    if (cancelled)
+        //        return Ok("Order Cancelled Sucessfully");
+        //    return BadRequest("order Status not correct");
+        //}
         [HttpPut("ConfirmOrder")]
-        public async Task<IActionResult> ConfirmOrder(Guid OrderId)
-        {
-            Order order = await _OrderService.getOrder(OrderId);
-            if (order == null) return NotFound("this orderid dosen't meet any order");
+        //public async Task<IActionResult> ConfirmOrder(Guid OrderId)
+        //{
+        //    Order order = await _OrderService.getOrder(OrderId);
+        //    if (order == null) return NotFound("this orderid dosen't meet any order");
 
-            //check authersity of restaurant
-            var restaurantId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (restaurantId != order.RestaurantID)
-                return Unauthorized($"this user with userId{restaurantId} not autherized to confirm this orderId");
+        //    //check authersity of restaurant
+        //    var restaurantId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    if (restaurantId != order.RestaurantID)
+        //        return Unauthorized($"this user with userId{restaurantId} not autherized to confirm this orderId");
 
-            bool Assigned = await _OrderService.assignDelivaryManToOrder(order);
-            if (!Assigned)
-                return BadRequest("there are not available DelivaryMen Now");
+        //    bool Assigned = await _OrderService.assignDelivaryManToOrder(order);
+        //    if (!Assigned)
+        //        return BadRequest("there are not available DelivaryMen Now");
 
-            bool confirmed = await _OrderService.ConfirmOrder(order);
+        //    bool confirmed = await _OrderService.ConfirmOrder(order);
 
-            if (confirmed)
-                return Ok("Order confirmed Sucessfully");
-            return BadRequest("order Status not correct");
+        //    if (confirmed)
+        //        return Ok("Order confirmed Sucessfully");
+        //    return BadRequest("order Status not correct");
 
-        }
+        //}
 
         [Authorize(Roles = "Customer")]
         [HttpGet("Checkout")]
         public async Task<IActionResult> Checkout()
         {
-            var CustomerUserName = User.FindFirstValue(ClaimTypes.Name);
-            ShoppingCart cart = await _shoppingCartRepository.getByCustomer(CustomerUserName);
+            var CustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            ShoppingCart cart = await _shoppingCartRepository.getByCustomer(CustomerId);
             if (cart == null) return NotFound("customer or shopping car Not found");
 
             CheckoutViewDTO checkout = await _OrderService.Checkout(cart);
@@ -195,8 +202,9 @@ namespace FoodOrderingAPI.Controllers
         [HttpPost("PlaceOrder")]
         public async Task<IActionResult> PlaceOrder(NewOrderDTO newOrder)
         {
-            var CustomerUserName = User.FindFirstValue(ClaimTypes.Name);
-            ShoppingCart cart = await _shoppingCartRepository.getByCustomer(CustomerUserName);
+            var CustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            ShoppingCart cart = await _shoppingCartRepository.getByCustomer(CustomerId);
             if (cart == null) return NotFound("customer or shopping car Not found");
             try
             {

@@ -147,7 +147,7 @@ namespace FoodOrderingAPI.Services
                 await _repository.AddOrderItem(orderitem);
             }
         }
-        public async Task PlaceOrder( ShoppingCart cart)
+        public async Task PlaceOrder(NewOrderDTO orderdto, ShoppingCart cart)
         {
             // التأكد من صحة البيانات المدخلة
             Address add = await _addressRepo.GetAddress(orderdto.AddressID);
