@@ -23,7 +23,7 @@ namespace FoodOrderingAPI.Services
 
         Task<Admin> GetAdminByUserNameAsync(string UserName);
 
-        Task<IEnumerable<Order>> GetAllOrdersAsync(string status = null); // null == all status orders
+        Task<IEnumerable<Order>> GetAllOrdersAsync(StatusEnum status = StatusEnum.All); // null == all status orders
 
         Task UpdateAdminAsync(AdminDto dto);
     }

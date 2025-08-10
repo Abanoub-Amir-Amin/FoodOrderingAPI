@@ -21,15 +21,10 @@ namespace FoodOrderingAPI.Models
         [Column(TypeName = "decimal(10,2)")]
         public decimal SubTotal { get; set; } = 0;
 
-        [Column(TypeName = "decimal(10,2)")]
-        public decimal DiscountAmount { get; set; } = 0;
-
-        [Column(TypeName = "decimal(10,2)")]
-        public decimal DelivaryPrice { get; set; } = 0;
 
 
         [Column(TypeName = "decimal(10,2)")]
-        public decimal TotalAfterDiscount => SubTotal + DelivaryPrice - DiscountAmount; 
+        public decimal TotalAfterDiscount => SubTotal + Restaurant.DelivaryPrice; 
 
         public Customer Customer { get; set; }
         public Restaurant Restaurant { get; set; }

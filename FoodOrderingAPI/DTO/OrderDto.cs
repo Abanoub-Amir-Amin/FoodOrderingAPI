@@ -1,11 +1,13 @@
-﻿namespace FoodOrderingAPI.DTO
+﻿using FoodOrderingAPI.Models;
+
+namespace FoodOrderingAPI.DTO
 {
     public class OrderDto
     {
         public Guid AddressID { get; set; }
         public string RestaurantID { get; set; } 
         public string? DeliveryManID { get; set; } 
-        public string Status { get; set; }
+        public StatusEnum Status { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime? DeliveredAt { get; set; }
         public decimal TotalPrice { get; set; }

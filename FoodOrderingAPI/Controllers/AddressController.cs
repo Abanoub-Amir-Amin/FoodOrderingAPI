@@ -35,6 +35,23 @@ namespace FoodOrderingAPI.Controllers
                 return NotFound();
             return Ok();
         }
+        [HttpGet("DefaultAddress")]
+        public async Task<IActionResult> GetById(string customerId)
+        {
+            Address address = await addressRepo.getDafaultAddress(customerId);
+            if (address == null)
+                return NotFound();
+            return Ok();
+        }
+        [HttpPut("makeAddressDefault")]
+        public async Task<IActionResult> MakeDefault(Guid AddressId)
+        {
+            Address add=await addressRepo.MakeDefault(AddressId);
+            if(add ==null)
+                return NotFound();
+            return Ok(add);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Add(string userName, AddressDTO address)
         {
@@ -45,9 +62,13 @@ namespace FoodOrderingAPI.Controllers
             }
             if (ModelState.IsValid)
             {
-                await addressRepo.Add(userName, address);
+                Address add=await addressRepo.Add(userName, address);
                 await addressRepo.Save();
-                return Ok("add Address Successfully");
+                return Ok(new
+                {
+                    Message = "Address added successfully",
+                    Data = add
+                });
             }
             else
             {

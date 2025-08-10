@@ -69,6 +69,11 @@ namespace FoodOrderingAPI
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IOrderRepo, OrderRepo>();
 
+            builder.Services.AddScoped<IPromoCodeRepo, PromoCodeRepo>();
+            builder.Services.AddScoped<IPromoCodeService, PromoCodeService>();
+
+            builder.Services.AddScoped<IOpenRouteService, OpenRouteService>();//to get duration between two locations
+
             builder.Services.AddScoped<IItemService, ItemService>();
             builder.Services.AddScoped<IItemRepo, ItemRepo>();
 

@@ -15,7 +15,7 @@ namespace FoodOrderingAPI.DTO
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         [Column(TypeName = "decimal(10, 2)")]
-        public decimal DelivaryPrice { get; set; }
+        public double DelivaryPrice { get; set; }
         public TimeSpan orderTime { get; set; }
         public UserDto User { get; set; }
     }

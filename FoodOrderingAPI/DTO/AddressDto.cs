@@ -14,9 +14,8 @@ namespace FoodOrderingAPI.DTO
         public string City { get; set; }
 
         [MaxLength(100)]
-        public string LatLng { get; set; }
-
-        public bool IsDefault { get; set; } = false;
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
 
     }
 }

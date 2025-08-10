@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FoodOrderingAPI.Controllers
 {
@@ -19,14 +20,16 @@ namespace FoodOrderingAPI.Controllers
     {
         private readonly ApplicationDBContext _context;
         private readonly IPromoCodeService _service;
+        private readonly IShoppingCartRepository _shoppingCartRepository;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _environment;
         private readonly IItemRepo itemRepo;
 
-        public PromoCodeController(IPromoCodeService service, ApplicationDBContext context, IMapper mapper, IWebHostEnvironment environment)
+        public PromoCodeController(IPromoCodeService service,IShoppingCartRepository shoppingCartRepository, ApplicationDBContext context, IMapper mapper, IWebHostEnvironment environment)
 
         {
             _service = service;
+            _shoppingCartRepository = shoppingCartRepository;
             _context = context;
             _mapper = mapper;
             _environment = environment;
@@ -96,5 +99,24 @@ namespace FoodOrderingAPI.Controllers
             var dtoList = _mapper.Map<IEnumerable<PromoCodeDto>>(promoCodes);
             return Ok(dtoList);
         }
+        [Authorize(Roles = "Customer")]
+        [HttpGet("ValidatePromoCode")]
+        public async Task<IActionResult> ValidatePromoCode(string restaurantId, string code)
+        {
+            var userName = User.FindFirstValue(ClaimTypes.Name);
+
+            ShoppingCart shoppingcart = await _shoppingCartRepository.getByCustomer(userName);
+            if(shoppingcart == null)
+            {
+                return BadRequest("customer or shopping cart not found");
+            }
+            PromoCodeApplyDto pcode = await _service.ValidatePromoCode(restaurantId, code,shoppingcart.SubTotal,shoppingcart.Restaurant.DelivaryPrice);
+            if (pcode.IsVaild)
+                return Ok(pcode);
+            else
+                return BadRequest(pcode);
+        }
+
+
     }
 }

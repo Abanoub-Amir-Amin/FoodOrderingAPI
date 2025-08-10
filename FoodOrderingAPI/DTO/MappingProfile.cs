@@ -111,7 +111,7 @@ public class MappingProfile : Profile
                  .ForMember(dest => dest.User, opt => opt.Ignore())
                  .ForMember(dest => dest.Gender, opt => opt.Ignore())     
                  .ForMember(dest => dest.Addresses, opt => opt.Ignore())
-                 .ForMember(dest => dest.RewardHistories, opt => opt.Ignore())
+                 //.ForMember(dest => dest.RewardHistories, opt => opt.Ignore())
                  .ForMember(dest => dest.Orders, opt => opt.Ignore())
                  .ForMember(dest => dest.Reviews, opt => opt.Ignore())
                  .ForMember(dest => dest.ComplaintChats, opt => opt.Ignore())
@@ -127,7 +127,7 @@ public class MappingProfile : Profile
                 .ForMember(dest => dest.UserID, opt => opt.Ignore())
                 .ForMember(dest => dest.User, opt => opt.Ignore())
                 .ForMember(dest => dest.Addresses, opt => opt.Ignore())
-                .ForMember(dest => dest.RewardHistories, opt => opt.Ignore())
+                //.ForMember(dest => dest.RewardHistories, opt => opt.Ignore())
                 .ForMember(dest => dest.Orders, opt => opt.Ignore())
                 .ForMember(dest => dest.Reviews, opt => opt.Ignore())
                 .ForMember(dest => dest.ComplaintChats, opt => opt.Ignore())
@@ -141,8 +141,12 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Addresses, opt => opt.MapFrom(src =>
                 src.Addresses.Select(a => $"{a.Label} - {a.Street}, {a.City}").ToList()))
             .ForMember(dest => dest.TotalOrders, opt => opt.MapFrom(src => src.Orders.Count))
-            .ForMember(dest => dest.Rewards, opt => opt.MapFrom(src => src.RewardHistories.Select(r => r.Reason).ToList()))
-            .ForMember(dest => dest.TotalRewardspoints, opt => opt.MapFrom(src => src.RewardHistories.Sum(r => r.PointsEarned)));
+            .ForMember(dest => dest.TotalCancelledOrders, opt => opt.MapFrom(src => src.Orders.Where(o => o.Status==StatusEnum.Cancelled).Count()))
+            .ForMember(dest => dest.TotalDeliveredOrders, opt => opt.MapFrom(src => src.Orders.Where(O=>O.Status==StatusEnum.Delivered).Count()))
+            .ForMember(dest => dest.InProcessOrders, opt => opt.MapFrom(src => src.Orders.Where(o=> o.Status==StatusEnum.Preparing||o.Status==StatusEnum.WaitingToConfirm).ToList()));
+
+        //.ForMember(dest => dest.Rewards, opt => opt.MapFrom(src => src.RewardHistories.Select(r => r.Reason).ToList()))
+        //.ForMember(dest => dest.TotalRewardspoints, opt => opt.MapFrom(src => src.RewardHistories.Sum(r => r.PointsEarned)));
 
 
 
@@ -176,92 +180,24 @@ public class MappingProfile : Profile
         CreateMap<Admin, AdminDto>();
 
 
-        ////order
 
 
+        CreateMap<Order, OrderDetailDTO>()
+        .ForMember(dest => dest.Address, opt => opt.MapFrom(src => $"{src.Address.Label} - {src.Address.Street}, {src.Address.City}"))
+        .ForMember(dest => dest.DelivaryName, opt => opt.MapFrom(src => src.DeliveryMan.User.UserName))
+        .ForMember(dest => dest.DelivaryPrice, opt => opt.MapFrom(src => src.DelivaryPrice))
+        .ForMember(dest => dest.DiscountAmount, opt => opt.MapFrom(src => src.DiscountAmount))
+        .ForMember(dest => dest.items, opt => opt.MapFrom(src => src.OrderItems))
+        .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
+        .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber))
+        .ForMember(dest => dest.OrderTimeToComplete, opt => opt.MapFrom(src => src.OrderTimeToComplete))
+        .ForMember(dest => dest.RestaurantLocation, opt => opt.MapFrom(src => src.Restaurant.Location))
+        .ForMember(dest => dest.RestaurantName, opt => opt.MapFrom(src => src.Restaurant.RestaurantName))
+        .ForMember(dest => dest.RestaurantPhone, opt => opt.MapFrom(src => src.Restaurant.User.PhoneNumber))
+        .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+        .ForMember(dest => dest.SubTotal, opt => opt.MapFrom(src => src.SubTotal))
+        .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
 
-        //CreateMap<ShoppingCart, CheckoutViewDTO>()
-        //.ForMember(dest => dest.Address, opt => opt.Ignore())
-        //.ForMember(dest => dest.DelivaryPrice, opt => opt.MapFrom(src => src.Restaurant.DelivaryPrice))
-        //.ForMember(dest => dest.DiscountAmount, opt => opt.Ignore())
-        //.ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.ShoppingCartItems))
-        //.ForMember(dest => dest.RestaurantName, opt => opt.MapFrom(src => src.Restaurant.RestaurantName))
-        //.ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Customer.User.PhoneNumber))
-
-        //.ForMember(dest => dest.SubTotal, opt => opt.MapFrom(src => src.SubTotal))
-        //.ForMember(dest => dest.TotalPrice, opt => opt.Ignore());
-
-
-        ////place order
-        //CreateMap<ShoppingCartItem, OrderItem>()
-        //.ForMember(dest => dest.ItemID, opt => opt.MapFrom(src => src.ItemID))
-        //.ForMember(dest => dest.OrderID, opt => opt.Ignore())
-        //.ForMember(dest => dest.Preferences, opt => opt.MapFrom(src => src.Preferences))
-        //.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
-        //.ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
-
-
-        //CreateMap<NewOrderDTO, Order>()
-        //.ForMember(dest => dest.Status, opt => opt.MapFrom(src => StatusEnum.Preparing))
-        //.ForMember(dest => dest.AddressID, opt => opt.MapFrom(src => src.AddressID))
-        //.ForMember(dest => dest.DeliveredAt, opt => opt.Ignore()) //determine it after order reach to customer+ 
-        //.ForMember(dest => dest.DeliveryManID, opt => opt.Ignore())//get it by function assignDelivaryMantoOrder+
-        //.ForMember(dest => dest.OrderDate, opt => opt.Ignore())//create auto when create obj with time of now
-        //.ForMember(dest => dest.OrderTimeToComplete, opt => opt.Ignore())//get the time by restaurant++  distance between restaurant and customer+
-        ////.ForMember(dest => dest.PaymentTransactions, opt => opt.MapFrom(src => src.PaymentTransactions))
-        //.ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
-        //.ForMember(dest => dest.PromoCodeID, opt => opt.MapFrom(src => src.PromoCodeID));
-
-
-        //CreateMap<ShoppingCart, Order>()
-        //.ForMember(dest => dest.CustomerID, opt => opt.MapFrom(src => src.CustomerID))
-        //.ForMember(dest => dest.DelivaryPrice, opt => opt.Ignore())//get it by restaurant
-        //.ForMember(dest => dest.DiscountAmount, opt => opt.Ignore())//determine based on promocode applied
-        //.ForMember(dest => dest.RestaurantID, opt => opt.MapFrom(src => src.RestaurantID))
-        //.ForMember(dest => dest.SubTotal, opt => opt.MapFrom(src => src.SubTotal))
-        //.ForMember(dest => dest.TotalPrice, opt => opt.Ignore());// it is already calculated 
-
-
-
-        ////orderDetails
-        //CreateMap<OrderItem, OrderItemDto>()
-        //.ForMember(dest => dest.itemName, opt => opt.MapFrom(src => src.Item.Name))
-        //.ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Item.ImageFile))
-        //.ForMember(dest => dest.OrderID, opt => opt.MapFrom(src => src.OrderID))
-        //.ForMember(dest => dest.Preferences, opt => opt.MapFrom(src => src.Preferences))
-        //.ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
-        //.ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
-
-
-        //CreateMap<Order, OrderDetailDTO>()
-        //.ForMember(dest => dest.Address, opt => opt.MapFrom(src => $"{src.Address.Label} - {src.Address.Street}, {src.Address.City}"))
-        //.ForMember(dest => dest.DelivaryName, opt => opt.MapFrom(src => src.DeliveryMan.User.UserName))
-        //.ForMember(dest => dest.DelivaryPrice, opt => opt.MapFrom(src => src.DelivaryPrice))
-        //.ForMember(dest => dest.DiscountAmount, opt => opt.MapFrom(src => src.DiscountAmount))
-        //.ForMember(dest => dest.items, opt => opt.MapFrom(src => src.OrderItems))
-        //.ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
-        //.ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber))
-        //.ForMember(dest => dest.OrderTimeToComplete, opt => opt.MapFrom(src => src.OrderTimeToComplete))
-        //.ForMember(dest => dest.RestaurantLocation, opt => opt.MapFrom(src => src.Restaurant.Location))
-        //.ForMember(dest => dest.RestaurantName, opt => opt.MapFrom(src => src.Restaurant.RestaurantName))
-        //.ForMember(dest => dest.RestaurantPhone, opt => opt.MapFrom(src => src.Restaurant.User.PhoneNumber))
-        //.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
-        //.ForMember(dest => dest.SubTotal, opt => opt.MapFrom(src => src.SubTotal))
-        //.ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
-
-
-
-
-        ////orderviews
-        //CreateMap<Order, OrderViewDTO>()
-        //.ForMember(dest => dest.OrderID, opt => opt.MapFrom(src => src.OrderID))
-        //.ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
-        //.ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber))
-        //.ForMember(dest => dest.itemNames, opt => opt.MapFrom(src => src.OrderItems.Select(oi => oi.Item.Name)))
-        //.ForMember(dest => dest.RestaurantName, opt => opt.MapFrom(src => src.Restaurant.RestaurantName))
-        //.ForMember(dest => dest.PaymentMethod, opt => opt.Ignore())//untill implement payment
-        //.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
-        //.ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
 
     }
 }

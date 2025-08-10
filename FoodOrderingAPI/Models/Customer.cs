@@ -19,7 +19,7 @@ namespace FoodOrderingAPI.Models
         public string UserID {  get; set; }
         public User User { get; set; }
         public ICollection<Address>Addresses { get; set; }
-        public ICollection<RewardHistory> RewardHistories { get; set; }
+        //public ICollection<RewardHistory> RewardHistories { get; set; }
         public ICollection<Order> Orders { get; set; }
         public ICollection<Review> Reviews { get; set; }
         public ICollection<ComplaintChat> ComplaintChats { get; set; }

@@ -119,7 +119,7 @@ namespace FoodOrderingAPI.Repository
             }
         }
 
-        public async Task<Order> UpdateOrderStatusAsync(Guid OrderId, string newStatus, string deliveryManId)
+        public async Task<Order> UpdateOrderStatusAsync(Guid OrderId, StatusEnum newStatus, string deliveryManId)
         {
 
             var UpdateOrder = await _context.Orders
@@ -128,24 +128,28 @@ namespace FoodOrderingAPI.Repository
             if (UpdateOrder == null)
                 return null;
 
-            var validTransitions = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
+            //var validTransitions = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase)
+            //{
+            //    {"Preparing"  , new List<string> { "PickedUp"} },
+            //    {"PickedUp"   , new List<string> {"InRoute"} },
+            //    {"InRoute"    , new List<string> {"Delivered" } }
+            //};
+            var validTransitions = new Dictionary<StatusEnum, List<StatusEnum>>
             {
-                {"Preparing"  , new List<string> { "PickedUp"} },
-                {"PickedUp"   , new List<string> {"InRoute"} },
-                {"InRoute"    , new List<string> {"Delivered" } }
+                {StatusEnum.Preparing  , new List<StatusEnum> { StatusEnum.Out_for_Delivery} },
+                {StatusEnum.Out_for_Delivery    , new List < StatusEnum > { StatusEnum.Delivered } }
             };
-
             var CurrentStatus = UpdateOrder.Status;
 
             // Check if the transition from current to new status is allowed
             if (!validTransitions.TryGetValue(CurrentStatus, out var allowedStatus) ||
-                !allowedStatus.Contains(newStatus, StringComparer.OrdinalIgnoreCase))
+                !allowedStatus.Contains(newStatus))
             {
                 throw new InvalidOperationException(
                 $"Invalid status transition from '{CurrentStatus}' to '{newStatus}'");
             }
 
-            if (newStatus == "Delivered")
+            if (newStatus == StatusEnum.Delivered)
             {
                 DeliveryMan deliveryMan = await DeliveryManEntityAsync(deliveryManId);
 
@@ -154,7 +158,7 @@ namespace FoodOrderingAPI.Repository
                     deliveryMan.LastOrderDate = DateTime.UtcNow;
                     await UpdateDeliveryManAfterDeliveryAsync(deliveryManId);
                 }
-
+                UpdateOrder.DeliveredAt = DateTime.Now;
             }
 
             UpdateOrder.Status = newStatus;
