@@ -12,6 +12,7 @@ namespace FoodOrderingAPI.Services
     public class OrderService:IOrderService
     {
         private readonly IWebHostEnvironment _environment;
+        private readonly IStripeService stripeService;
         private readonly ApplicationDBContext _context;
         private readonly IOrderRepo _repository;
         private readonly INotificationRepo _notificationRepo;
@@ -35,7 +36,8 @@ namespace FoodOrderingAPI.Services
             ApplicationDBContext context,
             IMapper mapper,
             UserManager<User> userManager,
-            IWebHostEnvironment environment)
+            IWebHostEnvironment environment,
+            IStripeService stripeService)
         {
             _repository = repository;
             _notificationRepo = notificationRepo;
@@ -48,6 +50,7 @@ namespace FoodOrderingAPI.Services
             _mapper = mapper;
             _userManager = userManager;
             _environment = environment ?? throw new ArgumentNullException(nameof(environment));
+            this.stripeService = stripeService;
         }
         // Orders
         public async Task<IEnumerable<Order>> GetAllOrdersByRestaurantAsync(string restaurantId)
@@ -134,6 +137,7 @@ namespace FoodOrderingAPI.Services
         {
             CheckoutViewDTO checkout = _mapper.Map<CheckoutViewDTO>(shoppingCart);
             checkout.Address = await _addressRepo.getDafaultAddress(shoppingCart.CustomerID);
+            checkout.PaymentLink = stripeService.CreatePaymentLink(shoppingCart.ShoppingCartItems.ToList());
             return checkout;
         }
         public async Task transferItemsFromCartToOrder(ShoppingCart cart, Order order)

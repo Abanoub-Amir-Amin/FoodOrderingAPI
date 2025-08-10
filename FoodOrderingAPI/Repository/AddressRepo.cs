@@ -54,7 +54,7 @@ namespace FoodOrderingAPI.Repository
         {
             Customer customer = await dbContext.Customers.FirstOrDefaultAsync(c => c.User.UserName == Username);
             bool isDefault = false;
-            if(!customer.Addresses.Any())
+            if (customer.Addresses == null)
                 isDefault = true;
             Address address = new Address()
             {
