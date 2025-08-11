@@ -12,6 +12,52 @@ namespace FoodOrderingAPI
         {
             
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSeeding((context, _) =>
+            {
+                var admin = context.Set<User>().FirstOrDefault(u => u.Id == "Admin0");
+                if (admin == null)
+                {
+                    admin = new User
+                    {
+                        Id = "Admin0",
+                        UserName = "Admin",
+                        PasswordHash = new PasswordHasher<User>().HashPassword(null, "AS_AS_s1"),
+                        EmailConfirmed = true,
+                        Role = RoleEnum.Admin,
+                        CreatedAt = DateTime.UtcNow,
+                        LockoutEnabled = false,
+                        AccessFailedCount = 0,
+                        PhoneNumberConfirmed = true,
+                    };
+                    context.Set<User>().Add(admin);
+                    context.SaveChanges();
+                }
+            })
+            .UseAsyncSeeding(async (context, _, cancellationToken) =>
+            {
+                var admin = await context.Set<User>().FirstOrDefaultAsync(u => u.Id == "Admin0", cancellationToken);
+                if (admin == null)
+                {
+                    admin = new User
+                    {
+                        Id = "Admin0",
+                        UserName = "Admin",
+                        PasswordHash = new PasswordHasher<User>().HashPassword(null, "AS_AS_s1"),
+                        EmailConfirmed = true,
+                        Role = RoleEnum.Admin,
+                        CreatedAt = DateTime.UtcNow,
+                        LockoutEnabled = false,
+                        AccessFailedCount = 0,
+                        PhoneNumberConfirmed = true,
+                    };
+                    context.Set<User>().Add(admin);
+                    await context.SaveChangesAsync(cancellationToken);
+                }
+            });
+
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -42,6 +88,36 @@ namespace FoodOrderingAPI
                 .HasOne(u => u.DeliveryMan)
                 .WithOne(d => d.User)
                 .HasForeignKey<DeliveryMan>(d => d.UserId);
+
+            modelBuilder.Entity<Admin>()
+                .HasOne(a => a.User)
+                .WithOne(u => u.Admin) 
+                .HasForeignKey<Admin>(a => a.UserId) 
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Restaurant>()
+                .HasOne(R => R.User)
+                .WithOne(u => u.Restaurant)
+                .HasForeignKey<Restaurant>(R => R.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<DeliveryMan>()
+                .HasOne(D => D.User)
+                .WithOne(u => u.DeliveryMan)
+                .HasForeignKey<DeliveryMan>(D => D.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Customer>()
+                .HasOne(c => c.User)
+                .WithOne(u => u.Customer)
+                .HasForeignKey<Customer>(c => c.UserID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Customer>()
+                .HasOne(c => c.User)
+                .WithOne(u => u.Customer)
+                .HasForeignKey<Customer>(c => c.UserID)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ComplaintChat>()
                 .HasOne(cc => cc.Admin)

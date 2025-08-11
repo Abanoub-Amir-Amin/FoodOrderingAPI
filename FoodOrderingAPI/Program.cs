@@ -31,8 +31,20 @@ namespace FoodOrderingAPI
             builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             builder.Services.AddScoped<JwtTokenService>();
             builder.Services.AddScoped<INotificationRepo, NotificationRepo>();
+
             builder.Services.AddScoped<ICustomerRepo, CustomerRepo>();
+            builder.Services.AddScoped<ICustomerServices, CustomerService>();
+
+            builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+            builder.Services.AddScoped<IShoppingCartServices, ShoppingCartServices>();
+
+            builder.Services.AddScoped<IShoppingCartItemsRepository, ShoppingCartItemsRepository>();
+            builder.Services.AddScoped<IShoppingCartIemService, ShoppingCartItemService>();
+
+
             builder.Services.AddScoped<IAddressRepo, AddressRepo>();
+
+            builder.Services.AddScoped<IStripeService, StripeService>();
 
             // Register controllers with JSON options
             builder.Services.AddControllers()
@@ -53,6 +65,25 @@ namespace FoodOrderingAPI
             // Register DeliveryMan services and repositories
             builder.Services.AddScoped<IDeliveryManService, DeliveryManService>();
             builder.Services.AddScoped<IDeliveryManRepository, DeliveryManRepository>();
+
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IOrderRepo, OrderRepo>();
+
+            builder.Services.AddScoped<IPromoCodeRepo, PromoCodeRepo>();
+            builder.Services.AddScoped<IPromoCodeService, PromoCodeService>();
+
+            builder.Services.AddScoped<IOpenRouteService, OpenRouteService>();//to get duration between two locations
+
+            builder.Services.AddScoped<IItemService, ItemService>();
+            builder.Services.AddScoped<IItemRepo, ItemRepo>();
+
+            builder.Services.AddScoped<IDiscountService, DiscountService>();
+            builder.Services.AddScoped<IDiscountRepo, DiscountRepo>();
+
+            builder.Services.AddScoped<IEmailSender, EmailSenderService>();
+
+            builder.Services.AddScoped<IConfirmationEmail, ConfirmationEmail>();
+
             builder.Services.AddSignalR();
             // Register AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -68,7 +99,10 @@ namespace FoodOrderingAPI
             })
             .AddEntityFrameworkStores<ApplicationDBContext>()
             .AddDefaultTokenProviders();
-
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.SignIn.RequireConfirmedEmail = true;
+            });
             // Configure JWT Authentication
             builder.Services.AddAuthentication(options =>
             {
@@ -146,15 +180,15 @@ namespace FoodOrderingAPI
 
             // Register OpenAPI/Swagger services
             builder.Services.AddOpenApi();
-            builder.Services.AddCors(op =>
+            // Add CORS policy to allow Angular frontend
+            builder.Services.AddCors(options =>
             {
-                op.AddPolicy("public", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed(_ => true));
+                options.AddPolicy("public", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed(_ => true));
                 //op.AddPolicy("subscription", policy =>
                 //{
                 //    policy.WithOrigins("127.0.0.1").WithHeaders("token", "role").WithMethods("get");
                 //});
             });
-
 
             // It configures EF Core to use SQL Server as the database provider,
             // and enables support for spatial data types (like geography, geometry) using NetTopologySuite.

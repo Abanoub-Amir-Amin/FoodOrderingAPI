@@ -177,7 +177,7 @@ namespace FoodOrderingAPI.Services
             return await _repository.GetClosestDeliveryManAsync(orderLatitude, orderLongitude);
         }
 
-        public async Task<Order> UpdateOrderStatusAsync(Guid OrderId, string newStatus, string deliveryManId)
+        public async Task<Order> UpdateOrderStatusAsync(Guid OrderId, StatusEnum newStatus, string deliveryManId)
         {
             return await _repository.UpdateOrderStatusAsync(OrderId, newStatus, deliveryManId);
         }

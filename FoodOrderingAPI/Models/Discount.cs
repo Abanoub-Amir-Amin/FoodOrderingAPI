@@ -14,7 +14,8 @@ namespace FoodOrderingAPI.Models
         [ForeignKey(nameof(Item))]
         public Guid ItemID { get; set; }
 
-        public float Percentage { get; set; }
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal Percentage { get; set; }
 
         public DateTime StartDate { get; set; }
 

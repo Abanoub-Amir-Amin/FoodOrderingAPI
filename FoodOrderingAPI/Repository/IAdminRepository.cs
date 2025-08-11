@@ -22,7 +22,7 @@ namespace FoodOrderingAPI.Repository
         Task<IEnumerable<Admin>> GetAllAdminsAsync();
         Task<Admin> GetAdminByUserNameAsync(string UserName);
         Task<IEnumerable<Order>> GetAllOrdersAsync();
-        Task<IEnumerable<Order>> GetOrdersByStatusAsync(string status);
+        Task<IEnumerable<Order>> GetOrdersByStatusAsync(StatusEnum status);
 
         Task UpdateAdminAsync(Admin admin);
 

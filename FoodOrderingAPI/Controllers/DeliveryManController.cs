@@ -3,7 +3,7 @@ using FoodOrderingAPI.DTO;
 using FoodOrderingAPI.Models;
 using FoodOrderingAPI.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -16,12 +16,16 @@ namespace FoodOrderingAPI.Controllers
         private readonly ApplicationDBContext _context;
         private readonly IDeliveryManService _service;
         private readonly IMapper _mapper;
+        private readonly UserManager<User> userManager;
+        private readonly IConfirmationEmail confirmationEmail;
 
-        public DeliveryManController(ApplicationDBContext context, IDeliveryManService service, IMapper mapper)
+        public DeliveryManController(ApplicationDBContext context, IDeliveryManService service, IMapper mapper, UserManager<User> userManager, IConfirmationEmail confirmationEmail)
         {
             _context = context;
             _service = service;
             _mapper = mapper;
+            this.userManager = userManager;
+            this.confirmationEmail = confirmationEmail;
         }
 
         [HttpPost("apply")]
@@ -35,6 +39,7 @@ namespace FoodOrderingAPI.Controllers
 
                 // Return 201 Created with route to newly created resource
                 // return CreatedAtAction(nameof(GetRestaurantById), new { id = result.UserId }, result);
+                await confirmationEmail.SendConfirmationEmail(dto.Email, await userManager.FindByEmailAsync(dto.Email));
                 return Created();
             }
             catch (InvalidOperationException ex) when (ex.Message.Contains("already exists"))
@@ -229,7 +234,6 @@ namespace FoodOrderingAPI.Controllers
                 AvailabilityStatus = deliveryMan.AvailabilityStatus,
                 User = new UserDto
                 {
-                    UserID = deliveryMan.User.Id,
                     Email = deliveryMan.User.Email,
                     UserName = deliveryMan.User.UserName
                 }
@@ -267,6 +271,33 @@ namespace FoodOrderingAPI.Controllers
             {
                 return StatusCode(500, new { error = "An error occurred while updating order status: " + ex.Message });
             }
+
+        }
+        [AllowAnonymous]
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string UserId, string Token)
+        {
+            if (string.IsNullOrEmpty(UserId) || string.IsNullOrEmpty(Token))
+            {
+                // Provide a descriptive error message for the view
+                return BadRequest("The link is invalid or has expired. Please request a new one if needed.");
+            }
+            //Find the User by Id
+            var user = await userManager.FindByIdAsync(UserId);
+            if (user == null)
+            {
+                // Provide a descriptive error for a missing user scenario
+                return NotFound("We could not find a user associated with the given link.");
+
+            }
+            // Attempt to confirm the email
+            var result = await userManager.ConfirmEmailAsync(user, Token);
+            if (result.Succeeded)
+            {
+                return Ok("Thank you for confirming your email address. Your account is now verified!");
+            }
+            // If confirmation fails
+            return BadRequest("We were unable to confirm your email address. Please try again or request a new link.");
 
         }
     }

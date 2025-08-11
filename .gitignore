@@ -5,6 +5,9 @@
 
 # User-specific files
 **/Migrations/
+**/wwwroot/
+# Ignore appsettings files (contains secrets/configs)
+appsettings*.json
 *.rsuser
 *.suo
 *.user

@@ -5,8 +5,12 @@ namespace FoodOrderingAPI.DTO
 {
     public class RegisterDTO
     {
+        [Required]
         public string UserName { get; set; }
+        [Required]
         public string Password { get; set; }
+
+        [Required]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
         //[Compare("Email")]
@@ -16,8 +20,9 @@ namespace FoodOrderingAPI.DTO
         //[EnumDataType(typeof(RoleEnum))]
         //public RoleEnum Role { get; set; }
         //will not enter his  in register
-        //[Compare("Password")]
-        //public string ConfirmPassword { get; set; }
-        public bool AgreeTerms { get; set; }
+        [Compare("Password")]
+        public string ConfirmPassword { get; set; }
+        //public bool AgreeTerms {  get; set; }
+
     }
 }

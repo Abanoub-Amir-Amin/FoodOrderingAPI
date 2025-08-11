@@ -76,10 +76,10 @@ namespace FoodOrderingAPI.Services
                 var orders = await _repository.GetOrdersByCustomerIdAsync(customer.UserID);
 
                 var totalOrders = orders.Count();
-                var deliveredOrders = orders.Count(o => o.Status == "Delivered");
-                var cancelledOrders = orders.Count(o => o.Status == "Cancelled");
+                var deliveredOrders = orders.Count(o => o.Status == StatusEnum.Delivered);
+                var cancelledOrders = orders.Count(o => o.Status == StatusEnum.Cancelled);
 
-                var inProcessOrders = _mapper.Map<List<OrderDto>>(orders.Where(o => o.Status == "In Process").ToList());
+                var inProcessOrders = _mapper.Map<List<OrderDto>>(orders.Where(o => o.Status == StatusEnum.Preparing||o.Status == StatusEnum.Out_for_Delivery).ToList());
 
                 var customerDto = _mapper.Map<CustomerDTO>(customer);
 
@@ -105,9 +105,9 @@ namespace FoodOrderingAPI.Services
             return await _repository.GetAdminByUserNameAsync(UserName);
         }
 
-        public async Task<IEnumerable<Order>> GetAllOrdersAsync(string status = null)
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync(StatusEnum status = StatusEnum.All)
         {
-            if (string.IsNullOrEmpty(status))
+            if (status == StatusEnum.All)
                 return await _repository.GetAllOrdersAsync();
 
             return await _repository.GetOrdersByStatusAsync(status);

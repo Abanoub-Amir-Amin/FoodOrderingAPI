@@ -5,16 +5,15 @@ namespace FoodOrderingAPI.Interfaces
 {
     public interface ICustomerRepo
     {
-        public Task<CustomerDTO> GetById(string id);
-        public Task<List<CustomerDTO>> GetAll();
+        public Task<Customer> GetById(string id);
+        public Task<List<Customer>> GetAll();
         public Task Add(Customer customer);
-        public Task<bool> Update(string CustomerId, UpdateCustomerDTO customer);
-        public Task<bool> Delete(string id);
+        public Task<Customer> Update(Customer customer);
+        public Task<Customer> Delete(string id);
         public Task Save();
-        public Task<CustomerDTO> GetByEmail(string email);
-        public Task<CustomerDTO> GetByUsername(string UserName);
-        public Task<IdentityResult> Register(RegisterCustomerDTO dto);
-        //public Task<CustomerRepo> Authenticate(LoginDTO customer);
+        public Task<Customer> GetByEmail(string email);
+        public Task<Customer> GetByUsername(string UserName);
+        //public Task<IdentityResult> Register(RegisterCustomerDTO dto);
         //public Task<IEnumerable<Order>> GetCustomerOrdersAsync(int customerId);
         //public Task<IEnumerable<Review>> GetCustomerReviewsAsync(int customerId);
         //public Task<IEnumerable<RewardHistory>> GetCustomerRewardssAsync(int customerId);

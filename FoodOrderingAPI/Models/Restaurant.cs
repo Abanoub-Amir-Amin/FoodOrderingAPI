@@ -14,7 +14,12 @@ namespace FoodOrderingAPI.Models
 
         [MaxLength(255)]
         public string Location { get; set; }
-
+        //update to restaurant to get time of order to deliver to customer
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public TimeSpan orderTime { get; set; }
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal DelivaryPrice { get; set; } = 0;
         public float? Rating { get; set; }
 
         [MaxLength(100)]
@@ -26,8 +31,8 @@ namespace FoodOrderingAPI.Models
         public bool IsAvailable { get; set; } = true; // Default to true
 
         // URL for the restaurant's logo
-        [MaxLength(500)] 
-        public string LogoUrl { get; set; }
+        [MaxLength(500)]
+        public string? ImageFile { get; set; }
 
         public User User { get; set; }
 

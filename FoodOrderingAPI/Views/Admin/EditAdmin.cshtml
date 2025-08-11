@@ -1,0 +1,40 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model FoodOrderingAPI.DTO.AdminDto
+
+@{
+    ViewData["Title"] = "Edit Admin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit Admin</h1>
+
+<form asp-controller="Admin" asp-action="EditAdmin" method="post">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <input type="hidden" asp-for="User.UserName" />
+
+    <div class="mb-3">
+        <label asp-for="@Model.User.UserName" class="form-label">User Name</label>
+        <input asp-for="@Model.User.UserName" class="form-control" readonly />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="@Model.User.Email" class="form-label">Email</label>
+        <input asp-for="@Model.User.Email" class="form-control" />
+        <span asp-validation-for="@Model.User.Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="@Model.User.Phone" class="form-label">Phone</label>
+        <input asp-for="@Model.User.Phone" class="form-control" />
+        <span asp-validation-for="@Model.User.Phone" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    @* <button type="button" onclick="window.location.href='@Url.Action("EditAdmin")'" method="post" class="btn btn-primary">Save</button> *@
+    <button type="button" onclick="window.location.href='@Url.Action("Dashboard")'" class="btn btn-secondary">Cancel</button>
+
+</form>
+

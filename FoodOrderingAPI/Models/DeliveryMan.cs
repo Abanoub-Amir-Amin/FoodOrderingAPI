@@ -20,7 +20,7 @@ namespace FoodOrderingAPI.Models
         public double Longitude { get; set; }
         //will be build by lon/lat
         public NetTopologySuite.Geometries.Point? Location { get; set; }
-
+        [Range(1,5)]
         public float? Rank { get; set; } = 0;
 
         public bool AvailabilityStatus { get; set; } = true;
