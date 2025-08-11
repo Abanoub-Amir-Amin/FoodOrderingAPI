@@ -69,11 +69,21 @@ namespace FoodOrderingAPI
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IOrderRepo, OrderRepo>();
 
+            builder.Services.AddScoped<IPromoCodeRepo, PromoCodeRepo>();
+            builder.Services.AddScoped<IPromoCodeService, PromoCodeService>();
+
+            builder.Services.AddScoped<IOpenRouteService, OpenRouteService>();//to get duration between two locations
+
             builder.Services.AddScoped<IItemService, ItemService>();
             builder.Services.AddScoped<IItemRepo, ItemRepo>();
 
             builder.Services.AddScoped<IDiscountService, DiscountService>();
             builder.Services.AddScoped<IDiscountRepo, DiscountRepo>();
+
+            builder.Services.AddScoped<IEmailSender, EmailSenderService>();
+
+            builder.Services.AddScoped<IConfirmationEmail, ConfirmationEmail>();
+
             builder.Services.AddSignalR();
             // Register AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -89,7 +99,10 @@ namespace FoodOrderingAPI
             })
             .AddEntityFrameworkStores<ApplicationDBContext>()
             .AddDefaultTokenProviders();
-
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.SignIn.RequireConfirmedEmail = true;
+            });
             // Configure JWT Authentication
             builder.Services.AddAuthentication(options =>
             {
@@ -171,6 +184,7 @@ namespace FoodOrderingAPI
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAngularDevClient", policy =>
+
                     policy.WithOrigins("http://localhost:4200", "http://localhost:62532") // ✅ ضع هنا الـ Origin الذي يعمل عليه Angular
                           .AllowAnyHeader()
                           .AllowAnyMethod()

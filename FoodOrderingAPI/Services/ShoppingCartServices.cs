@@ -63,21 +63,16 @@ namespace FoodOrderingAPI.Services
             await UpdatePrices(cart);
 
         }
+        
         public async Task UpdatePrices(ShoppingCart cart)
         {
             if (cart.ShoppingCartItems == null || !cart.ShoppingCartItems.Any())
             {
                 cart.SubTotal = 0;
-                cart.DiscountAmount = 0;
             }
             else
             {
                 cart.SubTotal = cart.ShoppingCartItems.Sum(sci => sci.TotalPrice);
-                cart.DiscountAmount = cart.ShoppingCartItems.Sum(sci =>
-                    sci.Item?.Discounts?.Sum(discount =>
-                        ((decimal)discount.Percentage * sci.Item.Price) / 100
-                    ) ?? 0
-                );
             }
 
             await shoppingCartRepository.Save();

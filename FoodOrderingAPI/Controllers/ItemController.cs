@@ -100,7 +100,7 @@ namespace FoodOrderingAPI.Controllers
             var items = await _ItemService.GetItemsByCategoryAsync(category);
             return Ok(items);
         }
-
+        [AllowAnonymous]
         [HttpGet("items/byrestaurantname")]
         public async Task<IActionResult> GetItemsByRestaurantName([FromQuery] string restaurantName)
         {
@@ -131,6 +131,15 @@ namespace FoodOrderingAPI.Controllers
             var items = await _ItemService.GetMostOrderedItemsAsync(restaurantId);
 
             return Ok(items);
+        }
+        [HttpGet("items/categories")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllCategories()
+        {
+            var categories = await _ItemService.GetAllCategoriesAsync();
+            if (categories == null || !categories.Any())
+                return NotFound("No categories found.");
+            return Ok(categories);
         }
     }
 }

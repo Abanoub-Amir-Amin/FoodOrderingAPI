@@ -1,11 +1,7 @@
 ﻿using FoodOrderingAPI.DTO;
-using FoodOrderingAPI.Interfaces;
 using FoodOrderingAPI.Models;
-using FoodOrderingAPI.Repository;
 using FoodOrderingAPI.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -19,8 +15,13 @@ namespace FoodOrderingAPI.Controllers
     public class CustomerController : ControllerBase
     {
         ICustomerServices customerServices;
-        public CustomerController(ICustomerServices customerServices) {
+        private readonly UserManager<User> userManager;
+        private readonly IConfirmationEmail confirmationEmail;
+
+        public CustomerController(ICustomerServices customerServices, UserManager<User> userManager, IConfirmationEmail confirmationEmail) {
             this.customerServices = customerServices;
+            this.userManager = userManager;
+            this.confirmationEmail = confirmationEmail;
         }
         [HttpGet("All")]
         //public async Task<IActionResult> GetAll()
@@ -76,6 +77,7 @@ namespace FoodOrderingAPI.Controllers
             IdentityResult result = await customerServices.Register(customer);
             if (result.Succeeded)
             {
+                await confirmationEmail.SendConfirmationEmail(customer.Email, await userManager.FindByEmailAsync(customer.Email));
                 return Created();
             }
             else
@@ -108,6 +110,34 @@ namespace FoodOrderingAPI.Controllers
             else
                 return BadRequest(ModelState);
         }
+        [AllowAnonymous]
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string UserId, string Token)
+        {
+            if (string.IsNullOrEmpty(UserId) || string.IsNullOrEmpty(Token))
+            {
+                // Provide a descriptive error message for the view
+               return BadRequest("The link is invalid or has expired. Please request a new one if needed.");
+            }
+            //Find the User by Id
+            var user = await userManager.FindByIdAsync(UserId);
+            if (user == null)
+            {
+                // Provide a descriptive error for a missing user scenario
+                return NotFound("We could not find a user associated with the given link.");
+                
+            }
+            // Attempt to confirm the email
+            var result = await userManager.ConfirmEmailAsync(user, Token);
+            if (result.Succeeded)
+            {
+                return Ok("Thank you for confirming your email address. Your account is now verified!");
+            }
+            // If confirmation fails
+            return BadRequest("We were unable to confirm your email address. Please try again or request a new link.");
+            
+        }
+        
         //[HttpDelete]
         //public async Task<IActionResult>Delete(string CustomerId)
         //{

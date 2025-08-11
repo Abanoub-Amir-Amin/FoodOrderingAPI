@@ -9,6 +9,6 @@ namespace FoodOrderingAPI.Services
         public Task DeleteProductStripeAsync(Item item);
         public Task<string> CreatePriceStripeAsync(Item item, string productId, decimal discount);
         public Task DeletePriceStripeAsync(Item item);
-
+        public string CreatePaymentLink(List<ShoppingCartItem> items);
     }
 }

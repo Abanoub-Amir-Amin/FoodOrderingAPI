@@ -20,8 +20,10 @@ namespace FoodOrderingAPI.Repository
             Customer? customer = await dbContext.Customers
             .Include(c => c.User)
             .Include(c => c.Addresses)
-            .Include(c => c.RewardHistories)
+            //.Include(c => c.RewardHistories)
             .Include(c => c.Orders)
+            .ThenInclude(O => O.OrderItems)
+            .ThenInclude(OI => OI.Item)
             .FirstOrDefaultAsync(c => c.CustomerID == Customerid);
             return customer;
         }
@@ -31,7 +33,7 @@ namespace FoodOrderingAPI.Repository
             .Include(c => c.User)
             .Include(c => c.Addresses)
             .Include(c => c.Orders)
-            .Include(c => c.RewardHistories)
+            //.Include(c => c.RewardHistories)
             .ToListAsync();
             return customers;
         }
@@ -63,8 +65,10 @@ namespace FoodOrderingAPI.Repository
             Customer? customer = await dbContext.Customers
             .Include(c => c.User)
             .Include(c => c.Addresses)
-            .Include(c => c.RewardHistories)
+            //.Include(c => c.RewardHistories)
             .Include(c => c.Orders)
+            .ThenInclude(O => O.OrderItems)
+            .ThenInclude(OI => OI.Item)
             .FirstOrDefaultAsync(c => c.User.Email == email);
             return customer;
         }
@@ -74,9 +78,11 @@ namespace FoodOrderingAPI.Repository
             Customer? customer = await dbContext.Customers
             .Include(c => c.User)
             .Include(c => c.Addresses)
-            .Include(c => c.RewardHistories)
-            .Include(c => c.Orders)
-            .FirstOrDefaultAsync(c => c.User.UserName == UserName);
+            //.Include(c => c.RewardHistories)
+           .Include(c => c.Orders)
+           .ThenInclude(O => O.OrderItems)
+           .ThenInclude(OI => OI.Item)
+           .FirstOrDefaultAsync(c => c.User.UserName == UserName);
             return customer;
         }
         //public async Task<IdentityResult> Register(RegisterCustomerDTO dto)

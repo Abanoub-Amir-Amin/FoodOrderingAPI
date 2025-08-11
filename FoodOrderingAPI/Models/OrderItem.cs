@@ -19,6 +19,8 @@ namespace FoodOrderingAPI.Models
         [MaxLength(255)]
         public string Preferences { get; set; }
 
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal TotalPrice { get; set; }
         public Order Order { get; set; }
 
         public Item Item { get; set; }

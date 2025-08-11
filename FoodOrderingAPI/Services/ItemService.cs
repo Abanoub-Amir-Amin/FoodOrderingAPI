@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace FoodOrderingAPI.Services
 {
-    public class ItemService:IItemService
+    public class ItemService : IItemService
     {
         private readonly IWebHostEnvironment _environment;
         private readonly ApplicationDBContext _context;
@@ -148,6 +148,10 @@ namespace FoodOrderingAPI.Services
             return $"/uploads/{uniqueFileName}";
         }
 
-        
+        public async Task<List<string>> GetAllCategoriesAsync()
+        {
+            // Get all distinct categories from the Items table
+            return await _repository.GetAllCategoriesAsync();
+        }
     }
 }

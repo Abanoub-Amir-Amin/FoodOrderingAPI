@@ -116,7 +116,7 @@ namespace FoodOrderingAPI.Repository
             return await _context.Orders.ToListAsync();
 
         }
-        public async Task<IEnumerable<Order>> GetOrdersByStatusAsync(string status)
+        public async Task<IEnumerable<Order>> GetOrdersByStatusAsync(StatusEnum status)
         {
             return await _context.Orders
                 .Where(o => o.Status == status)

@@ -18,5 +18,6 @@ namespace FoodOrderingAPI.Services
         Task<IEnumerable<ItemDto>> GetMostOrderedItemsAsync(string restaurantId, int topCount = 10);
         //Image Upload
         Task<string> SaveImageAsync(IFormFile file);
+        Task<List<string>> GetAllCategoriesAsync();
     }
 }

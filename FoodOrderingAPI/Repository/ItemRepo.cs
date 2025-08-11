@@ -22,7 +22,7 @@ namespace FoodOrderingAPI.Repository
         public async Task<Item> AddItemAsync(string restaurantId, Item item)
         {
             var productId = await StripeService.CreateProductStripeAsync(item);
-            var priceId = await StripeService.CreatePriceStripeAsync(item, productId, 0);
+            var priceId = await StripeService.CreatePriceStripeAsync(item, productId, 0); // 0 is discount percentage for new items
             item.StripePriceId = priceId; // Store the Stripe Price ID in the Item entity
             item.StripeProductId = productId; // Store the Stripe Product ID in the Item entity
             item.RestaurantID = restaurantId;
@@ -115,6 +115,15 @@ namespace FoodOrderingAPI.Repository
 
             // Convert to List of Tuple<Item, int>
             return mostOrderedItems.Select(x => (x.Item, x.TotalQuantity)).ToList();
+        }
+        public async Task<List<string>> GetAllCategoriesAsync()
+        {
+            var categories = await _context.Items
+                .Where(i => i.IsAvailable)
+                .Select(i => i.Category)
+                .Distinct()
+                .ToListAsync();
+            return categories;
         }
     }
 }
