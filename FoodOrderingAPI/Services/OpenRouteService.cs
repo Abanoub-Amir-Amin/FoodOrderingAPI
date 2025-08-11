@@ -15,12 +15,25 @@
             _httpClient = new HttpClient();
             _apiKey = config["OpenRouteService:ApiKey"];
         }
-
+        public bool IsValidLating(double lat, double lng)
+        {
+            return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+        }
         public async Task<TimeSpan> GetTravelDurationAsync(
             double originLat, double originLng,
             double destLat, double destLng)
         {
             string url = "https://api.openrouteservice.org/v2/directions/driving-car";
+            if (!IsValidLating(originLat, originLng))
+            {
+                throw new Exception("not valid latitude or lngtitude for orignal location");
+            }
+            if (!IsValidLating(destLat, destLng))
+            {
+                throw new Exception("not valid latitude or lngtitude for destination location");
+
+
+            }
 
             var requestBody = new
             {

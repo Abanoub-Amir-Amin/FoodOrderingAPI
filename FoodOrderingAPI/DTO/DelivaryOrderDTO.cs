@@ -12,7 +12,7 @@ namespace FoodOrderingAPI.DTO
 
         public string RestaurantName { get; set; }
         public string RestaurantAddress { get; set; }
-        public string RestaurantPhone { get; set; }
+        public string? RestaurantPhone { get; set; }
 
         public List<string> itemNames { get; set; }
         public DateTime OrderDate { get; set; }

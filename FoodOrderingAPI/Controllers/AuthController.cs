@@ -39,7 +39,7 @@ public class AuthController : ControllerBase
         if (user == null)
             return Unauthorized("Invalid username or password");
 
-        // Allow login for Admins without email confirmation
+        //// Allow login for Admins without email confirmation
         if (!(user.Role.ToString() == "Admin") && !await _userManager.IsEmailConfirmedAsync(user))
             return Unauthorized("Email not confirmed. Please check your inbox.");
 

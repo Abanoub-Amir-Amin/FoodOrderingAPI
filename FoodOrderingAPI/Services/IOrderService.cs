@@ -22,7 +22,7 @@ namespace FoodOrderingAPI.Services
 
         //customer
         public Task<CheckoutViewDTO> Checkout(ShoppingCart shoppingCart);
-        public Task PlaceOrder(NewOrderDTO orderdto, ShoppingCart cart);
+        public Task PlaceOrder(ShoppingCart cart);
         public Task<List<OrderViewDTO>> getOrders(string customerId);
         public Task<List<OrderViewDTO>> GetOrdersByStatusAsyncForCustomer(string customerId, StatusEnum[] statuses);
         public Task<OrderDetailDTO?> getOrderDetails(Guid orderId);

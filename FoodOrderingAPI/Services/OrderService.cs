@@ -107,19 +107,22 @@ namespace FoodOrderingAPI.Services
                $"Order number {order.OrderNumber} Confirmed");
             return true;
         }
-        
+
 
 
         //assign order to delivaryMan
         //in controller in confirm action we should assign delivaryman first and ensures that there are available delivaryman
         public async Task<bool> assignDelivaryManToOrder(Order order)
         {
-            DeliveryMan deliveryMan = await _deliveryManService.GetBestAvailableDeliveryManAsync();
-            if(deliveryMan == null) return false;
-            await _repository.AssignOrderToDelivaryMan(order,deliveryMan.DeliveryManID);
+            var deliveryMan = await _deliveryManService.GetClosestDeliveryManAsync(order.Restaurant.Latitude, order.Restaurant.Longitude);
+            if (deliveryMan == null) return false;
+            if (order.Status == StatusEnum.WaitingToConfirm) { 
+                await _repository.AssignOrderToDelivaryMan(order, deliveryMan.DeliveryManID);
 
-            _notificationRepo.CreateNotificationTo(order.DeliveryManID,
+                _notificationRepo.CreateNotificationTo(order.DeliveryManID,
                $"Order number {order.OrderNumber} has assigned to deliver ");
+                deliveryMan.AvailabilityStatus = false;
+        }
             return true;
 
         }
@@ -149,13 +152,9 @@ namespace FoodOrderingAPI.Services
                 await _repository.AddOrderItem(orderitem);
             }
         }
-        public async Task PlaceOrder(NewOrderDTO orderdto, ShoppingCart cart)
+        public async Task PlaceOrder(ShoppingCart cart)
         {
             // التأكد من صحة البيانات المدخلة
-            Address add = await _addressRepo.GetAddress(orderdto.AddressID);
-            if (add == null)
-                throw new ArgumentException("Address with this AddressID not found");
-
             if (cart.Restaurant == null)
                 throw new ArgumentException("ShoppingCart isn't assigned to Restaurant");
 
@@ -164,6 +163,12 @@ namespace FoodOrderingAPI.Services
 
             if (cart.Customer == null)
                 throw new ArgumentException("ShoppingCart isn't assigned to Customer");
+            Address add = await _addressRepo.getDafaultAddress(cart.CustomerID);
+            if (add == null)
+                throw new ArgumentException("there no Addresses for this user, pleases add address and try again");
+
+            if(string.IsNullOrEmpty(cart.Customer.User.PhoneNumber))
+                throw new ArgumentException("there no phone number for this user, pleases add phone and try again");
 
             //transacation 
             using var transaction = await _repository.BeginTransactionAsync();
@@ -171,8 +176,9 @@ namespace FoodOrderingAPI.Services
             {
                 //create order using shoppingcart and data from frontend
                 Order order = _mapper.Map<Order>(cart);
-                _mapper.Map(orderdto, order); // apply dto overrides
-
+                //_mapper.Map(orderdto, order); // apply dto overrides
+                order.AddressID = add.AddressID;
+                order.PhoneNumber = cart.Customer.User.PhoneNumber;
                 TimeSpan delivaryDuration = await _openRouteService.GetTravelDurationAsync(
                     cart.Restaurant.Latitude,
                     cart.Restaurant.Longitude,
@@ -195,12 +201,12 @@ namespace FoodOrderingAPI.Services
 
                 await _shoppingCartService.Clear(cart.CartID);
 
-                if (orderdto.PromoCodeID != null)
-                {
-                    bool applied = await _promoCodeService.ApplyPromoCode(order);
-                    if (!applied)
-                        throw new ArgumentException("Problem while applying PromoCode");
-                }
+                //if (orderdto.PromoCodeID != null)
+                //{
+                //    bool applied = await _promoCodeService.ApplyPromoCode(order);
+                //    if (!applied)
+                //        throw new ArgumentException("Problem while applying PromoCode");
+                //}
 
                 // you can add payment here
                 // await _paymentService.ChargeAsync(order);

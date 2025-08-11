@@ -200,7 +200,7 @@ namespace FoodOrderingAPI.Controllers
         }
         [Authorize(Roles = "Customer")]
         [HttpPost("PlaceOrder")]
-        public async Task<IActionResult> PlaceOrder(NewOrderDTO newOrder)
+        public async Task<IActionResult> PlaceOrder()
         {
             var CustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -208,7 +208,7 @@ namespace FoodOrderingAPI.Controllers
             if (cart == null) return NotFound("customer or shopping car Not found");
             try
             {
-                await _OrderService.PlaceOrder(newOrder, cart);
+                await _OrderService.PlaceOrder(cart);
             }
             catch (Exception ex)
             {
