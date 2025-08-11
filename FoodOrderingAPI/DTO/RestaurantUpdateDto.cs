@@ -14,9 +14,8 @@ namespace FoodOrderingAPI.DTO
         //update to restaurant to get time of order to deliver to customer
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        [Column(TypeName = "decimal(10,2)")]
-        public decimal DelivaryPrice { get; set; } = 0;
-
+        [Column(TypeName = "decimal(10, 2)")]
+        public decimal DelivaryPrice { get; set; }
         public TimeSpan orderTime { get; set; }
         public UserDto User { get; set; }
     }

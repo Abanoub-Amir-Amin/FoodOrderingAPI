@@ -190,8 +190,6 @@ public class MappingProfile : Profile
         CreateMap<Admin, AdminDto>();
 
 
-        //order
-
 
 
         CreateMap<ShoppingCart, CheckoutViewDTO>()
@@ -244,19 +242,6 @@ public class MappingProfile : Profile
         .ForMember(dest => dest.OrderID, opt => opt.MapFrom(src => src.OrderID))
         .ForMember(dest => dest.Preferences, opt => opt.MapFrom(src => src.Preferences))
         .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
-        .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
-
-
-        CreateMap<Order, OrderDto>()
-        .ForMember(dest => dest.AddressID, opt => opt.MapFrom(src =>src.AddressID))
-        .ForMember(dest => dest.RestaurantID, opt => opt.MapFrom(src => src.RestaurantID))
-        .ForMember(dest => dest.PromoCodeID, opt => opt.MapFrom(src => src.PromoCodeID))
-        .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems))
-        .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
-        .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
-        .ForMember(dest => dest.Customer, opt => opt.MapFrom(src => src.Customer))
-        .ForMember(dest => dest.DeliveredAt, opt => opt.MapFrom(src => src.DeliveredAt))
-        .ForMember(dest => dest.DeliveryManID, opt => opt.MapFrom(src => src.DeliveryManID))
         .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
 
 

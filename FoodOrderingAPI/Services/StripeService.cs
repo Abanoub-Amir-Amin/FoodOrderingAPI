@@ -1,5 +1,6 @@
 ﻿using FoodOrderingAPI.Models;
 using Stripe;
+using Stripe.Checkout;
 
 namespace FoodOrderingAPI.Services
 {
@@ -63,6 +64,29 @@ namespace FoodOrderingAPI.Services
             var priceOptions = new PriceUpdateOptions { Active = false };
             var priceService = new PriceService();
             Price price = await priceService.UpdateAsync(item.StripePriceId, priceOptions);
+        }
+        public string CreatePaymentLink(List<ShoppingCartItem> items)
+        {
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+                SuccessUrl = "https://example.com/success",
+                CancelUrl = "https://example.com/cancel"
+            };
+            foreach (var item in items)
+            {
+                options.LineItems.Add(new SessionLineItemOptions
+                {
+                    Price = item.Item.StripePriceId,
+                    Quantity = item.Quantity
+                });
+            }
+            var service = new SessionService();
+            Session session = service.Create(options);
+            Console.WriteLine(session.Url);
+            return session.Url;
         }
     }
 }

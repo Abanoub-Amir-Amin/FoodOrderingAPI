@@ -15,6 +15,7 @@ namespace FoodOrderingAPI.DTO
 
         public decimal DiscountAmount { get; set; }
         public decimal TotalPrice => SubTotal + DelivaryPrice - DiscountAmount;
+        public string PaymentLink { get; set; }
         //public string PaymentMethod { get; set; } // أو قائمة بالخيارات المتاحة
     }
 

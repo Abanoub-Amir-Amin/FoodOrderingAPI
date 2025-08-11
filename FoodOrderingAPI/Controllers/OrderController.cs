@@ -59,6 +59,8 @@ namespace FoodOrderingAPI.Controllers
         [Authorize(Roles = "Restaurant")]
 
         [HttpGet("{restaurantId}/orders/status")]
+        [Authorize(Roles = "Restaurant")]
+
         public async Task<IActionResult> GetOrdersByStatus(string restaurantId, [FromQuery] StatusEnum[] status)
         {
             var restaurant = await _RestaurantService.GetRestaurantByIdAsync(restaurantId);
@@ -164,6 +166,8 @@ namespace FoodOrderingAPI.Controllers
         //    return BadRequest("order Status not correct");
         //}
         [HttpPut("ConfirmOrder")]
+        [Authorize(Roles = "Restaurant")]
+
         public async Task<IActionResult> ConfirmOrder(Guid OrderId)
         {
             Order order = await _OrderService.getOrder(OrderId);
