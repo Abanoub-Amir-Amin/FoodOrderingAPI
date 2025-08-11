@@ -168,8 +168,10 @@ namespace FoodOrderingAPI.Services
                 return null;
             return availableDeliveryMen
                 .OrderBy(dm => dm.LastOrderDate ?? DateTime.MinValue)
-                //.ThenByDescending(dm => dm.Rank)
                 .FirstOrDefault();
+
+            //.ToList();
+            //.ThenByDescending(dm => dm.Rank)
         }
 
         public async Task<DeliveryMan?> GetClosestDeliveryManAsync(double orderLatitude, double orderLongitude)

@@ -105,6 +105,8 @@ namespace FoodOrderingAPI.Repository
                 .Include(dm => dm.User)
                 .Where(dm => dm.AvailabilityStatus && dm.User != null && dm.User.Role == RoleEnum.DeliveryMan)
                 .OrderBy(dm => dm.Location.Distance(orderLocation))
+                .ThenBy(dm => dm.LastOrderDate ?? DateTime.MinValue)
+                //.ToListAsync();
                 .FirstOrDefaultAsync();
             return closestDeliveryMan;
         }

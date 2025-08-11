@@ -9,7 +9,7 @@ namespace FoodOrderingAPI.Models
         public Guid AddressID { get; set; }
 
         [ForeignKey(nameof(Customer))]
-        public string CustomerID { get; set; }
+        public string? CustomerID { get; set; }
 
         [MaxLength(50)]
         public string Label { get; set; }

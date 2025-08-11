@@ -18,12 +18,13 @@ namespace FoodOrderingAPI.Services
         ApplicationDBContext _dbContext;
         ICustomerRepo customerRepo;
         IShoppingCartRepository shoppingCartRepo;
+        IAddressRepo addressRepo;
         IMapper _mapper;
         private readonly IConfiguration _configuration;
 
         UserManager<User> userManager { get; }
 
-        public CustomerService(ApplicationDBContext dbContext,ICustomerRepo customerRepo,IShoppingCartRepository shoppingCartRepository, IMapper _mapper, UserManager<User> userManager, IConfiguration configuration)
+        public CustomerService(ApplicationDBContext dbContext,ICustomerRepo customerRepo,IShoppingCartRepository shoppingCartRepository, IAddressRepo addressRepo,IMapper _mapper, UserManager<User> userManager, IConfiguration configuration)
         {
             _dbContext = dbContext;
             this.customerRepo = customerRepo;
@@ -31,6 +32,7 @@ namespace FoodOrderingAPI.Services
             this._mapper = _mapper;
             this.userManager = userManager;
             this._configuration = configuration;
+            this.addressRepo = addressRepo;
         }
 
         public async Task<CustomerDTO> GetCusomerDashboardDataById(string id) 
@@ -143,6 +145,9 @@ namespace FoodOrderingAPI.Services
                     await shoppingCartRepo.Create(cart, customer.CustomerID);
                     await shoppingCartRepo.Save();
 
+                    //add address
+                    await addressRepo.Add(user.UserName, dto.Address);
+                    await addressRepo.Save();
                     // Commit transaction if everything succeeded
                     await transaction.CommitAsync();
                 }

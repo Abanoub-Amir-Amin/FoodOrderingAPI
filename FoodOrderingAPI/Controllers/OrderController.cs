@@ -12,6 +12,7 @@ namespace FoodOrderingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class OrderController : ControllerBase
     {
         private readonly ApplicationDBContext _context;
@@ -37,6 +38,7 @@ namespace FoodOrderingAPI.Controllers
         }
         // ===== Orders =====
         [Authorize(Roles = "Restaurant")]
+
         [HttpGet("{restaurantId}/orders")]
         public async Task<IActionResult> GetAllOrdersByRestaurantAsync(string restaurantId)
         {
@@ -54,6 +56,7 @@ namespace FoodOrderingAPI.Controllers
 
             return Ok(ordersDto);
         }
+        [Authorize(Roles = "Restaurant")]
 
         [HttpGet("{restaurantId}/orders/status")]
         [Authorize(Roles = "Restaurant")]
@@ -68,7 +71,8 @@ namespace FoodOrderingAPI.Controllers
             if (!restaurant.IsActive)
                 return Forbid("Your restaurant account is not yet active.");
 
-            var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery, StatusEnum.Cancelled };
+            //var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery, StatusEnum.Cancelled };
+            var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery };
             StatusEnum[] requestedStatuses;
 
             if (!status.Any())
@@ -130,7 +134,6 @@ namespace FoodOrderingAPI.Controllers
         // ===== Dashboard Summary =====
         [HttpGet("{restaurantId}/dashboard-summary")]
         [Authorize(Roles = "Restaurant")]
-
         public async Task<IActionResult> GetDashboardSummary(string restaurantId)
         {
             var restaurant = await _RestaurantService.GetRestaurantByIdAsync(restaurantId);
@@ -145,25 +148,23 @@ namespace FoodOrderingAPI.Controllers
 
             return Ok(summary);
         }
-        [HttpPut("CancelOrder")]
-        [Authorize(Roles = "Restaurant")]
+        //[HttpPut("CancelOrder")]
+        //public async Task<IActionResult> CancelOrder(Guid OrderId, [FromBody] string reson)
+        //{
+        //    //check orderid exist
+        //    Order order = await _OrderService.getOrder(OrderId);
+        //    if (order == null) return NotFound("this orderid dosen't meet any order");
 
-        public async Task<IActionResult> CancelOrder(Guid OrderId, [FromBody] string reson)
-        {
-            //check orderid exist
-            Order order = await _OrderService.getOrder(OrderId);
-            if (order == null) return NotFound("this orderid dosen't meet any order");
+        //    //check authersity of restaurant
+        //    var restaurantId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    if (restaurantId != order.RestaurantID)
+        //        return Unauthorized($"this user with userId{restaurantId} not autherized to cancel this orderId");
 
-            //check authersity of restaurant
-            var restaurantId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (restaurantId != order.RestaurantID)
-                return Unauthorized($"this user with userId{restaurantId} not autherized to cancel this orderId");
-
-            bool cancelled = await _OrderService.CancelOrder(order, reson);
-            if (cancelled)
-                return Ok("Order Cancelled Sucessfully");
-            return BadRequest("order Status not correct");
-        }
+        //    bool cancelled = await _OrderService.CancelOrder(order, reson);
+        //    if (cancelled)
+        //        return Ok("Order Cancelled Sucessfully");
+        //    return BadRequest("order Status not correct");
+        //}
         [HttpPut("ConfirmOrder")]
         [Authorize(Roles = "Restaurant")]
 
@@ -203,7 +204,7 @@ namespace FoodOrderingAPI.Controllers
         }
         [Authorize(Roles = "Customer")]
         [HttpPost("PlaceOrder")]
-        public async Task<IActionResult> PlaceOrder(NewOrderDTO newOrder)
+        public async Task<IActionResult> PlaceOrder()
         {
             var CustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -211,7 +212,7 @@ namespace FoodOrderingAPI.Controllers
             if (cart == null) return NotFound("customer or shopping car Not found");
             try
             {
-                await _OrderService.PlaceOrder(newOrder, cart);
+                await _OrderService.PlaceOrder(cart);
             }
             catch (Exception ex)
             {
@@ -246,6 +247,17 @@ namespace FoodOrderingAPI.Controllers
         {
             var CustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var orders = await _OrderService.GetOrdersByStatusAsyncForCustomer(CustomerId, status);
+            return Ok(orders);
+        }
+
+        //---------------DelivaryMan-------------
+
+        [Authorize(Roles = "DeliveryMan")]
+        [HttpGet("PreparingOrdersForDelivary")]
+        public async Task<IActionResult> GetOrdersForDelivary()
+        {
+            var DelivaryId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var orders = await _OrderService.getOrdersForDelivarMan(DelivaryId);
             return Ok(orders);
         }
     }

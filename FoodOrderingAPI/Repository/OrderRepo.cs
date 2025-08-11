@@ -43,19 +43,19 @@ namespace FoodOrderingAPI.Repository
 
             var deliveredCount = orders.Count(o => o.Status == StatusEnum.Delivered);
             var inProcessCount = orders.Count(o => o.Status == StatusEnum.Preparing || o.Status == StatusEnum.Out_for_Delivery);
-            var cancelledCount = orders.Count(o => o.Status == StatusEnum.Cancelled);
+            //var cancelledCount = orders.Count(o => o.Status == StatusEnum.Cancelled);
 
             return new DashboardSummaryDto
             {
                 DeliveredOrders = deliveredCount,
                 InProcessOrders = inProcessCount,
-                CancelledOrders = cancelledCount
+                //CancelledOrders = cancelledCount
             };
         }
         //========operation of order by restaurant==========
         public async Task CancelOrder(Order order)
         {
-                order.Status = StatusEnum.Cancelled;
+                //order.Status = StatusEnum.Cancelled;
                 await _context.SaveChangesAsync();
         }
         public async Task ConfirmOrder(Order order)
@@ -109,8 +109,25 @@ namespace FoodOrderingAPI.Repository
             return await _context.Orders
                 .Include(o => o.Restaurant)
                 .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Item)
                 //.Include(o => o.PaymentTransactions)
                 .Where(o => o.CustomerID==customerId)
+                .ToListAsync();
+
+        }
+        public async Task<List<Order>> getOrdersDelivaryMan(string DelivaryId)
+        {
+            return await _context.Orders
+                .Include(o => o.Address)
+                .Include(o => o.Restaurant)
+                .ThenInclude(R => R.User)
+                .Include(o => o.OrderItems)
+                .Include(o => o.Customer)
+                .ThenInclude(C => C.User)
+                .Include(c => c.OrderItems)
+                .ThenInclude(OI => OI.Item)
+                //.Include(o => o.PaymentTransactions)
+                .Where(o => o.DeliveryManID == DelivaryId && o.Status== StatusEnum.Preparing)
                 .ToListAsync();
 
         }
@@ -118,10 +135,12 @@ namespace FoodOrderingAPI.Repository
         {
             return await _context.Orders
                 .Include(o => o.Restaurant)
+                .ThenInclude(R => R.User)
                 .Include(o => o.OrderItems)
                 //.Include(o => o.PaymentTransactions)
                 .Include(o => o.Address)
                 .Include(o => o.DeliveryMan)
+                .ThenInclude(D => D.User)
                 .Include(o => o.PromoCode)
                 .FirstOrDefaultAsync(o => o.OrderID == orderId);
         }
