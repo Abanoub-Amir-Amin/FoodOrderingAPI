@@ -84,6 +84,9 @@ namespace FoodOrderingAPI
 
             builder.Services.AddScoped<IConfirmationEmail, ConfirmationEmail>();
 
+            builder.Services.AddScoped<IReviewService, ReviewService>();
+            builder.Services.AddScoped<IReviewRepo, ReviewRepo>();
+
             builder.Services.AddSignalR();
             // Register AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
