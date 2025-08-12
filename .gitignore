@@ -6,6 +6,7 @@
 # User-specific files
 **/Migrations/
 **/wwwroot/
+**/wwwroot/uploads
 # Ignore appsettings files (contains secrets/configs)
 appsettings*.json
 *.rsuser
@@ -365,5 +366,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-# Ignore appsettings files (contains secrets/configs)
-appsettings*.json

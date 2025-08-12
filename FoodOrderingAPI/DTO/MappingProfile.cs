@@ -189,7 +189,8 @@ public class MappingProfile : Profile
 
         CreateMap<Admin, AdminDto>();
 
-
+        CreateMap<Restaurant, RestaurantDto>()
+         .ForMember(dest => dest.ImageFile, opt => opt.Ignore());
 
 
         CreateMap<ShoppingCart, CheckoutViewDTO>()
