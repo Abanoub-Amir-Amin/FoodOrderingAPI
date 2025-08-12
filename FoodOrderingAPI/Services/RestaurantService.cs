@@ -147,11 +147,11 @@ namespace FoodOrderingAPI.Services
             if (dto.IsAvailable.HasValue)
                 existingRestaurant.IsAvailable = dto.IsAvailable.Value;
 
-            if (!string.IsNullOrWhiteSpace(dto.Email))
-                existingRestaurant.User.Email = dto.Email;
+            if (!string.IsNullOrWhiteSpace(dto.User.Email))
+                existingRestaurant.User.Email = dto.User.Email;
 
-            if (!string.IsNullOrWhiteSpace(dto.Phone))
-                existingRestaurant.User.PhoneNumber = dto.Phone;
+            if (!string.IsNullOrWhiteSpace(dto.User.Phone))
+                existingRestaurant.User.PhoneNumber = dto.User.Phone;
 
             if (dto.Longitude==0)
                 existingRestaurant.Longitude = dto.Longitude;

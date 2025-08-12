@@ -23,7 +23,7 @@ namespace FoodOrderingAPI.Controllers
             this.userManager = userManager;
             this.confirmationEmail = confirmationEmail;
         }
-        [HttpGet("All")]
+        //[HttpGet("All")]
         //public async Task<IActionResult> GetAll()
         //{
         //    List<CustomerDTO> data = await customerServices.GetAll();
