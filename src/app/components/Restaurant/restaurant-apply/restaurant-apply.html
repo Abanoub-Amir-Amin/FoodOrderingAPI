@@ -25,21 +25,31 @@
       </div>
     </div>
 
-    <div class="mb-3">
+    <!-- <div class="mb-3">
       <label class="form-label">Location</label>
       <input formControlName="Location" type="text" class="form-control" placeholder="Enter location" />
       <div *ngIf="applyForm.get('Location')?.invalid && applyForm.get('Location')?.touched" class="text-danger small">
         Location is required.
       </div>
-    </div>
-
+    </div> -->
+      <app-map-component (addressInfo)="setAddress($event)"  [formSubmitted]="success"></app-map-component>
+    
     <div class="mb-3">
       <label class="form-label">Open Hours</label>
       <input formControlName="OpenHours" type="text" class="form-control" placeholder="e.g., 9 AM - 10 PM" />
     </div>
 
-    
+    <div class="mb-3">
+      <label class="form-label">Order Time</label>
+      <input formControlName="OrderTime" type="time" class="form-control" placeholder="e.g., 1:30:00" />
+    </div>
+   
 
+    <div class="mb-3">
+      <label class="form-label">Delivary Price</label>
+      <input formControlName="DelivaryPrice" type="Price" class="form-control" placeholder="Enter Delivary Price" />
+    </div>
+   
     <div class="mb-3">
       <label class="form-label">Username</label>
       <input formControlName="UserName" type="text" class="form-control" placeholder="Choose a username" />

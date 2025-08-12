@@ -50,7 +50,7 @@
         <label class="form-label">Confirm Password</label>
         <input type="password" formControlName="confirmPassword" class="form-control" placeholder="Confirm Password" />
       </div>
-
+      <app-map-component (addressInfo)="setAddress($event)"  [formSubmitted]="isRegestered"></app-map-component>
       <button type="submit" class="btn btn-primary w-100">Create Account</button>
 
       <div class="text-center mt-3">

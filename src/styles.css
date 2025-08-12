@@ -102,7 +102,7 @@ body {
 }
 
 /* Button Styles */
-.btn {
+.btn:not(#set-btn) {
   display: inline-flex;
   align-items: center;
   justify-content: center;

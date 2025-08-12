@@ -8,7 +8,14 @@
   phoneNumber: string; // ✅ تعديل هنا
   password: string;
   confirmPassword: string; // ✅ مطلوب
- 
+ Address:AddressDto;
+}
+export interface AddressDto{
+  label: string;     
+  street: string;  
+  city: string;       
+  latitude: number;   
+  longitude: number;  
 }
 export interface UserDto {
   UserId?: string

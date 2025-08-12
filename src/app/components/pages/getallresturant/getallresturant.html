@@ -16,7 +16,7 @@
         
           <img 
           class="img-fluid p-3"
-            [src]="'http://localhost:5000/' + (restaurant.imageFile?.startsWith('wwwroot') ? restaurant.imageFile.slice(8) : restaurant.imageFile)"
+            [src]="'http://localhost:5000/' + (restaurant.imageFile?.startsWith('wwwroot') ? restaurant.imageFile?.slice(8) : restaurant.imageFile)"
           
             alt="صورة المطعم"
           />
