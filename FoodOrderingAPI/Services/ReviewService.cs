@@ -32,13 +32,13 @@ namespace FoodOrderingAPI.Services
             await reviewRepo.CreateReviewAsync(reviewEntity);
         }
 
-        public async Task DeleteReviewAsync(Guid reviewId)
+        public async Task<bool> DeleteReviewAsync(Guid reviewId)
         {
             if (reviewId == Guid.Empty)
             {
                 throw new ArgumentException("Review ID cannot be empty.", nameof(reviewId));
             }
-            await reviewRepo.DeleteReviewAsync(reviewId);
+            return await reviewRepo.DeleteReviewAsync(reviewId);
         }
 
         public async Task<IEnumerable<Review>> GetAllReviewsAsync()

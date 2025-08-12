@@ -31,6 +31,10 @@ namespace FoodOrderingAPI.Controllers
         public async Task<IActionResult> GetAllReviews()
         {
             var reviews = await reviewService.GetAllReviewsAsync();
+            if(reviews == null || !reviews.Any())
+            {
+                return NotFound("No reviews found.");
+            }
             return Ok(reviews);
         }
 
@@ -57,6 +61,10 @@ namespace FoodOrderingAPI.Controllers
                 return BadRequest("Order ID cannot be empty.");
             }
             var reviews = await reviewService.GetReviewsByOrderIdAsync(orderId);
+            if (reviews == null || !reviews.Any())
+            {
+                return NotFound("No reviews found for this order.");
+            }
             return Ok(reviews);
         }
 
@@ -68,6 +76,10 @@ namespace FoodOrderingAPI.Controllers
                 return BadRequest("Customer ID cannot be null or empty.");
             }
             var reviews = await reviewService.GetReviewsByCustomerIdAsync(customerId);
+            if (reviews == null || !reviews.Any())
+            {
+                return NotFound("No reviews found for this customer.");
+            }
             return Ok(reviews);
         }
 
@@ -79,6 +91,10 @@ namespace FoodOrderingAPI.Controllers
                 return BadRequest("Restaurant ID cannot be null or empty.");
             }
             var reviews = await reviewService.GetReviewsByRestaurantIdAsync(restaurantId);
+            if (reviews == null || !reviews.Any())
+            {
+                return NotFound("No reviews found for this restaurant.");
+            }
             return Ok(reviews);
         }
 
@@ -89,17 +105,13 @@ namespace FoodOrderingAPI.Controllers
             {
                 return BadRequest("Review ID cannot be empty.");
             }
-            await reviewService.DeleteReviewAsync(reviewId);
-            return NoContent();
+            var isDeleted = await reviewService.DeleteReviewAsync(reviewId);
+            if(!isDeleted)
+            {
+                return NotFound("Review not found.");
+            }
+            return Ok();
         }
-
-        [HttpGet("getallreviews")]
-        public async Task<IActionResult> GetAllReviewsForAdmin()
-        {
-            var reviews = await reviewService.GetAllReviewsAsync();
-            return Ok(reviews);
-        }
-
 
     }
 }
