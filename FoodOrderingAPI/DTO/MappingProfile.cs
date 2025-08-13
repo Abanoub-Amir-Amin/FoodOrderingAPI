@@ -215,7 +215,6 @@ public class MappingProfile : Profile
 
 
         CreateMap<NewOrderDTO, Order>()
-        .ForMember(dest => dest.Status, opt => opt.MapFrom(src => StatusEnum.WaitingToConfirm))
         .ForMember(dest => dest.AddressID, opt => opt.MapFrom(src => src.AddressID))
         .ForMember(dest => dest.DeliveredAt, opt => opt.Ignore()) //determine it after order reach to customer+ 
         .ForMember(dest => dest.DeliveryManID, opt => opt.Ignore())//get it by function assignDelivaryMantoOrder+
@@ -232,7 +231,9 @@ public class MappingProfile : Profile
         .ForMember(dest => dest.DiscountAmount, opt => opt.Ignore())//determine based on promocode applied
         .ForMember(dest => dest.RestaurantID, opt => opt.MapFrom(src => src.RestaurantID))
         .ForMember(dest => dest.SubTotal, opt => opt.MapFrom(src => src.SubTotal))
-        .ForMember(dest => dest.TotalPrice, opt => opt.Ignore());// it is already calculated 
+        .ForMember(dest => dest.TotalPrice, opt => opt.Ignore())// it is already calculated 
+        .ForMember(dest => dest.Status, opt => opt.MapFrom(src => StatusEnum.WaitingToConfirm));
+
 
 
 

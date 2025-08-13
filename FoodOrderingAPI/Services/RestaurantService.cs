@@ -147,12 +147,6 @@ namespace FoodOrderingAPI.Services
             if (dto.IsAvailable.HasValue)
                 existingRestaurant.IsAvailable = dto.IsAvailable.Value;
 
-            if (!string.IsNullOrWhiteSpace(dto.Email))
-                existingRestaurant.User.Email = dto.Email;
-
-            if (!string.IsNullOrWhiteSpace(dto.Phone))
-                existingRestaurant.User.PhoneNumber = dto.Phone;
-
             if (dto.Longitude==0)
                 existingRestaurant.Longitude = dto.Longitude;
 
