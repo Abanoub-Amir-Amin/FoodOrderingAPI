@@ -186,17 +186,15 @@ namespace FoodOrderingAPI
             // Add CORS policy to allow Angular frontend
             builder.Services.AddCors(options =>
             {
-                //options.AddPolicy("public", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed(_ => true));
-                //op.AddPolicy("subscription", policy =>
-                //{
-                //    policy.WithOrigins("127.0.0.1").WithHeaders("token", "role").WithMethods("get");
-                //});
+                options.AddPolicy("public", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed(_ => true));
+
                 options.AddPolicy("AllowAngularDevClient", policy =>
-                policy.WithOrigins("http://localhost:4200", "http://localhost:5000") // ✅ ضع هنا الـ Origin الذي يعمل عليه Angular
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials());
-                    });
+                    policy.WithOrigins("https://localhost:7060", "http://localhost:4200", "http://localhost:3150")
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials());
+                
+            });
 
             // It configures EF Core to use SQL Server as the database provider,
             // and enables support for spatial data types (like geography, geometry) using NetTopologySuite.

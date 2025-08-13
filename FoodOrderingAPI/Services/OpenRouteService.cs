@@ -5,7 +5,7 @@
     using System.Text.Json;
     using System.Threading.Tasks;
 
-    public class OpenRouteService:IOpenRouteService
+    public class OpenRouteService : IOpenRouteService
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiKey;
@@ -141,5 +141,3 @@
         }
     }
 }
-
-   
