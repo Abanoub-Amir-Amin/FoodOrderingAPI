@@ -14,7 +14,7 @@ namespace FoodOrderingAPI.DTO
         public string RestaurantAddress { get; set; }
         public string? RestaurantPhone { get; set; }
 
-        public List<string> itemNames { get; set; }
+        public List<OrderItemDto> items { get; set; }
         public DateTime OrderDate { get; set; }
         //public String PaymentMethod { get; set; }
         public decimal TotalPrice { get; set; }

@@ -192,7 +192,7 @@ namespace FoodOrderingAPI
                 //    policy.WithOrigins("127.0.0.1").WithHeaders("token", "role").WithMethods("get");
                 //});
                 options.AddPolicy("AllowAngularDevClient", policy =>
-                policy.WithOrigins("http://localhost:4200", "http://localhost:62532") // ✅ ضع هنا الـ Origin الذي يعمل عليه Angular
+                policy.WithOrigins("http://localhost:4200", "http://localhost:5000") // ✅ ضع هنا الـ Origin الذي يعمل عليه Angular
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials());
@@ -233,7 +233,7 @@ namespace FoodOrderingAPI
             app.UseStaticFiles();
 
             //app.UseHttpsRedirection();
-            app.UseCors("public");
+            app.UseCors("AllowAngularDevClient");
 
             app.UseAuthentication();
             app.UseAuthorization();
