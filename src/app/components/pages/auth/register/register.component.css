@@ -1,0 +1,138 @@
+.registration-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg) 0;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--title-color);
+  margin-bottom: var(--spacing-sm);
+  background: linear-gradient(
+    135deg,
+    var(--first-color),
+    var(--first-color-alt)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--text-color-light);
+  margin-bottom: 0;
+}
+
+.registration-form {
+  max-width: 600px;
+  /* margin: 0 auto; */
+}
+
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: var(--text-color-light);
+  padding: 4px;
+}
+
+.password-requirements {
+  margin-top: var(--spacing-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.requirement {
+  font-size: 0.8rem;
+  color: var(--error-color);
+  transition: color 0.3s ease;
+}
+
+.requirement.met {
+  color: var(--success-color);
+}
+
+.location-info {
+  font-size: 0.9rem;
+  color: var(--text-color-light);
+  margin-bottom: var(--spacing-sm);
+  font-style: italic;
+}
+
+.location-display {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background-color: var(--container-color);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.9rem;
+}
+
+.location-display p {
+  margin: 2px 0;
+}
+
+.terms-link {
+  color: var(--first-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.terms-link:hover {
+  text-decoration: underline;
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: var(--spacing-lg);
+  font-size: 1.1rem;
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.submit-message {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  text-align: center;
+  font-weight: 500;
+}
+
+.submit-message.success {
+  background-color: rgba(134, 142, 150, 0.1);
+  color: var(--success-color);
+  border: 1px solid var(--success-color);
+}
+
+.submit-message.error {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: var(--error-color);
+  border: 1px solid var(--error-color);
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .registration-form {
+    max-width: 100%;
+  }
+}

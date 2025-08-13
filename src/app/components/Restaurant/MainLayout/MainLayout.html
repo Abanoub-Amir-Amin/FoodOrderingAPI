@@ -1,0 +1,60 @@
+<div class="dashboard-root" [ngClass]="{'dark-mode': isDarkMode}">
+  <mat-sidenav-container>
+
+    <!-- Sidebar -->
+    <mat-sidenav mode="side" opened fixedInViewport class="sidebar" role="navigation" aria-label="Main navigation">
+      <div class="brand">
+        <h2>Presto</h2>
+        <h1>{{ restaurant?.restaurantName || 'Loading...' }}</h1>
+        <img [src]="getImageUrl(restaurant?.imageFile)" class="logo" alt="{{ restaurant?.restaurantName || 'Default Restaurant Logo' }}" />
+        
+        <button mat-icon-button (click)="toggleTheme()" aria-label="Toggle dark mode">
+          <mat-icon>{{ isDarkMode ? 'dark_mode' : 'light_mode' }}</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="logout()" aria-label="Logout">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+
+      <nav role="navigation" aria-label="Sidebar navigation links">
+        <a mat-button [routerLink]="[navData[0].RouterLink]" routerLinkActive="active" aria-label="Dashboard">
+          <mat-icon>dashboard</mat-icon> Dashboard
+        </a>
+        <a mat-button [routerLink]="[navData[1].RouterLink]" routerLinkActive="active" aria-label="Orders">
+          <mat-icon>receipt_long</mat-icon> Orders
+        </a>
+        <a mat-button [routerLink]="[navData[2].RouterLink]" routerLinkActive="active" aria-label="Menu">
+          <mat-icon>restaurant_menu</mat-icon> Menu
+        </a>
+        <a mat-button [routerLink]="[navData[3].RouterLink]" routerLinkActive="active" aria-label="Profile">
+          <mat-icon>person</mat-icon> Profile
+        </a>
+        <!-- <a mat-button [routerLink]="[navData[4].RouterLink]" routerLinkActive="active" aria-label="Settings">
+          <mat-icon>settings</mat-icon>Settings
+        </a> -->
+
+      </nav>
+    </mat-sidenav>
+
+    <!-- Main Content -->
+    <mat-sidenav-content>
+      <mat-toolbar color="primary" class="toolbar" role="banner">
+        <span>{{ restaurant?.restaurantName || 'Loading...' }}</span>
+        <span class="spacer"></span>
+
+        <span *ngIf="restaurant?.isActive; else waiting">
+          Account Status: <strong class="active">Active</strong>
+        </span>
+        <ng-template #waiting>
+          Account Status: <strong class="pending">Pending Approval</strong>
+        </ng-template>
+      </mat-toolbar>
+
+      <div class="dashboard-content">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+
+  </mat-sidenav-container>
+</div>

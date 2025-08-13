@@ -1,0 +1,11 @@
+<mat-card>
+      <h3>Most Ordered</h3>
+      <div class="most-ordered-list">
+        <ng-container *ngFor="let item of mostOrdered">
+          <div class="item-card">
+            <img [src]="item.imageUrl || 'assets/food-placeholder.jpg'" alt="img"/>
+            <span>{{item.name}}</span>
+          </div>
+        </ng-container>
+      </div>
+</mat-card>

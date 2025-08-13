@@ -1,0 +1,160 @@
+/* Root container holding sidenav + content side by side */
+.dashboard-root {
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: #fff3e0;
+  color: #333;
+  overflow: hidden; /* Prevent unwanted scrolls */
+}
+
+/* Angular Material sidenav container fills full height & width */
+.mat-sidenav-container {
+  height: 100vh;
+  width: 100vw;
+  box-sizing: border-box;
+}
+
+/* Sidebar / sidenav */
+.dashboard-root .sidebar {
+  background-color: #fff;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  width: 360px; /* Fixed sidenav width */
+  height: 100vh;
+  padding: 10px;
+  box-sizing: border-box;
+  position: fixed; /* Fix position so content scrolls independently */
+  top: 0;
+  left: 0;
+  overflow-y: auto; /* Allow sidebar scrolling if needed */
+  z-index: 1000;
+}
+
+/* Brand section inside sidebar */
+.dashboard-root .brand {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.dashboard-root .brand .logo {
+  border-radius: 50%;
+  max-width: 80px;
+  margin: 0 auto 10px auto;
+  display: block;
+}
+
+.dashboard-root .brand h2 {
+  color: #ff9100;
+  margin: 0;
+  font-weight: 700;
+}
+
+/* Sidebar navigation links */
+.dashboard-root nav {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dashboard-root nav a {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  color: #555;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.dashboard-root nav a:hover,
+.dashboard-root nav a.active {
+  background-color: #ff9100;
+  color: #fff;
+}
+
+/* Toolbar styling inside main content */
+.dashboard-root .mat-toolbar.toolbar {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  font-size: 1.15rem;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 900;
+}
+
+/* Spacer to push right-aligned toolbar items */
+.dashboard-root .spacer {
+  flex-grow: 1;
+}
+
+/* Main content area where routed content renders */
+.dashboard-root .mat-sidenav-content {
+  margin-left: 360px; /* Offset by sidenav width */
+  height: 100vh;
+  width: calc(100vw - 360px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background-color: transparent;
+  overflow-y: auto;
+}
+
+/* Content area under the toolbar */
+.dashboard-root .dashboard-content {
+  padding: 24px 30px;
+  flex: 1 1 auto; /* Fill remaining vertical space */
+  background-color: #fff;
+  overflow-y: auto;
+  box-sizing: border-box;
+  min-height: 0; /* Fix for flexbox overflow issues on some browsers */
+}
+
+/* Account status text styles */
+.dashboard-root .active {
+  color: #388e3c;
+  font-weight: 700;
+}
+
+.dashboard-root .pending {
+  color: #ff9800;
+  font-weight: 700;
+}
+
+/* Dark mode overrides */
+.dark-mode {
+  background-color: #212121;
+  color: #fff;
+}
+
+.dark-mode .sidebar {
+  background-color: #2c2c2c;
+  box-shadow: none;
+  color: #bbb;
+}
+
+.dark-mode .mat-toolbar.toolbar {
+  background-color: #2c2c2c !important;
+  color: #fff !important;
+}
+
+.dark-mode nav a {
+  color: #bbb;
+}
+
+.dark-mode nav a:hover,
+.dark-mode nav a.active {
+  background-color: #555 !important;
+  color: #fff !important;
+}

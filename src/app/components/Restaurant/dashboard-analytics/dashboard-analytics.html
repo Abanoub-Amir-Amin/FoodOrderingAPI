@@ -1,0 +1,15 @@
+<mat-card>
+      <h3>Weekly Orders</h3>
+      <ngx-charts-bar-vertical
+        [results]="weeklyOrders"
+        [view]="[350,250]"
+        scheme="vivid"
+        [xAxis]="true"
+        [yAxis]="true"
+        [legend]="false"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [xAxisLabel]="'Day'"
+        [yAxisLabel]="'Orders'">
+      </ngx-charts-bar-vertical>
+ </mat-card>

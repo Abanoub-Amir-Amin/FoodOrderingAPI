@@ -1,0 +1,67 @@
+/* Custom Colors */
+:root {
+    --light-peach: #fce8d6; /* Approximate color from the background */
+    --primary-blue: #5b7bff; /* Approximate color for "Shipping Address" */
+    --text-muted: #888; /* Approximate color for "Frame 20" */
+    --success-green: #79c788; /* Approximate color for "Save Change" button */
+    --input-placeholder-color: #a0a0a0; /* Approximate placeholder color */
+}
+
+body {
+    background-color: var(--light-peach);
+    font-family: Arial, sans-serif; /* You might want to use a specific font from the image if known */
+}
+
+.shipping-form-container {
+    background-color: white;
+    padding: 2.5rem; /* Increased padding for better spacing */
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    max-width: 600px; /* Limit the width of the form */
+    width: 100%;
+}
+
+.text-primary-blue {
+    color: var(--primary-blue);
+    font-weight: bold;
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+.form-label {
+    font-weight: 500;
+    color: #333; /* Darker color for labels */
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem; /* Slightly smaller font size for labels */
+}
+
+.form-control {
+    border-color: #ddd; /* Lighter border for inputs */
+    padding: 0.8rem 1rem; /* Adjust padding for input fields */
+    border-radius: 0.3rem; /* Slightly rounded corners for inputs */
+}
+
+.form-control::placeholder {
+    color: var(--input-placeholder-color);
+    font-style: italic;
+    font-size: 0.9rem; /* Adjust placeholder font size */
+}
+
+.btn-success-custom {
+    background-color: var(--success-green);
+    border-color: var(--success-green);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+    border-radius: 0.3rem;
+    width: auto; /* Allow button to size naturally */
+    display: block; /* Make it a block element for d-grid to center it */
+    margin: 0 auto; /* Center the button */
+}
+
+.btn-success-custom:hover {
+    background-color: #6bb07a; /* Slightly darker green on hover */
+    border-color: #6bb07a;
+}

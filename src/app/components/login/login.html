@@ -1,0 +1,49 @@
+
+<div class="container py-5 registration-wrapper">
+  <div class="card  shadow-lg border-0 w-100" style="max-width: 600px; margin: 0 auto">
+    <div class="header text-center mb-4">
+      <h1 class="title">Login</h1>
+      <p class="subtitle">Welcome Back 🙌</p>
+   
+    </div>
+<form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Username</mat-label>
+    <!-- Match formControlName casing -->
+    <input
+      matInput
+      formControlName="UserName"
+      autocomplete="username"
+      aria-label="Username"
+      placeholder="Enter your username"
+    />
+    <mat-error *ngIf="loginForm.get('UserName')?.hasError('required')">
+      Username is required
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Password</mat-label>
+    <!-- Match formControlName casing -->
+    <input
+      matInput
+      type="password"
+      formControlName="Password"
+      autocomplete="current-password"
+      aria-label="Password"
+      placeholder="Enter your password"
+    />
+    <mat-error *ngIf="loginForm.get('Password')?.hasError('required')">
+      Password is required
+    </mat-error>
+    <mat-error *ngIf="loginForm.get('Password')?.hasError('minlength')">
+      Password must be at least 6 characters
+    </mat-error>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid" class="submit-btn">
+    Submit
+  </button>
+
+  <div *ngIf="error" class="error-msg">{{ error }}</div>
+</form>
