@@ -57,7 +57,7 @@ namespace FoodOrderingAPI.Services
                     ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
                     //use item repo
                     mapper.Map(shoppingcartitemDto, shoppingCartItem);
-                    shoppingCartItem.TotalPrice = item.Price;
+                    shoppingCartItem.TotalPrice = item.DiscountedPrice;
                     await shoppingCartItemsRepository.addItemToShoppingCart(shoppingCartItem);
                     await shoppingCartServices.UpdatePrices(shoppingcart);
                     await shoppingCartItemsRepository.Save();
@@ -94,7 +94,7 @@ namespace FoodOrderingAPI.Services
             {
                 ShoppingCart shoppingCart = await shoppingCartRepository.getById(shoppingCartItem.CartID);
                 shoppingCartItem.Quantity += Addition;
-                shoppingCartItem.TotalPrice = shoppingCartItem.Quantity * shoppingCartItem.Item.Price;
+                shoppingCartItem.TotalPrice = shoppingCartItem.Quantity * shoppingCartItem.Item.DiscountedPrice;
                 await shoppingCartServices.UpdatePrices(shoppingCart);
                 await shoppingCartItemsRepository.Save();
 
