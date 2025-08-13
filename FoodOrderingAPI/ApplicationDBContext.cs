@@ -44,6 +44,7 @@ namespace FoodOrderingAPI
                     {
                         Id = "Admin0",
                         UserName = "Admin",
+                        NormalizedUserName = "ADMIN",
                         PasswordHash = new PasswordHasher<User>().HashPassword(null, "AS_AS_s1"),
                         EmailConfirmed = true,
                         Role = RoleEnum.Admin,

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 namespace FoodOrderingAPI.Controllers
 {
     [EnableCors("AllowAngularDevClient")]
-    [Authorize(Roles = "Restaurant")]
+    //[Authorize(Roles = "Restaurant")]
     [ApiController]
     [Route("api/[controller]")]
     public class ItemController : ControllerBase
