@@ -12,7 +12,6 @@ using System.Security.Claims;
 namespace FoodOrderingAPI.Controllers
 {
     [EnableCors("AllowAngularDevClient")]
-    [Authorize(Roles = "Restaurant")]
     [ApiController]
     [Route("api/[controller]")]
     public class RestaurantController : ControllerBase

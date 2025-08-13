@@ -103,7 +103,7 @@ namespace FoodOrderingAPI.Repository
 
             var closestDeliveryMan = await _context.DeliveryMen
                 .Include(dm => dm.User)
-                .Where(dm => dm.AvailabilityStatus && dm.User != null && dm.User.Role == RoleEnum.DeliveryMan)
+                .Where(dm => dm.AvailabilityStatus && dm.User != null && dm.User.Role == RoleEnum.DeliveryMan && dm.AccountStatus == AccountStatusEnum.Active  )
                 .OrderBy(dm => dm.Location.Distance(orderLocation))
                 .ThenBy(dm => dm.LastOrderDate ?? DateTime.MinValue)
                 //.ToListAsync();

@@ -213,16 +213,16 @@ public class MappingProfile : Profile
         .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
 
 
-        CreateMap<NewOrderDTO, Order>()
-        .ForMember(dest => dest.Status, opt => opt.MapFrom(src => StatusEnum.WaitingToConfirm))
-        .ForMember(dest => dest.AddressID, opt => opt.MapFrom(src => src.AddressID))
-        .ForMember(dest => dest.DeliveredAt, opt => opt.Ignore()) //determine it after order reach to customer+ 
-        .ForMember(dest => dest.DeliveryManID, opt => opt.Ignore())//get it by function assignDelivaryMantoOrder+
-        .ForMember(dest => dest.OrderDate, opt => opt.Ignore())//create auto when create obj with time of now
-        .ForMember(dest => dest.OrderTimeToComplete, opt => opt.Ignore())//get the time by restaurant++  distance between restaurant and customer+
-        //.ForMember(dest => dest.PaymentTransactions, opt => opt.MapFrom(src => src.PaymentTransactions))
-        .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
-        .ForMember(dest => dest.PromoCodeID, opt => opt.MapFrom(src => src.PromoCodeID));
+        //CreateMap<NewOrderDTO, Order>()
+        //.ForMember(dest => dest.Status, opt => opt.MapFrom(src => StatusEnum.WaitingToConfirm))
+        //.ForMember(dest => dest.AddressID, opt => opt.MapFrom(src => src.AddressID))
+        //.ForMember(dest => dest.DeliveredAt, opt => opt.Ignore()) //determine it after order reach to customer+ 
+        //.ForMember(dest => dest.DeliveryManID, opt => opt.Ignore())//get it by function assignDelivaryMantoOrder+
+        //.ForMember(dest => dest.OrderDate, opt => opt.Ignore())//create auto when create obj with time of now
+        //.ForMember(dest => dest.OrderTimeToComplete, opt => opt.Ignore())//get the time by restaurant++  distance between restaurant and customer+
+        ////.ForMember(dest => dest.PaymentTransactions, opt => opt.MapFrom(src => src.PaymentTransactions))
+        //.ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
+        //.ForMember(dest => dest.PromoCodeID, opt => opt.MapFrom(src => src.PromoCodeID));
 
 
         CreateMap<ShoppingCart, Order>()
@@ -231,8 +231,8 @@ public class MappingProfile : Profile
         .ForMember(dest => dest.DiscountAmount, opt => opt.Ignore())//determine based on promocode applied
         .ForMember(dest => dest.RestaurantID, opt => opt.MapFrom(src => src.RestaurantID))
         .ForMember(dest => dest.SubTotal, opt => opt.MapFrom(src => src.SubTotal))
-        .ForMember(dest => dest.TotalPrice, opt => opt.Ignore());// it is already calculated 
-
+        .ForMember(dest => dest.TotalPrice, opt => opt.Ignore())// it is already calculated 
+        .ForMember(dest => dest.Status, opt => opt.MapFrom(src => StatusEnum.WaitingToConfirm));
 
 
         //orderDetails
