@@ -24,6 +24,7 @@ namespace FoodOrderingAPI.Services
                 ReviewID = Guid.NewGuid(),
                 CustomerID = review.CustomerID,
                 RestaurantID = review.RestaurantID,
+                UserName = review.UserName,
                 OrderID = review.OrderID,
                 Rating = review.Rating,
                 Comment = review.Comment,

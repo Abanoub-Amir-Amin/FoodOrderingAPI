@@ -16,7 +16,7 @@ namespace FoodOrderingAPI.Models
 
         [ForeignKey(nameof(Restaurant))]
         public string RestaurantID { get; set; }
-
+        public string UserName { get; set; }
         public float Rating { get; set; }
 
         [MaxLength(1000)]
