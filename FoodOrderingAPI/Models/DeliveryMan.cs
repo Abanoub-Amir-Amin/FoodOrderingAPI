@@ -5,12 +5,7 @@ using System.Drawing;
 
 namespace FoodOrderingAPI.Models
 {
-    public enum AccountStatusEnum
-    {
-        Rejected,
-        Active,
-        Pending
-    }
+   
     public class DeliveryMan
     {
         [Key, ForeignKey(nameof(User))]

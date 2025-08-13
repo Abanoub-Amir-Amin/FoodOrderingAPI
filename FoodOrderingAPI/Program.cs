@@ -187,10 +187,13 @@ namespace FoodOrderingAPI
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("public", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().SetIsOriginAllowed(_ => true));
-                //op.AddPolicy("subscription", policy =>
-                //{
-                //    policy.WithOrigins("127.0.0.1").WithHeaders("token", "role").WithMethods("get");
-                //});
+
+                options.AddPolicy("AllowAngularDevClient", policy =>
+                    policy.WithOrigins("https://localhost:7060", "http://localhost:4200", "http://localhost:3150")
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials());
+                
             });
 
             // It configures EF Core to use SQL Server as the database provider,
@@ -228,7 +231,7 @@ namespace FoodOrderingAPI
             app.UseStaticFiles();
 
             //app.UseHttpsRedirection();
-            app.UseCors("public");
+            app.UseCors("AllowAngularDevClient");
 
             app.UseAuthentication();
             app.UseAuthorization();
