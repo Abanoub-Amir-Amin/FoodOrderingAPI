@@ -24,14 +24,17 @@ namespace FoodOrderingAPI.Repository
             await _context.Reviews.AddAsync(review);
             await _context.SaveChangesAsync();
         }
-        public async Task DeleteReviewAsync(Guid reviewId)
+        public async Task<bool> DeleteReviewAsync(Guid reviewId)
         {
-            var review = await GetReviewByIdAsync(reviewId);
+            var review = await _context.Reviews.FindAsync(reviewId);
             if (review != null)
             {
-                _context.Reviews.Remove(review);
+                var isDeleted = _context.Reviews.Remove(review);
                 await _context.SaveChangesAsync();
+                Console.WriteLine(isDeleted);
+                return isDeleted != null;
             }
+            return false;
         }
 
         public async Task<IEnumerable<Review>> GetReviewsByOrderIdAsync(Guid orderId)

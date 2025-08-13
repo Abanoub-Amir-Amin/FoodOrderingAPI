@@ -47,7 +47,7 @@ namespace FoodOrderingAPI.Services
             }
         }
         public async Task<Customer> getCustomer(Guid shoppingcartid) {
-            return (await shoppingCartRepository.getById(shoppingcartid)).Customer;
+            return (await shoppingCartRepository.getById(shoppingcartid))?.Customer;
         }
         public async Task Create(ShoppingCart cart, string customerid)
         {

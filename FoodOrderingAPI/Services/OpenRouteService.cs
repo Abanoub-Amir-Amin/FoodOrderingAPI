@@ -90,13 +90,9 @@
             }
             if (!IsValidLating(destLat, destLng))
             {
-                throw new Exception("not valid latitude or longitude for destination location");
-            }
+                throw new Exception("not valid latitude or lngtitude for destination location");
 
-            // إضافة: التحقق من الترتيب المنطقي للإحداثيات (للقاهرة/مصر)
-            if (originLat > originLng || destLat > destLng)
-            {
-                Console.WriteLine("Warning: Coordinates might be swapped. In Egypt, latitude (~30.x) should be smaller than longitude (~31.x)");
+
             }
 
             // تحضير البيانات للإرسال
@@ -105,9 +101,9 @@
             {
                 coordinates = new[]
                 {
-            new[] { originLng, originLat }, // [lng, lat] - الطول الجغرافي أولاً
-            new[] { destLng, destLat }
-        }
+                new[] { originLng, originLat }, // [lng, lat]
+                new[] { destLng, destLat }
+            }
             };
 
             // إضافة debugging للتأكد من الترتيب
@@ -155,47 +151,16 @@
                 using var doc = JsonDocument.Parse(responseBody);
                 var root = doc.RootElement;
 
-                // التحقق من وجود routes
-                if (!root.TryGetProperty("routes", out var routes) || routes.GetArrayLength() == 0)
-                {
-                    throw new Exception("No routes found in API response");
-                }
-
-                // التحقق من وجود summary
-                var firstRoute = routes[0];
-                if (!firstRoute.TryGetProperty("summary", out var summary))
-                {
-                    throw new Exception("No summary found in route data");
-                }
-
-                // التحقق من وجود duration
-                if (!summary.TryGetProperty("duration", out var durationProperty))
-                {
-                    throw new Exception("No duration found in route summary");
-                }
-
-                double durationInSeconds = durationProperty.GetDouble();
-                TimeSpan durationSpan = TimeSpan.FromSeconds(durationInSeconds);
-
-                return durationSpan;
-            }
-            catch (HttpRequestException ex)
-            {
-                // تغيير 6: معالجة أفضل للأخطاء
-                Console.WriteLine($"HTTP Error: {ex.Message}");
-                throw new Exception($"Failed to get travel duration: {ex.Message}", ex);
-            }
-            catch (JsonException ex)
-            {
-                Console.WriteLine($"JSON Parsing Error: {ex.Message}");
-                throw new Exception("Invalid response format from routing service", ex);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"General Error: {ex.Message}");
-                throw;
-            }
+            var summary = root
+                .GetProperty("routes")[0]
+                .GetProperty("summary");
+            
+            double durationInSeconds = summary.GetProperty("duration").GetDouble();
+            TimeSpan durationspan = TimeSpan.FromSeconds(durationInSeconds);
+            return durationspan;
+            
         }
     }
 
-    }
+   
+}

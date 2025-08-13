@@ -40,7 +40,8 @@ namespace FoodOrderingAPI.Repository
             cart.UpdatedAt = DateTime.Now;
             //cart.ShoppingCartItems.Clear();
             dbContext.ShoppingCartItems.RemoveRange(cart.ShoppingCartItems);
-
+            cart.RestaurantID = null;
+            
         }
     
         public async Task Save()

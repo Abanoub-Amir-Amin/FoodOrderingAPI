@@ -11,6 +11,6 @@ namespace FoodOrderingAPI.Services
         Task<IEnumerable<Review>> GetReviewsByCustomerIdAsync(string customerId);
         Task<IEnumerable<Review>> GetReviewsByRestaurantIdAsync(string restaurantId);
         Task CreateReviewAsync(ReviewDto review);
-        Task DeleteReviewAsync(Guid reviewId);
+        Task<bool> DeleteReviewAsync(Guid reviewId);
     }
 }
