@@ -25,6 +25,7 @@ namespace FoodOrderingAPI.Services
         Task<IEnumerable<CustomerDTO>> GetCustomersOrderSummaryAsync();
 
 
+        Task<IEnumerable<CustomerDTO>> GetCustomersOrderSummaryAsync();
 
         Task<IEnumerable<Admin>> GetAllAdminsAsync();
         Task<Admin> GetAdminByUserNameAsync(string UserName);
@@ -34,7 +35,9 @@ namespace FoodOrderingAPI.Services
 
         Task<IEnumerable<Order>> GetAllOrdersAsync(StatusEnum status = StatusEnum.All);
 
+        Task<IEnumerable<Order>> GetAllOrdersAsync(StatusEnum status = StatusEnum.All); // null == all status orders
 
+        Task UpdateAdminAsync(AdminDto dto);
     }
 
 }

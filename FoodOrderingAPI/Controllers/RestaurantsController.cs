@@ -20,16 +20,16 @@ namespace FoodOrderingAPI.Controllers
     [ApiController]
     [Route("api/[controller]")]
     public class RestaurantController : ControllerBase
-    {
+    { 
         private readonly ApplicationDBContext _context;
-        private readonly IRestaurantService _service;
+        private readonly IRestaurantService _service;    
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _environment;
         private readonly UserManager<User> userManager;
         private readonly IConfirmationEmail confirmationEmail;
 
         public RestaurantController(IRestaurantService service, ApplicationDBContext context, IMapper mapper, IWebHostEnvironment environment, IConfirmationEmail confirmationEmail, UserManager<User> userManager)
-
+        
         {
             _service = service;
             _context = context;
@@ -59,6 +59,7 @@ namespace FoodOrderingAPI.Controllers
                 var result = await _service.ApplyToJoinAsync(dto);
 
                 // Return 201 Created with route to newly created resource
+                await confirmationEmail.SendConfirmationEmail(dto.User.Email, await userManager.FindByEmailAsync(dto.User.Email));
                 return CreatedAtAction(nameof(GetRestaurantById), new { id = result.UserId }, result);
             }
             catch (InvalidOperationException ex) when (ex.Message.Contains("already exists"))
@@ -141,6 +142,13 @@ namespace FoodOrderingAPI.Controllers
                 return BadRequest(new { errors });
             }
 
+            // Authorizing that the authenticated user is the owner of this restaurant ID
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdClaim != restaurantId)
+            {
+                return Forbid("You are not authorized to update this restaurant's profile.");
+            }
+
             try
             {
                 var updatedRestaurant = await _service.UpdateRestaurantProfileAsync(restaurantId, dto);
@@ -210,7 +218,7 @@ namespace FoodOrderingAPI.Controllers
             {
                 await _service.SetRestaurantLocation(restaurantId, restaurant.Latitude, restaurant.Longitude);
                 return Ok("Location updated successfully.");
-            }
+        }
             catch (Exception ex)
             {
                 // Optionally log the exception here

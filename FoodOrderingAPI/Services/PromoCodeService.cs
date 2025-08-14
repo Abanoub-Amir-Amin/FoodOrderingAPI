@@ -47,15 +47,15 @@ namespace FoodOrderingAPI.Services
             if (dto.ExpiryDate != null)
             {
                 existingCode.ExpiryDate = dto.ExpiryDate.Value;
-            }
+        }
 
             if (dto.Code != null)
-            {
+        {
                 existingCode.Code = dto.Code;
-            }
+        }
 
             if (dto.DiscountPercentage != null)
-            {
+        {
                 existingCode.DiscountPercentage = dto.DiscountPercentage.Value;
             }
 
@@ -113,8 +113,9 @@ namespace FoodOrderingAPI.Services
         }
 
         public async Task<PromoCode?> GetPromoCodeByIdAsync(Guid promoCodeId)
-        {
+            {
             return await _repository.GetPromoCodeByIdAsync(promoCodeId);
         }
+
     }
 }

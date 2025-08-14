@@ -6,6 +6,7 @@ namespace FoodOrderingAPI.Models
     {
         [Key]
         public Guid PromoCodeID { get; set; }
+        public string RestaurantID { get; set; }
 
         [MaxLength(50)]
         public string Code { get; set; }

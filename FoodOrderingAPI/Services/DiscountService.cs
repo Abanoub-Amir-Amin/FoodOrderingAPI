@@ -54,7 +54,7 @@ namespace FoodOrderingAPI.Services
             }
 
             if (dis.EndDate.HasValue)
-            {
+        {
                 existingDiscount.EndDate = dis.EndDate.Value;
             }
 

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FoodOrderingAPI.Controllers
 {
@@ -19,6 +20,7 @@ namespace FoodOrderingAPI.Controllers
     {
         private readonly ApplicationDBContext _context;
         private readonly IPromoCodeService _service;
+        private readonly IShoppingCartRepository _shoppingCartRepository;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _environment;
         private readonly IItemRepo itemRepo;
@@ -27,6 +29,7 @@ namespace FoodOrderingAPI.Controllers
 
         {
             _service = service;
+            _shoppingCartRepository = shoppingCartRepository;
             _context = context;
             _mapper = mapper;
             _environment = environment;
@@ -87,7 +90,14 @@ namespace FoodOrderingAPI.Controllers
 
             IEnumerable<PromoCode> promoCodes;
 
-            promoCodes = await _service.GetAllPromoCodesByRestaurantAsync(restaurantId);
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                promoCodes = await _service.GetAllPromoCodesByRestaurantAsync(restaurantId);
+            }
+            else
+            {
+                promoCodes = await _service.SearchPromoCodesByCodeAsync(restaurantId, code);
+            }
 
             var dtoList = _mapper.Map<IEnumerable<PromoCodeDto>>(promoCodes);
             return Ok(dtoList);

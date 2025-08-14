@@ -63,10 +63,10 @@ namespace FoodOrderingAPI.Controllers
         {
             try
             {
-                var item = await _ItemService.GetItemByIdAsync(itemId);
+            var item = await _ItemService.GetItemByIdAsync(itemId);
 
-                if (item == null)
-                    return NotFound($"There are no such item with ID '{itemId}'");
+            if (item == null)
+                return NotFound($"There are no such item with ID '{itemId}'");
 
                 var dto = _mapper.Map<ItemDto>(item);
                 return Ok(dto);
@@ -87,7 +87,7 @@ namespace FoodOrderingAPI.Controllers
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> UpdateItem(Guid itemId, [FromForm] ItemUpdateDto dto)
         {
-
+            
             var item = await _ItemService.UpdateItemAsync(itemId, dto);
 
             if (item == null)

@@ -24,6 +24,8 @@ public class MappingProfile : Profile
             // Avoid mapping User.Restaurant to prevent cycles
             .ForMember(dest => dest.User, opt => opt.Ignore());
 
+        // Map Restaurant → RestaurantProfileDto
+        CreateMap<Restaurant, RestaurantUpdateDto>().ReverseMap(); // Basic ReverseMap for profile updates
 
         CreateMap<Restaurant, RestaurantUpdateDto>()
             .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageFile))
@@ -39,6 +41,9 @@ public class MappingProfile : Profile
 
         // Map Order → OrderDto
         CreateMap<Order, OrderDto>();
+
+        // Map from Item entity to ItemDto
+        CreateMap<Item, ItemDto>();
 
         // Map DeliveryManDto → DeliveryMan
         CreateMap<DeliveryManDto, DeliveryMan>()
@@ -120,13 +125,15 @@ public class MappingProfile : Profile
 
 
 
+
+
         //CreateMap<RegisterCustomerDTO, User>()
         //   .ForMember(dest => dest.Role, opt => opt.MapFrom(src => RoleEnum.Customer))
         //   .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now));
 
+       
 
-
-        CreateMap<RegisterCustomerDTO, User>()
+          CreateMap<RegisterCustomerDTO, User>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
