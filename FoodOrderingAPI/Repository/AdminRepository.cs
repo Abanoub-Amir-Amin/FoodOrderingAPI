@@ -146,7 +146,7 @@ namespace FoodOrderingAPI.Repository
         public async Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(string customerId)
         {
             return await _context.Orders
-                .Include(o => o.OrderItems)  
+                .Include(o => o.OrderItems)
                 .Where(o => o.RestaurantID == customerId)
                 .ToListAsync();
         }
@@ -167,17 +167,7 @@ namespace FoodOrderingAPI.Repository
                 .ToListAsync();
         }
 
-        public async Task UpdateAdminAsync(Admin admin)
-        {
-            _context.Admins.Update(admin);
 
-            if (admin.User != null)
-            {
-                _context.Users.Update(admin.User);
-            }
-
-            await _context.SaveChangesAsync();
-        }
 
     }
 

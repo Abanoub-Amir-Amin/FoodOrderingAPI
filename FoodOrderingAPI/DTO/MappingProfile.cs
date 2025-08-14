@@ -24,8 +24,6 @@ public class MappingProfile : Profile
             // Avoid mapping User.Restaurant to prevent cycles
             .ForMember(dest => dest.User, opt => opt.Ignore());
 
-        // Map Restaurant → RestaurantProfileDto
-        CreateMap<Restaurant, RestaurantUpdateDto>().ReverseMap(); // Basic ReverseMap for profile updates
 
         CreateMap<Restaurant, RestaurantUpdateDto>()
             .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageFile))
@@ -41,9 +39,6 @@ public class MappingProfile : Profile
 
         // Map Order → OrderDto
         CreateMap<Order, OrderDto>();
-
-        // Map from Item entity to ItemDto
-        CreateMap<Item, ItemDto>();
 
         // Map DeliveryManDto → DeliveryMan
         CreateMap<DeliveryManDto, DeliveryMan>()
@@ -125,15 +120,13 @@ public class MappingProfile : Profile
 
 
 
-
-
         //CreateMap<RegisterCustomerDTO, User>()
         //   .ForMember(dest => dest.Role, opt => opt.MapFrom(src => RoleEnum.Customer))
         //   .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now));
 
-       
 
-          CreateMap<RegisterCustomerDTO, User>()
+
+        CreateMap<RegisterCustomerDTO, User>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
@@ -143,10 +136,10 @@ public class MappingProfile : Profile
         CreateMap<RegisterCustomerDTO, Customer>()
                  .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                  .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
-                 .ForMember(dest => dest.CustomerID, opt => opt.Ignore()) 
-                 .ForMember(dest => dest.UserID, opt => opt.Ignore())     
+                 .ForMember(dest => dest.CustomerID, opt => opt.Ignore())
+                 .ForMember(dest => dest.UserID, opt => opt.Ignore())
                  .ForMember(dest => dest.User, opt => opt.Ignore())
-                 .ForMember(dest => dest.Gender, opt => opt.Ignore())     
+                 .ForMember(dest => dest.Gender, opt => opt.Ignore())
                  .ForMember(dest => dest.Addresses, opt => opt.Ignore())
                  //.ForMember(dest => dest.RewardHistories, opt => opt.Ignore())
                  .ForMember(dest => dest.Orders, opt => opt.Ignore())
@@ -179,8 +172,8 @@ public class MappingProfile : Profile
                 src.Addresses.Select(a => $"{a.Label} - {a.Street}, {a.City}").ToList()))
             .ForMember(dest => dest.TotalOrders, opt => opt.MapFrom(src => src.Orders.Count))
             //.ForMember(dest => dest.TotalCancelledOrders, opt => opt.MapFrom(src => src.Orders.Where(o => o.Status==StatusEnum.Cancelled).Count()))
-            .ForMember(dest => dest.TotalDeliveredOrders, opt => opt.MapFrom(src => src.Orders.Where(O=>O.Status==StatusEnum.Delivered).Count()))
-            .ForMember(dest => dest.InProcessOrders, opt => opt.MapFrom(src => src.Orders.Where(o=> o.Status==StatusEnum.Preparing||o.Status==StatusEnum.WaitingToConfirm).ToList()));
+            .ForMember(dest => dest.TotalDeliveredOrders, opt => opt.MapFrom(src => src.Orders.Where(O => O.Status == StatusEnum.Delivered).Count()))
+            .ForMember(dest => dest.InProcessOrders, opt => opt.MapFrom(src => src.Orders.Where(o => o.Status == StatusEnum.Preparing || o.Status == StatusEnum.WaitingToConfirm).ToList()));
 
         //.ForMember(dest => dest.Rewards, opt => opt.MapFrom(src => src.RewardHistories.Select(r => r.Reason).ToList()))
         //.ForMember(dest => dest.TotalRewardspoints, opt => opt.MapFrom(src => src.RewardHistories.Sum(r => r.PointsEarned)));
@@ -308,7 +301,7 @@ public class MappingProfile : Profile
         .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
         .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber))
         .ForMember(dest => dest.items, opt => opt.MapFrom(src => src.OrderItems))
-        .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FirstName+" "+src.Customer.LastName))
+        .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FirstName + " " + src.Customer.LastName))
         .ForMember(dest => dest.CustomerAddress, opt => opt.MapFrom(src => $"{src.Address.Label} - {src.Address.Street}, {src.Address.City}"))
         .ForMember(dest => dest.CustomerPhone, opt => opt.MapFrom(src => src.PhoneNumber))
         .ForMember(dest => dest.RestaurantName, opt => opt.MapFrom(src => src.Restaurant.RestaurantName))

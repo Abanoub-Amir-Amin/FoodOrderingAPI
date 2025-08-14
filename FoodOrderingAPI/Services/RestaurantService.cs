@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using FoodOrderingAPI.DTO;
 using FoodOrderingAPI.DTO.FoodOrderingAPI.DTO;
-using Microsoft.AspNetCore.Http;
 using FoodOrderingAPI.Models;
 using FoodOrderingAPI.Repository;
 using Microsoft.AspNetCore.Http;
@@ -41,8 +40,6 @@ namespace FoodOrderingAPI.Services
             if (string.IsNullOrWhiteSpace(dto.User.Password)) throw new ArgumentException("Password is required", nameof(dto.User.Password));
             if (string.IsNullOrWhiteSpace(dto.User.UserName)) throw new ArgumentException("Username is required", nameof(dto.User.UserName));
 
-            Console.WriteLine($"Applying to join with User: {dto.User.UserName}, Email: {dto.User.Email}");
-            // 2. Check for existing users with same email or username
             var existingUserByEmail = await _userManager.FindByEmailAsync(dto.User.Email);
             if (existingUserByEmail != null)
                 throw new InvalidOperationException("A user with this email already exists.");
@@ -57,24 +54,22 @@ namespace FoodOrderingAPI.Services
             {
                 // Map and create the new user
                 var newUser = _mapper.Map<User>(dto.User);
-            newUser.Role = RoleEnum.Restaurant;
-            newUser.CreatedAt = DateTime.UtcNow;
+                newUser.Role = RoleEnum.Restaurant;
+                newUser.CreatedAt = DateTime.UtcNow;
 
-            // 5. Create user with hashed password via UserManager
-            var userCreateResult = await _userManager.CreateAsync(newUser, dto.User.Password);
-            if (!userCreateResult.Succeeded)
-            {
-                var errors = string.Join("; ", userCreateResult.Errors.Select(e => e.Description));
-                throw new InvalidOperationException($"Failed to create user: {errors}");
-            }
+                var userCreateResult = await _userManager.CreateAsync(newUser, dto.User.Password);
+                if (!userCreateResult.Succeeded)
+                {
+                    var errors = string.Join("; ", userCreateResult.Errors.Select(e => e.Description));
+                    throw new InvalidOperationException($"Failed to create user: {errors}");
+                }
 
-            // 6. Assign the "Restaurant" role to this user
-            var roleAssignResult = await _userManager.AddToRoleAsync(newUser, "Restaurant");
-            if (!roleAssignResult.Succeeded)
-            {
-                var errors = string.Join("; ", roleAssignResult.Errors.Select(e => e.Description));
-                throw new InvalidOperationException($"Failed to assign role: {errors}");
-            }
+                var roleAssignResult = await _userManager.AddToRoleAsync(newUser, "Restaurant");
+                if (!roleAssignResult.Succeeded)
+                {
+                    var errors = string.Join("; ", roleAssignResult.Errors.Select(e => e.Description));
+                    throw new InvalidOperationException($"Failed to assign role: {errors}");
+                }
 
                 // Save logo file if provided
                 if (dto.LogoFile != null && dto.LogoFile.Length > 0)
@@ -83,15 +78,15 @@ namespace FoodOrderingAPI.Services
                 }
 
                 // Map restaurant dto and assign references
-            var restaurantEntity = _mapper.Map<Restaurant>(dto);
-            restaurantEntity.RestaurantID = newUser.Id;
-            restaurantEntity.User = newUser;
+                var restaurantEntity = _mapper.Map<Restaurant>(dto);
+                restaurantEntity.RestaurantID = newUser.Id;
+                restaurantEntity.User = newUser;
                 restaurantEntity.ImageFile = dto.ImageUrl;
 
-            if (string.IsNullOrWhiteSpace(restaurantEntity.RestaurantID))
-            {
-                restaurantEntity.RestaurantID = Guid.NewGuid().ToString();
-            }
+                if (string.IsNullOrWhiteSpace(restaurantEntity.RestaurantID))
+                {
+                    restaurantEntity.RestaurantID = Guid.NewGuid().ToString();
+                }
 
                 restaurantEntity.IsActive = false;
 
@@ -113,9 +108,9 @@ namespace FoodOrderingAPI.Services
                 // delete user if created outside transaction (UserManager may create user outside EF)
                 var userToDelete = await _userManager.FindByNameAsync(dto.User.UserName);
                 if (userToDelete != null)
-            {
+                {
                     await _userManager.DeleteAsync(userToDelete);
-            }
+                }
 
                 throw; // rethrow error
             }

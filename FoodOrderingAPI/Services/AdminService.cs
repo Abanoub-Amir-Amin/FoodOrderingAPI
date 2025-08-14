@@ -137,14 +137,6 @@ namespace FoodOrderingAPI.Services
             return await _repository.GetAdminByUserNameAsync(UserName);
         }
 
-        public async Task<IEnumerable<Order>> GetAllOrdersAsync(StatusEnum status = StatusEnum.All)
-        {
-            if (status == StatusEnum.All)
-                return await _repository.GetAllOrdersAsync();
-
-            return await _repository.GetOrdersByStatusAsync(status);
-        }
-
         public async Task UpdateAdminAsync(AdminDto dto)
         {
             var admin = await _repository.GetAdminByUserNameAsync(dto.User.UserName);

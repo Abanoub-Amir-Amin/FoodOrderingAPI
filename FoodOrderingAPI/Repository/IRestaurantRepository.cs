@@ -6,7 +6,7 @@ namespace FoodOrderingAPI.Repository
 {
     public interface IRestaurantRepository
     {
-        
+
         //Restaurant Apply to Join
         Task<Restaurant> ApplyToJoinAsync(Restaurant restaurantEntity);
 

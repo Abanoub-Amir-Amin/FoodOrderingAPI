@@ -4,7 +4,7 @@ namespace FoodOrderingAPI.DTO
 {
     public class PromoCodeApplyDto
     {
-        public Guid? PromoCodeID {  get; set; }
+        public Guid? PromoCodeID { get; set; }
         public bool IsVaild { get; set; }
         [Column(TypeName = "decimal(10,2)")]
         public decimal SubTotal { get; set; } = 0;

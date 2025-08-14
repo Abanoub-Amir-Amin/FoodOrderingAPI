@@ -125,7 +125,7 @@ public class AdminController : Controller
         {
             await _adminService.DeactivateDeliveryMenAsync(id);
             return RedirectToAction(nameof(Dashboard));
-    }
+        }
         catch (KeyNotFoundException)
         {
             return NotFound();

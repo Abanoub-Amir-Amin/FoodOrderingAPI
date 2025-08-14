@@ -28,8 +28,7 @@ namespace FoodOrderingAPI.Services
         //PromoCode-CRUD
         public async Task<PromoCode> AddPromoCodeAsync(string restaurantId, PromoCode promoCode)
         {
-            promoCode.IssuedByID = restaurantId;
-            promoCode.IssuedByType = RoleEnum.Restaurant.ToString();
+            promoCode.RestaurantID = restaurantId;
             return await _repository.AddPromoCodeAsync(restaurantId, promoCode);
         }
 
@@ -47,15 +46,15 @@ namespace FoodOrderingAPI.Services
             if (dto.ExpiryDate != null)
             {
                 existingCode.ExpiryDate = dto.ExpiryDate.Value;
-        }
+            }
 
             if (dto.Code != null)
-        {
+            {
                 existingCode.Code = dto.Code;
-        }
+            }
 
             if (dto.DiscountPercentage != null)
-        {
+            {
                 existingCode.DiscountPercentage = dto.DiscountPercentage.Value;
             }
 
@@ -113,9 +112,8 @@ namespace FoodOrderingAPI.Services
         }
 
         public async Task<PromoCode?> GetPromoCodeByIdAsync(Guid promoCodeId)
-            {
+        {
             return await _repository.GetPromoCodeByIdAsync(promoCodeId);
         }
-
     }
 }

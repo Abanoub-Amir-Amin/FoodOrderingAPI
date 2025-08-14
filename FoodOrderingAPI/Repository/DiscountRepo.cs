@@ -42,11 +42,11 @@ namespace FoodOrderingAPI.Repository
             var item = await _context.Items.FirstOrDefaultAsync(i => i.ItemID == discount.ItemID);
             if (item != null)
             {
-            item.DiscountedPrice = item.Price * (1 - discount.Percentage / 100);
+                item.DiscountedPrice = item.Price * (1 - discount.Percentage / 100);
                 await StripeService.DeletePriceStripeAsync(item);
                 var priceId = await StripeService.CreatePriceStripeAsync(item, item.StripeProductId, discount.Percentage);
                 item.StripePriceId = priceId;
-            _context.Items.Update(item);
+                _context.Items.Update(item);
             }
             await _context.SaveChangesAsync();
             return discount;

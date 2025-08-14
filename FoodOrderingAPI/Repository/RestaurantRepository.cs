@@ -49,7 +49,6 @@ namespace FoodOrderingAPI.Repository
         }
         public async Task<Restaurant> UpdateRestaurantAsync(Restaurant restaurant)
         {
-            _context.Restaurants.Update(restaurant);
             await _context.SaveChangesAsync();
             return restaurant;
         }

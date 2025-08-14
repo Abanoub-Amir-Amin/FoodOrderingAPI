@@ -12,16 +12,6 @@ namespace FoodOrderingAPI.Repository
             _context = context;
         }
         // ===== Promo Codes CRUD =====
-        public async Task<PromoCode> GetPromoCodesByCodeAsync(string restaurantId, string code)
-        {
-            return await _context.PromoCodes
-                ?.FirstOrDefaultAsync(p => p.RestaurantID.ToString() == restaurantId && p.Code == code);
-        }
-        public async Task<PromoCode> GetPromoCodesById(Guid promocodeId)
-        {
-            return await _context.PromoCodes
-                .FindAsync(promocodeId);
-        }
         public async Task<PromoCode> AddPromoCodeAsync(string restaurantId, PromoCode promoCode)
         {
             promoCode.IssuedByID = restaurantId;
@@ -32,7 +22,6 @@ namespace FoodOrderingAPI.Repository
 
         public async Task<PromoCode> UpdatePromoCodeAsync(PromoCode promoCode)
         {
-            _context.PromoCodes.Update(promoCode);
             await _context.SaveChangesAsync();
             return promoCode;
         }

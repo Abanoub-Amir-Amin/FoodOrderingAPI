@@ -9,7 +9,5 @@
         public string Category { get; set; }
         public string? ImageFile { get; set; }
 
-        // The file being uploaded for the item's image
-        public IFormFile ImageFile { get; set; }
     }
 }

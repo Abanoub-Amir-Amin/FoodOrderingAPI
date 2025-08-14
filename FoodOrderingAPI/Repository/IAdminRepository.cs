@@ -34,7 +34,6 @@ namespace FoodOrderingAPI.Repository
         Task<IEnumerable<Order>> GetAllOrdersAsync();
         Task<IEnumerable<Order>> GetOrdersByStatusAsync(StatusEnum status);
 
-        Task UpdateAdminAsync(Admin admin);
 
     }
 }

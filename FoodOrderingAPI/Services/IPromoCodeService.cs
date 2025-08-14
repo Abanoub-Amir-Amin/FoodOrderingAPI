@@ -6,7 +6,6 @@ namespace FoodOrderingAPI.Services
     public interface IPromoCodeService
     {
         //PromoCode-CRUD
-        public Task<PromoCode> GetPromoCodesByCodeAsync(string restaurantId, string code);
         Task<PromoCode> AddPromoCodeAsync(string restaurantId, PromoCode promoCode);
         Task<PromoCode?> UpdatePromoCodeAsync(string restaurantId, Guid promoCodeId, PromoCodeDto dto);
         Task<bool> DeletePromoCodeAsync(Guid promoCodeId, string restaurantId);

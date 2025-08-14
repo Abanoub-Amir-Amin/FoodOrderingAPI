@@ -3,16 +3,12 @@ using FoodOrderingAPI.DTO;
 using FoodOrderingAPI.Models;
 using FoodOrderingAPI.Repository;
 using FoodOrderingAPI.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Index.HPRtree;
 
 namespace FoodOrderingAPI.Controllers
 {
-    [EnableCors("AllowAngularDevClient")]
-    [Authorize(Roles = "Restaurant")]
     [Route("api/[controller]")]
     [ApiController]
     public class DiscountController : ControllerBase
@@ -21,9 +17,7 @@ namespace FoodOrderingAPI.Controllers
         private readonly IDiscountService _service;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _environment;
-        private readonly IItemRepo itemRepo;
 
-        public DiscountController(IDiscountService service, ApplicationDBContext context, IMapper mapper, IWebHostEnvironment environment)
 
         public DiscountController(IDiscountService service, ApplicationDBContext context, IMapper mapper, IWebHostEnvironment environment)
         {
@@ -31,10 +25,9 @@ namespace FoodOrderingAPI.Controllers
             _context = context;
             _mapper = mapper;
             _environment = environment;
-            this.itemRepo = itemRepo;
 
         }
-        // ===== Discounts CRUD =====
+
         [HttpPost("{restaurantId}/discounts/{itemId}")]
         public async Task<IActionResult> AddDiscount(string restaurantId, Guid itemId, [FromBody] DiscountDto dto)
         {
@@ -68,9 +61,8 @@ namespace FoodOrderingAPI.Controllers
                 }
 
 
-            var updatedDiscount = await _service.UpdateDiscountAsync(discount);
-            return Ok(updatedDiscount);
-        }
+                return Ok(updatedDiscount);
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, new { error = "An error occurred while updating the discount info: " + ex.ToString() });

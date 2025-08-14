@@ -234,10 +234,10 @@ namespace FoodOrderingAPI.Controllers
         {
             var CustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var order = await _OrderService.getOrder(orderId);
-            if (order.CustomerID!=CustomerId)
+            if (order.CustomerID != CustomerId)
                 return Unauthorized($"this user with userId{CustomerId} not autherized to view this orderId");
 
-            var orderDetails =await _OrderService.getOrderDetails(orderId);
+            var orderDetails = await _OrderService.getOrderDetails(orderId);
             if (orderDetails == null) return NotFound();
             return Ok(orderDetails);
         }

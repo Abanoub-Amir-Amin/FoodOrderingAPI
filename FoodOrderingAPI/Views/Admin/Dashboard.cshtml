@@ -1,11 +1,9 @@
 ﻿@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model FoodOrderingAPI.DTO.DashboardDto
-
 @{
     ViewData["Title"] = "Admin Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml";
-}
 
     // Get the antiforgery token for use in JS
     var requestVerificationToken = Antiforgery.GetAndStoreTokens(Context).RequestToken;
@@ -111,12 +109,12 @@
             background-color: transparent !important;
         }
 
-        body.dark-mode #chatBtnhover,
-        body.dark-mode #chatBtnToggle:focus {
-            color: #0d6efd !important;
-            border-color: #0d6efd !important;
-            background-color: transparent !important;
-        }
+    body.dark-mode #chatBtnhover,
+    body.dark-mode #chatBtnToggle:focus {
+        color: #0d6efd !important;
+        border-color: #0d6efd !important;
+        background-color: transparent !important;
+    }
 
     /* Status select in dark mode */
     body.dark-mode #statusFilter {
@@ -278,42 +276,40 @@
                 <li class="nav-item mb-2" role="presentation">
                     <button class="nav-link" id="admin-tab" data-bs-toggle="pill" data-bs-target="#admin"
                             type="button" role="tab" aria-controls="admin" aria-selected="false">
-                            Admin Control
-                        </button>
-                    </li>
+                        Admin Control
+                    </button>
+                </li>
                 <li class="nav-item mb-2" role="presentation">
                     <button class="nav-link active" id="restaurant-tab" data-bs-toggle="pill" data-bs-target="#restaurant"
                             type="button" role="tab" aria-controls="restaurant" aria-selected="true">
-                            Restaurant Control
-                        </button>
-                    </li>
+                        Restaurant Control
+                    </button>
+                </li>
                 <li class="nav-item mb-2" role="presentation">
                     <button class="nav-link" id="customer-tab" data-bs-toggle="pill" data-bs-target="#customer"
                             type="button" role="tab" aria-controls="customer" aria-selected="false">
-                            Customer Control
-                        </button>
-                    </li>
+                        Customer Control
+                    </button>
+                </li>
                 <li class="nav-item mb-2" role="presentation">
                     <button class="nav-link" id="orders-tab" data-bs-toggle="pill" data-bs-target="#orders"
                             type="button" role="tab" aria-controls="orders" aria-selected="false">
-                            Orders Control
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
+                        Orders Control
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
                     <button class="nav-link" id="deliveryman-tab" data-bs-toggle="pill" data-bs-target="#deliveryman"
                             type="button" role="tab" aria-controls="deliveryman" aria-selected="false">
-                            Delivery Man Control
-                        </button>
-                    </li>
-                </ul>
-            </div>
+                        Delivery Man Control
+                    </button>
+                </li>
+            </ul>
         </nav>
 
         <!-- Main content -->
         <main class="col-md-10 col-lg-10">
 
             <div class="tab-content" id="dashboardTabsContent">
-
                 <!-- Restaurants tab -->
                 <div class="tab-pane fade show active" id="restaurant" role="tabpanel" aria-labelledby="restaurant-tab">
                     <div class="card shadow-sm">
@@ -328,30 +324,30 @@
                                             <th>Open Hours</th>
                                             <th class="text-center">Actions</th>
                                         </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var rest in Model.ActiveRestaurants)
-                            {
-                                <tr>
-                                    <td>@rest.RestaurantName</td>
-                                    <td>@rest.Location</td>
-                                    <td>@rest.OpenHours</td>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var rest in Model.ActiveRestaurants)
+                                        {
+                                            <tr>
+                                                <td>@rest.RestaurantName</td>
+                                                <td>@rest.Location</td>
+                                                <td>@rest.OpenHours</td>
                                                 <td class="text-center">
                                                     <form asp-action="DeactivateRestaurant" method="post" class="d-inline">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@rest.User.UserName" />
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@rest.User.UserName" />
                                                         <button class="btn btn-warning btn-sm me-1" type="submit" title="Deactivate">Deactivate</button>
-                                        </form>
+                                                    </form>
                                                     <form asp-action="DeleteRestaurant" method="post" class="d-inline" onsubmit="return confirm('Confirm delete?');">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@rest.User.UserName" />
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@rest.User.UserName" />
                                                         <button class="btn btn-danger btn-sm" type="submit" title="Delete">Delete</button>
-                                        </form> 
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -368,31 +364,31 @@
                                             <th>Open Hours</th>
                                             <th class="text-center">Actions</th>
                                         </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var rest in Model.InactiveRestaurants)
-                            {
-                                <tr>
-                                    <td>@rest.RestaurantName</td>
-                                    <td>@rest.Location</td>
-                                    <td>@rest.OpenHours</td>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var rest in Model.InactiveRestaurants)
+                                        {
+                                            <tr>
+                                                <td>@rest.RestaurantName</td>
+                                                <td>@rest.Location</td>
+                                                <td>@rest.OpenHours</td>
                                                 <td class="text-center">
                                                     <form asp-action="ActivateRestaurant" method="post" class="d-inline">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@rest.User.UserName" />
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@rest.User.UserName" />
                                                         <button class="btn btn-success btn-sm me-1" type="submit" title="Activate">Activate</button>
-                                        </form>
+                                                    </form>
                                                     <form asp-action="DeleteRestaurant" method="post" class="d-inline" onsubmit="return confirm('Confirm delete?');">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@rest.User.UserName" />
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@rest.User.UserName" />
                                                         <button class="btn btn-danger btn-sm" type="submit" title="Delete">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -447,18 +443,18 @@
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover align-middle mb-0">
                                     <thead class="table-dark">
-                            <tr>
+                                        <tr>
                                             <th>Account Status</th>
                                             <th>User Name</th>
-                                <th>Email</th>
+                                            <th>Email</th>
                                             <th>Phone Number</th>
                                             <th class="text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                                         @foreach (var del in Model.InactiveDeliveryMen)
-                            {
-                                <tr>
+                                        {
+                                            <tr>
                                                 <td>@del.AccountStatus</td>
                                                 <td>@del.User.UserName</td>
                                                 <td>@del.User.Email</td>
@@ -470,16 +466,16 @@
                                                         <button class="btn btn-success btn-sm me-1" type="submit" title="Activate">Activate</button>
                                                     </form>
                                                     <form asp-action="DeleteDeliveryMan" method="post" class="d-inline" onsubmit="return confirm('Confirm delete?');">
-                                            @Html.AntiForgeryToken()
+                                                        @Html.AntiForgeryToken()
                                                         <input type="hidden" name="id" value="@del.User.UserName" />
                                                         <button class="btn btn-danger btn-sm" type="submit" title="Delete">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -492,50 +488,49 @@
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover align-middle mb-0">
                                     <thead class="table-dark">
-                            <tr>
-                                <th>UserName</th>
-                                <th>Email</th>
-                                <th>Loyalty Points</th>
-                                <th>Total Orders</th>
-                                <th>Delivered Orders</th>
-                                <th>Cancelled Orders</th>
-                                <th>In-Process Orders</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var customer in Model.Customers)
-                            {
-                                <tr>
-                                    <td>@customer.UserName</td>
-                                    <td>@customer.Email</td>
-                                    @* <td>@customer.LoyaltyPoints</td> *@
-                                    <td>@customer.TotalOrders</td>
-                                    <td>@customer.TotalDeliveredOrders</td>
-                                                <td style="min-width:250px;">
-                                        @if (customer.InProcessOrders != null && customer.InProcessOrders.Any())
+                                        <tr>
+                                            <th>UserName</th>
+                                            <th>Email</th>
+                                            <th>Loyalty Points</th>
+                                            <th>Total Orders</th>
+                                            <th>Delivered Orders</th>
+                                            <th>Cancelled Orders</th>
+                                            <th>In-Process Orders</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var customer in Model.Customers)
                                         {
+                                            <tr>
+                                                <td>@customer.UserName</td>
+                                                <td>@customer.Email</td>
+                                                <td>@customer.TotalOrders</td>
+                                                <td>@customer.TotalDeliveredOrders</td>
+                                                <td style="min-width:250px;">
+                                                    @if (customer.InProcessOrders != null && customer.InProcessOrders.Any())
+                                                    {
                                                         <ul class="mb-0 ps-3">
-                                                @foreach (var order in customer.InProcessOrders)
-                                                {
-                                                    <li>
+                                                            @foreach (var order in customer.InProcessOrders)
+                                                            {
+                                                                <li>
                                                                     <strong>Order Date:</strong> @order.OrderDate.ToShortDateString(),
                                                                     <strong>Total:</strong> @order.TotalPrice.ToString("C"),
                                                                     <strong>Status:</strong> @order.Status,
                                                                     <strong>Items:</strong> @string.Join(", ", order.OrderItems.Select(o => $"{o.itemName} (x{o.Quantity})"))
-                                                    </li>
-                                                }
-                                            </ul>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    }
+                                                    else
+                                                    {
+                                                        <em>No In-Process Orders</em>
+                                                    }
+                                                </td>
+                                            </tr>
                                         }
-                                        else
-                                        {
-                                            <em>No In-Process Orders</em>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -548,32 +543,31 @@
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle mb-0">
                                     <thead class="table-dark">
-                            <tr>
-                                <th>UserName</th>
-                                <th>Email</th>
-                                <th>Phone</th>
+                                        <tr>
+                                            <th>UserName</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
                                             <th class="text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var admin in Model.Admins)
-                            {
-                                <tr>
-                                    <td>@admin.User.UserName</td>
-                                    <td>@admin.User.Email</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var admin in Model.Admins)
+                                        {
+                                            <tr>
+                                                <td>@admin.User.UserName</td>
+                                                <td>@admin.User.Email</td>
                                                 <td>@admin.User.PhoneNumber</td>
                                                 <td class="text-center">
                                                     <a asp-action="EditAdmin" asp-route-userId="@admin.User.UserName" class="btn btn-primary btn-sm" title="Update Admin">Update</a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-
 
                 <!-- Orders tab -->
                 <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
@@ -584,43 +578,43 @@
                                 <form method="get" class="d-flex align-items-center gap-2 flex-wrap">
                                     <label for="statusFilter" class="fw-semibold mb-0">Status:</label>
                                     <select id="statusFilter" asp-for="SelectedStatus" asp-items="Model.StatusList" class="form-select form-select-sm" style="min-width: 180px;"></select>
-                            <button type="submit" class="btn btn-primary btn-sm">Filter</button>
-                        </form>
+                                    <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+                                </form>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover align-middle mb-0">
                                     <thead class="table-dark">
-                            <tr>
-                                <th>Customer</th>
-                                <th>Restaurant ID</th>
-                                <th>Order Date</th>
-                                <th>Status</th>
-                                <th>Total Price</th>
-                                <th>Order Items</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var order in Model.Orders) 
-                            {
-                                <tr>
+                                        <tr>
+                                            <th>Customer</th>
+                                            <th>Restaurant ID</th>
+                                            <th>Order Date</th>
+                                            <th>Status</th>
+                                            <th>Total Price</th>
+                                            <th>Order Items</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var order in Model.Orders)
+                                        {
+                                            <tr>
                                                 <td>@order.Customer.FirstName @order.Customer.LastName</td>
-                                    <td>@order.RestaurantID</td>
-                                    <td>@order.OrderDate.ToShortDateString()</td>
-                                    <td>@order.Status</td>
-                                    <td>@order.TotalPrice.ToString("C")</td>
-                                    <td>
+                                                <td>@order.RestaurantID</td>
+                                                <td>@order.OrderDate.ToShortDateString()</td>
+                                                <td>@order.Status</td>
+                                                <td>@order.TotalPrice.ToString("C")</td>
+                                                <td>
                                                     <ul class="mb-0 ps-3">
-                                            @foreach (var item in order.OrderItems)
-                                            {
-                                                <li>@item.itemName (@item.Quantity)</li>
-                                            }
-                                        </ul>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                                                        @foreach (var item in order.OrderItems)
+                                                        {
+                                                            <li>@item.itemName (@item.Quantity)</li>
+                                                        }
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
