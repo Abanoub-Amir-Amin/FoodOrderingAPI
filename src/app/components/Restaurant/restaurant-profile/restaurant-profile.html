@@ -1,0 +1,146 @@
+<div class="profile-container" *ngIf="profileForm">
+  <h2>Your Profile</h2>
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" novalidate>
+
+    <!-- Restaurant Name -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Restaurant Name</mat-label>
+      <input
+        matInput
+        formControlName="restaurantName"
+        placeholder="Enter your restaurant's name"
+        title="Restaurant Name"
+        required
+        aria-describedby="restaurantNameError"
+      />
+      <mat-error id="restaurantNameError" *ngIf="profileForm.get('restaurantName')?.hasError('required')">
+        Restaurant name is required.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Location -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Location</mat-label>
+      <input
+        matInput
+        formControlName="location"
+        placeholder="Enter the location"
+        title="Location"
+        required
+        aria-describedby="locationError"
+      />
+      <mat-error id="locationError" *ngIf="profileForm.get('location')?.hasError('required')">
+        Location is required.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Open Hours -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Open Hours</mat-label>
+      <input
+        matInput
+        formControlName="openHours"
+        placeholder="e.g., 9 AM - 10 PM"
+        title="Open Hours"
+      />
+    </mat-form-field>
+
+    <!-- userName -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>User Name</mat-label>
+      <input
+        matInput
+        formControlName="userName"
+        type="userName"
+        placeholder="Enter your user Name address"
+        title="userName"
+        required
+        aria-describedby="userNameError userNamenvalidError"
+      />
+      <mat-error id="userNameError" *ngIf="profileForm.get('userName')?.hasError('required')">
+        Email is required.
+      </mat-error>
+      <mat-error id="userNamenvalidError" *ngIf="profileForm.get('userName')?.hasError('userName')">
+        Please enter a valid email address.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Email -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        formControlName="email"
+        type="email"
+        placeholder="Enter your email address"
+        title="Email"
+        required
+        aria-describedby="emailError emailInvalidError"
+      />
+      <mat-error id="emailError" *ngIf="profileForm.get('email')?.hasError('required')">
+        Email is required.
+      </mat-error>
+      <mat-error id="emailInvalidError" *ngIf="profileForm.get('email')?.hasError('email')">
+        Please enter a valid email address.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Phone -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Phone</mat-label>
+      <input
+        matInput
+        formControlName="phoneNumber"
+        type="tel"
+        placeholder="Enter your phone number"
+        title="Phone Number"
+      />
+    </mat-form-field>
+  
+    <!-- Image Upload Section -->
+    <!-- <section class="image-upload-section">
+      <label for="imageFileInput" class="image-label">Restaurant Image</label> -->
+
+      <!-- Preview or fallback -->
+      <!-- <div class="image-preview-container" *ngIf="imagePreviewUrl; else noImage">
+        <img
+          [src]="imagePreviewUrl"
+          alt="{{ profileForm.get('restaurantName')?.value || 'Default Restaurant Logo' }}"
+          class="image-preview"
+          loading="lazy"
+        />
+      </div>
+      <ng-template #noImage>
+        <p class="no-image-text">No image uploaded</p>
+      </ng-template> -->
+
+      <!-- File input -->
+      <!-- <input
+        type="file"
+        id="imageFileInput"
+        (change)="onFileSelected($event)"
+        accept="image/*"
+        aria-label="Upload restaurant image"
+        class="image-file-input"
+      />
+    </section> -->
+
+    <!-- Accept Orders Checkbox -->
+    <mat-checkbox formControlName="isAvailable" aria-label="Accept Orders (Is Available)" class="availability-checkbox">
+      Accept Orders (Is Available)
+    </mat-checkbox>
+
+    <!-- Submit Button -->
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="isSubmitting || profileForm.invalid"
+      aria-label="Save Changes"
+      class="submit-button"
+    >
+      {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
+    </button>
+
+  </form>
+</div>

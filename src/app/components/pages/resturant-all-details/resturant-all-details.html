@@ -1,0 +1,120 @@
+<div class="container">
+    <app-main-layout/>
+    <div class="row">
+        <div class="container py-4">
+
+  @if (!loading) {
+
+    <!-- كارد تفاصيل المطعم -->
+    <div class="restaurant-header card shadow-sm mb-4 border-0 overflow-hidden">
+      <div class="row g-0 align-items-center">
+
+        <!-- النصوص -->
+        <div class="col-md-8 p-4 d-flex flex-column justify-content-center">
+          <p class="text-muted mb-1">
+            Desi Flavours with a blend of Italian aesthetics!
+          </p>
+          <h2 class="fw-bold">{{ restaurant?.restaurantName }}</h2>
+
+          <div class="d-flex gap-3 mt-3">
+            <div class="info-pill">
+              <i class="bi bi-bicycle"></i>
+              Delivery in 20–25 Minutes
+            </div>
+          </div>
+        </div>
+
+        <!-- صورة المطعم -->
+        <div class="col-md-4 position-relative">
+          <img 
+            class="img-fluid h-100 w-100 object-fit-cover"
+            [src]="'http://localhost:5000/' + (restaurant?.imageFile?.startsWith('wwwroot') ? restaurant.imageFile.slice(8) : restaurant.imageFile)"
+            alt="صورة المطعم">
+
+          <!-- التقييم -->
+          <div class="rating-box shadow-sm position-absolute bottom-0 start-0 p-2 bg-dark bg-opacity-75 rounded text-center">
+            <div class="text-white fw-bold">
+              {{ restaurant?.rating || 4.5 }}
+            </div>
+            <div class="text-warning">★★★★☆</div>
+            <small class="text-muted">{{ reviews.length }} reviews</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- حالة الفتح -->
+      <div class="open-status px-3 py-2 text-white fw-bold ">
+        Open until 3:00 AM
+      </div>
+    </div>
+
+    <!-- قائمة الأطباق -->
+    <h4 class="mb-3">Resturant Menu</h4>
+  <div class="row g-4">
+  @for (item of items; track item.itemID) {
+    <div class="col-12 col-md-3 col-lg-3">
+      <div class="card border-0 shadow-sm h-80 rounded-4 overflow-hidden" style="max-width: 500px; ">
+        
+        <!-- صورة -->
+        <div class="text-center pt-3">
+          <img
+            class="rounded-circle border border-2 border-light shadow-sm"
+            style="width: 150px; height: 150px; object-fit: cover;"
+            [src]="'http://localhost:5000/' + (item.imageFile?.startsWith('wwwroot') ? item.imageFile.slice(8) : item.imageFile)"
+            alt="{{ item.name }}">
+        </div>
+
+        <!-- المحتوى -->
+        <div class="card-body text-center ">
+          <h6 class="fw-bold mb-1">{{ item.name }}</h6>
+          <p class="text-muted small mb-2">{{ item.description }}</p>
+          <div class="fw-bold text-success small mb-2">
+            {{ item.price }}
+          </div>
+          <button class="btn btn-primary btn-sm  rounded-pill shadow-sm" style="padding: 8px 14px; min-width: 90px;">
+            Add To Cart
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+</div>
+
+
+
+    <!-- آراء العملاء -->
+    <h4 class="mt-5 mb-3">Customer Review</h4>
+    @if (reviews.length > 0) {
+      <div class="row g-4">
+        @for (review of reviews; track review.reviewID) {
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0 p-3 h-100">
+              <div class="d-flex align-items-center mb-3">
+               
+                <div>
+                  <strong>{{ review.userName }}</strong>
+                  <div class="text-warning">
+                    ★★★★★
+                  </div>
+                  <small class="text-muted">{{ review.createdAt }}</small>
+                </div>
+              </div>
+              <p class="mb-0">{{ review.comment }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <p class="text-muted">لا توجد آراء حتى الآن.</p>
+    }
+
+  } @else {
+    <p class="text-center py-5">جارِ تحميل البيانات...</p>
+  }
+
+</div>
+
+    </div>
+    <app-footer/>
+</div>

@@ -1,0 +1,132 @@
+.head {
+  width: calc(100% - 5rem);
+  margin-left: 5rem;
+  z-index: 1;
+  transition: all 0.5s ease;
+  background: var(--light-yellow-color);
+  padding: 1rem 1.5rem 0 1.5rem;
+  position: fixed;
+  height: 95px;
+  top: 0;
+}
+
+.head .head-content {
+  background-color: var(--body-color);
+  border-radius: 0.625rem;
+  box-shadow: 0px 0px 10px 0 rgb(34 41 47 / 10%);
+  padding: 0.813rem 1.563rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.head-content-right {
+  display: flex;
+  align-items: center;
+  justify-self: start;
+}
+
+.head-menu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 1.25rem;
+}
+
+.head-menu-item-btn {
+  font-size: 20px;
+  font-weight: 700;
+  height: 50px;
+  width: 50px;
+  cursor: pointer;
+  border: 5px solid var(--light-yellow-color);
+  border-radius: 50%;
+  margin-left: 5px;
+  outline: 0;
+  color: var(--text-color);
+  background-color: var(--third-color);
+}
+
+.head-menu-item-btn:hover,
+.head-menu-item-btn:focus {
+  border: 2px solid var(--third-color);
+  background-color: var(--body-color);
+}
+
+.head-user-avatar-container {
+  margin-left: 20px;
+}
+
+.head-user-avatar {
+  position: relative;
+}
+
+.user-avatar {
+  margin-bottom: -4px;
+  width: 50px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgb(35 35 35 /15%);
+  cursor: pointer;
+}
+.welcome-format {
+  font-weight: 900;
+  font-family: var(--subtitle-font);
+  font-size: 25px;
+  color: var(--text-color);
+}
+
+.circle-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: absolute;
+  top: -2px;
+  right: -3px;
+  background: gray;
+}
+
+.circle-indicator-active {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: absolute;
+  top: -2px;
+  right: -3px;
+  background: var(--first-color-alt);
+}
+.circle-indicator-active.pulse {
+  animation: pulse-animation 1.2s infinite;
+}
+
+@keyframes pulse-animation {
+  0% {
+    box-shadow: 0 0 0 0 #ffcc80a0;
+  }
+  100% {
+    box-shadow: 0 0 0 13px rgba(17, 64, 126, 0);
+  }
+}
+
+.head-trimmed {
+  width: calc(100% - 16.5625rem);
+  margin-left: 16.5625rem;
+}
+
+.head-md-screen {
+  width: calc(100% - 5rem);
+  margin-left: 5rem;
+  background-color: var(--light-yellow-color);
+}
+
+@media all and (min-width: 300px) and (max-width: 600px) {
+  .head {
+    padding: 0;
+  }
+  .head .head-content {
+    background-color: var(--white-color);
+    flex-direction: column-reverse;
+  }
+  .head-content-left {
+    margin-bottom: 15px;
+  }
+}

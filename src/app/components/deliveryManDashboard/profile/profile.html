@@ -1,0 +1,190 @@
+<!-- Outer Container -->
+<div class="outer-container">
+  <!-- Inner Container -->
+  <div class="inner-container">
+    <!-- Header -->
+    <div class="profile-header">
+      <h1 class="profile-title">
+        <i class="fas fa-user-circle"></i>
+        Profile
+      </h1>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading profile...</p>
+    </div>
+
+    <!-- Error Alert -->
+    <div *ngIf="errorMessage" class="alert alert-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Success Alert -->
+    <div *ngIf="successMessage" class="alert alert-success">
+      <i class="fas fa-check-circle"></i>
+      {{ successMessage }}
+    </div>
+
+    <!-- Profile Form -->
+    <div *ngIf="!isLoading" class="profile-form-container">
+      <div class="profile-form" (submit)="onSubmit()">
+        <!-- User Name Field -->
+        <div class="form-group">
+          <label for="userName" class="form-label">
+            <i class="fas fa-user"></i>
+            User Name
+          </label>
+          <input
+            type="text"
+            id="userName"
+            [(ngModel)]="formData.userName"
+            class="form-input"
+            [class.error]="!isValidUserName && formTouched.userName"
+            placeholder="Enter your name"
+            (blur)="onFieldBlur('userName')"
+            (input)="validateUserName()"
+          />
+          <div
+            *ngIf="!isValidUserName && formTouched.userName"
+            class="error-message"
+          >
+            {{ userNameError }}
+          </div>
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="email" class="form-label">
+            <i class="fas fa-envelope"></i>
+            Email Address
+          </label>
+          <input
+            type="email"
+            id="email"
+            [(ngModel)]="formData.email"
+            class="form-input"
+            [class.error]="!isValidEmail && formTouched.email"
+            placeholder="Enter your email"
+            (blur)="onFieldBlur('email')"
+            (input)="validateEmail()"
+          />
+          <div *ngIf="!isValidEmail && formTouched.email" class="error-message">
+            {{ emailError }}
+          </div>
+        </div>
+
+        <!-- Phone Field -->
+        <div class="form-group">
+          <label for="phoneNumber" class="form-label">
+            <i class="fas fa-phone"></i>
+            Phone Number
+          </label>
+          <input
+            type="tel"
+            id="phoneNumber"
+            [(ngModel)]="formData.phoneNumber"
+            class="form-input"
+            [class.error]="!isValidPhone && formTouched.phoneNumber"
+            placeholder="01xxxxxxxxx"
+            (blur)="onFieldBlur('phoneNumber')"
+            (input)="validatePhone()"
+          />
+          <div
+            *ngIf="!isValidPhone && formTouched.phoneNumber"
+            class="error-message"
+          >
+            {{ phoneError }}
+          </div>
+        </div>
+
+        <!-- Location Section -->
+        <div class="location-section">
+          <h3 class="section-title">
+            <i class="fas fa-map-marker-alt"></i>
+            Your Location
+          </h3>
+
+          <!-- Current Location Display -->
+          <div class="current-location">
+            <div class="location-info">
+              <span class="location-label">Current Location:</span>
+              <div class="coordinates">
+                <span class="coordinate">{{
+                  currentLat | number : "1.6-6"
+                }}</span
+                >,
+                <span class="coordinate">{{
+                  currentLng | number : "1.6-6"
+                }}</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="edit-location-btn"
+              [class.active]="isEditingLocation"
+              (click)="updateLocationMode()"
+            >
+              <i
+                class="fas"
+                [ngClass]="isEditingLocation ? 'fa-save' : 'fa-edit'"
+              ></i>
+              {{ isEditingLocation ? "Save Location" : "Edit Location" }}
+            </button>
+          </div>
+
+          <!-- Map Container -->
+          <div class="map-wrapper">
+            <div id="profileMap" class="map-container"></div>
+            <div *ngIf="isEditingLocation" class="map-instructions">
+              <i class="fas fa-info-circle"></i>
+              Click on map or drag marker to update location
+            </div>
+          </div>
+
+          <!-- Map Controls -->
+          <div class="map-controls">
+            <button
+              type="button"
+              class="current-location-btn"
+              (click)="getCurrentLocation()"
+            >
+              <i class="fas fa-crosshairs"></i>
+              Use Current Location
+            </button>
+          </div>
+
+          <!-- Hidden coordinate inputs -->
+          <input type="hidden" [(ngModel)]="formData.latitude" />
+          <input type="hidden" [(ngModel)]="formData.longitude" />
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="!isFormValid || isUpdating"
+            (click)="onSubmit()"
+          >
+            <i *ngIf="isUpdating" class="fas fa-spinner fa-spin"></i>
+            <i *ngIf="!isUpdating" class="fas fa-save"></i>
+            {{ isUpdating ? "Updating..." : "Update Profile" }}
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="onCancel()"
+            [disabled]="isUpdating"
+          >
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

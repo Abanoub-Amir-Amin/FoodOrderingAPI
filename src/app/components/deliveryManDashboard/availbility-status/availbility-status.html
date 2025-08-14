@@ -1,0 +1,38 @@
+<!-- Outer Container -->
+<div class="outer-container">
+  <!-- Inner Container -->
+  <div class="inner-container">
+    <!-- Header -->
+    <div class="status-header">
+      <h1 class="status-title">
+        <i class="fa-solid fa-motorcycle"></i>
+        Availability Status
+      </h1>
+
+      <!-- PARAGRAPH -->
+      <div class="status-paragraph">
+        <p class="status-paragraph-text">
+          When the availability button is ON, you can receive orders; when it’s
+          OFF, you will not get any orders. Turn it ON when ready to work and
+          OFF when you’re not.
+        </p>
+      </div>
+
+      <!-- Check Button -->
+      <div class="check-container">
+        <div class="form-check form-switch custom-switch">
+          <input
+            #switchInput
+            class="form-check-input"
+            type="checkbox"
+            role="switch"
+            id="flexSwitchCheckDisabled"
+            placeholder="Sswitch"
+            [(ngModel)]="isSwitched"
+            (change)="switchAvailabilityStatus(switchInput.checked)"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

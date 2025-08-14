@@ -1,0 +1,3 @@
+.summary-card { padding: 18px; }
+    .summary-grid { display: flex; gap: 20px; justify-content: space-between; }
+    span { font-weight: 600; }

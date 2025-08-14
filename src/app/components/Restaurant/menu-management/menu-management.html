@@ -1,0 +1,399 @@
+<div class="menu-management">
+  <h2>Menu Management</h2>
+
+  <!-- Filters -->
+  <div class="filters">
+    <mat-form-field appearance="outline" floatLabel="always">
+      <mat-label>Filter by Category</mat-label>
+      <mat-select [(value)]="categoryFilter" (selectionChange)="onCategoryChange($event.value)">
+        <mat-option value="">All Categories</mat-option>
+        <mat-option *ngFor="let c of categories" [value]="c">{{ c }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" floatLabel="always">
+      <mat-label>Search by Name</mat-label>
+      <input
+        matInput
+        [(ngModel)]="nameFilter"
+        name="nameFilter"
+        (ngModelChange)="onNameFilterChange($event)"
+        placeholder="Enter name to search"
+      />
+    </mat-form-field>
+  </div>
+
+  <!-- Items Table -->
+  <table mat-table [dataSource]="filteredItems" class="mat-elevation-z8" aria-label="Item list table">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef scope="col">Name</th>
+      <td mat-cell *matCellDef="let item">{{ item.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="category">
+      <th mat-header-cell *matHeaderCellDef scope="col">Category</th>
+      <td mat-cell *matCellDef="let item">{{ item.category }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="price">
+      <th mat-header-cell *matHeaderCellDef scope="col">Price ($)</th>
+      <td mat-cell *matCellDef="let item">{{ item.price | number: '1.2-2' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="isAvailable">
+      <th mat-header-cell *matHeaderCellDef scope="col">Available</th>
+      <td mat-cell *matCellDef="let item">{{ item.isAvailable ? 'Yes' : 'No' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="imageFile">
+      <th mat-header-cell *matHeaderCellDef scope="col">Image</th>
+      <td mat-cell *matCellDef="let item"><img [src]="getImageUrl(item?.imageFile)" class="img" alt="{{item.name}}"/></td>
+    </ng-container>
+ 
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef scope="col">Actions</th>
+      <td mat-cell *matCellDef="let item">
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="editItem(item)"
+          [attr.aria-label]="'Edit Item ' + item.Name"
+          type="button"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="deleteItem(item)"
+          [attr.aria-label]="'Delete Item ' + item.Name"
+          type="button"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['name', 'category', 'price', 'isAvailable', 'imageFile', 'actions']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['name', 'category', 'price', 'isAvailable', 'imageFile', 'actions']"></tr>
+  </table>
+
+  <!-- Add New Item Form -->
+  <section class="add-item-form">
+    <h3>Add New Item</h3>
+    <form [formGroup]="addItemForm" (ngSubmit)="submitItem()" aria-label="Add New Item Form">
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" placeholder="Enter item name" aria-required="true" />
+          <mat-error *ngIf="addItemForm.get('name')?.touched && addItemForm.get('name')?.invalid">
+            Name is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Category</mat-label>
+          <input matInput formControlName="category" placeholder="Enter category" aria-required="true" />
+          <mat-error *ngIf="addItemForm.get('category')?.touched && addItemForm.get('category')?.invalid">
+            Category is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Price</mat-label>
+          <input
+            matInput
+            formControlName="price"
+            type="number"
+            min="0"
+            placeholder="Enter price"
+            aria-required="true"
+          />
+          <mat-error *ngIf="addItemForm.get('price')?.touched && addItemForm.get('price')?.invalid">
+            Valid price is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" placeholder="Enter item description" rows="3"></textarea>
+      </mat-form-field>
+
+      <div class="form-row" style="align-items: center;">
+        <mat-checkbox formControlName="isAvailable" aria-label="Is Available">Is Available</mat-checkbox>
+      </div>
+      <div class="file-input-container" style="display: flex; flex-direction: column;">
+        <label for="item-image" class="file-input-label" style="font-size: 0.9rem; margin-bottom: 4px;">Image</label>
+        <input
+          id="item-image"
+          type="file"
+          (change)="onImageFileChange($event)"
+          accept="image/*"
+          aria-label="Select image file"
+          title="Select image file"
+        />
+      </div>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="addItemForm.invalid"
+          aria-label="Add Item"
+        >
+          Add/Update Item
+        </button>
+      
+    </form>
+  </section>
+
+  <!-- Discounts Section -->
+  <section class="discounts-section">
+    <h3>Manage Discounts</h3>
+
+    <table mat-table [dataSource]="Discounts" class="mat-elevation-z8" aria-label="Discounts Table">
+      <ng-container matColumnDef="itemName">
+        <th mat-header-cell *matHeaderCellDef scope="col">Item</th>
+        <td mat-cell *matCellDef="let d">
+          <ng-container *ngIf="getItemById(d.ItemID) as foundItem; else unknownItem">
+            {{ foundItem.name }}
+          </ng-container>
+          <ng-template #unknownItem>Unknown</ng-template>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="percentage">
+        <th mat-header-cell *matHeaderCellDef scope="col">% Discount</th>
+        <td mat-cell *matCellDef="let d">{{ d.percentage }}%</td>
+      </ng-container>
+
+      <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef scope="col">Start Date</th>
+        <td mat-cell *matCellDef="let d">{{ d.startDate | date }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="endDate">
+        <th mat-header-cell *matHeaderCellDef scope="col">End Date</th>
+        <td mat-cell *matCellDef="let d">{{ d.endDate | date }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef scope="col">Actions</th>
+        <td mat-cell *matCellDef="let d">
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="editDiscount(d)"
+            aria-label="Edit Discount"
+            type="button"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="deleteDiscount(d)"
+            aria-label="Delete Discount"
+            type="button"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['itemName', 'percentage', 'startDate', 'endDate', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['itemName', 'percentage', 'startDate', 'endDate', 'actions']"></tr>
+    </table>
+
+    <h4>{{ discountForm.value.discountID ? 'Edit Discount' : 'Add Discount' }}</h4>
+    <form [formGroup]="discountForm" (ngSubmit)="submitDiscount()" aria-label="Add or Edit Discount Form">
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Select Item</mat-label>
+          <mat-select formControlName="itemId" required aria-required="true">
+            <mat-option *ngFor="let item of items" [value]="item.itemID">{{ item.name }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="discountForm.get('itemId')?.touched && discountForm.get('itemId')?.invalid">
+            Item is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Discount Percentage</mat-label>
+          <input
+            matInput
+            formControlName="percentage"
+            type="number"
+            min="0"
+            max="100"
+            required
+            placeholder="0.00"
+            aria-required="true"
+          />
+          <mat-error *ngIf="discountForm.get('percentage')?.touched && discountForm.get('percentage')?.invalid">
+            0-100%
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Start Date</mat-label>
+          <input
+            matInput
+            formControlName="startDate"
+            type="date"
+            required
+            placeholder="mm/dd/yyyy"
+            aria-required="true"
+          />
+          <mat-error *ngIf="discountForm.get('startDate')?.touched && discountForm.get('startDate')?.invalid">
+            Start date required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>End Date</mat-label>
+          <input
+            matInput
+            formControlName="endDate"
+            type="date"
+            required
+            placeholder="mm/dd/yyyy"
+            aria-required="true"
+          />
+          <mat-error *ngIf="discountForm.get('endDate')?.touched && discountForm.get('endDate')?.invalid">
+            End date required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-actions">
+        <button mat-raised-button color="primary" type="submit" [disabled]="discountForm.invalid">
+          {{ discountForm.value.discountID ? 'Update Discount' : 'Add Discount' }}
+        </button>
+        <button mat-button type="button" (click)="cancelDiscountEdit()">Cancel</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Promo Codes Management Section -->
+  <section class="promo-codes-section">
+    <h3>Promo Codes Management</h3>
+
+    <!-- Search Promo Codes -->
+    <mat-form-field appearance="outline" floatLabel="always" class="full-width">
+      <mat-label>Search Promo Codes by Code</mat-label>
+      <input
+        matInput
+        [(ngModel)]="promoCodeFilter"
+        name="promoCodeFilter"
+        (ngModelChange)="onPromoCodeFilterChange($event)"
+        placeholder="Enter promo code to search"
+        title="Search Promo Codes by Code"
+      />
+    </mat-form-field>
+
+    <!-- Promo Codes List -->
+    <table mat-table [dataSource]="filteredPromoCodes" class="mat-elevation-z8" aria-label="Promo Code list">
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef scope="col">Code</th>
+        <td mat-cell *matCellDef="let promo">{{ promo.code }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="discountPercentage">
+        <th mat-header-cell *matHeaderCellDef scope="col">Discount %</th>
+        <td mat-cell *matCellDef="let promo">{{ promo.discountPercentage }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="isFreeDelivery">
+        <th mat-header-cell *matHeaderCellDef scope="col">Free Delivery</th>
+        <td mat-cell *matCellDef="let promo">{{ promo.isFreeDelivery ? 'Yes' : 'No' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="expiryDate">
+        <th mat-header-cell *matHeaderCellDef scope="col">Expiry Date</th>
+        <td mat-cell *matCellDef="let promo">{{ promo.expiryDate | date }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="usageLimit">
+        <th mat-header-cell *matHeaderCellDef scope="col">Usage Limit</th>
+        <td mat-cell *matCellDef="let promo">{{ promo.usageLimit }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef scope="col">Actions</th>
+        <td mat-cell *matCellDef="let promo of filteredPromoCodes">
+          <button mat-icon-button color="primary" (click)="editPromoCode(promo)" aria-label="Edit Promo Code" type="button">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deletePromoCode(promo)" aria-label="Delete Promo Code" type="button">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['code', 'discountPercentage', 'isFreeDelivery', 'expiryDate', 'usageLimit', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['code', 'discountPercentage', 'isFreeDelivery', 'expiryDate', 'usageLimit', 'actions']"></tr>
+    </table>
+
+    <!-- Add / Edit Promo Code Form -->
+    <form [formGroup]="promoCodeForm" (ngSubmit)="submitPromoCode()" class="promo-code-form" aria-label="Add or Edit Promo Code Form">
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field">
+          <input formControlName="promoCodeID" type="hidden" />
+
+          <mat-label>Code</mat-label>
+          <input matInput formControlName="Code" placeholder="Enter promo code" aria-required="true" />
+          <mat-error *ngIf="promoCodeForm.get('Code')?.touched && promoCodeForm.get('Code')?.invalid">Code is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Discount Percentage</mat-label>
+          <input
+            matInput
+            formControlName="DiscountPercentage"
+            type="number"
+            min="0"
+            max="100"
+            placeholder="0 - 100"
+            aria-required="true"
+          />
+          <mat-error *ngIf="promoCodeForm.get('DiscountPercentage')?.touched && promoCodeForm.get('DiscountPercentage')?.invalid">
+            Must be between 0 and 100
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row" style="align-items: center;">
+        <mat-checkbox formControlName="IsFreeDelivery" aria-label="Free Delivery">Free Delivery</mat-checkbox>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Expiry Date</mat-label>
+          <input matInput formControlName="ExpiryDate" type="date" placeholder="mm/dd/yyyy" aria-required="true" />
+          <mat-error *ngIf="promoCodeForm.get('ExpiryDate')?.touched && promoCodeForm.get('ExpiryDate')?.invalid">Expiry date is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Usage Limit</mat-label>
+          <input
+            matInput
+            formControlName="UsageLimit"
+            type="number"
+            min="1"
+            placeholder="At least 1"
+            aria-required="true"
+          />
+          <mat-error *ngIf="promoCodeForm.get('UsageLimit')?.touched && promoCodeForm.get('UsageLimit')?.invalid">Usage limit must be at least 1</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="promo-code-form-actions">
+        <button mat-raised-button color="primary" type="submit" [disabled]="promoCodeForm.invalid">
+          {{ promoCodeEditMode ? 'Update Promo Code' : 'Add Promo Code' }}
+        </button>
+        <button *ngIf="promoCodeEditMode" mat-button type="button" (click)="cancelPromoCodeEdit()">Cancel</button>
+      </div>
+    </form>
+  </section>
+</div>

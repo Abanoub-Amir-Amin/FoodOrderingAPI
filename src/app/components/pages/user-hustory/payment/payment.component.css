@@ -1,0 +1,25 @@
+
+    body {
+      background-color: #f4c7a3;
+      font-family: Arial, sans-serif;
+    }
+    .payment-card {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 30px;
+      max-width: 600px;
+      margin: 50px auto;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .payment-icons img {
+      width: 50px;
+      margin-right: 10px;
+    }
+    .form-control {
+      margin-bottom: 15px;
+    }
+    .btn-save {
+      background-color: #8bc34a;
+      color: white;
+      font-weight: bold;
+    }

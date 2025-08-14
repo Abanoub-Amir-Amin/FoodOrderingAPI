@@ -1,0 +1,31 @@
+<div class="container mt-5">
+  <div class="card p-4 shadow">
+    <h4 class="mb-3">Get Your GPS Location</h4>
+
+    <button class="btn btn-primary mb-3" (click)="getLocation()">
+      Get Location
+    </button>
+
+    @if (latitude && longitude) {
+      <div class="alert alert-success">
+        <strong>Latitude:</strong> {{ latitude }} <br />
+        <strong>Longitude:</strong> {{ longitude }}
+      </div>
+
+      <iframe
+        width="100%"
+        height="300"
+        frameborder="0"
+        style="border:0"
+        [src]="'https://www.google.com/maps?q=' + latitude + ',' + longitude + '&output=embed'"
+        allowfullscreen
+      ></iframe>
+    }
+
+    @if (errorMessage) {
+      <div class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+    }
+  </div>
+</div>

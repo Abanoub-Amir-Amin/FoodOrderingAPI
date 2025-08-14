@@ -1,0 +1,22 @@
+<!-- Main Content -->
+<div class="dashboard-container">
+
+  <div *ngIf="isLoading" class="loader">
+    <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+  </div>
+
+  <div *ngIf="!isLoading" class="dashboard-content">
+    <section class="summary-section">
+      <app-dashboard-summary [restaurant]="restaurant"></app-dashboard-summary>
+    </section>
+
+    <section class="analytics-section">
+      <app-dashboard-analytics [restaurantId]="restaurant?.restaurantId"></app-dashboard-analytics>
+    </section>
+
+    <section class="most-ordered-section">
+      <app-most-ordered [restaurantId]="restaurant?.restaurantId"></app-most-ordered>
+    </section>
+  </div>
+
+</div>

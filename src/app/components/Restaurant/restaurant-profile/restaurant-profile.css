@@ -1,0 +1,121 @@
+/* restaurant-profile.component.scss */
+
+.profile-container {
+  max-width: 600px;
+  margin: 40px auto; /* increased top margin */
+  padding: 24px 32px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Roboto', Arial, sans-serif;
+  color: #333;
+  box-sizing: border-box;
+
+  h2 {
+    margin-bottom: 24px;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: #ff9100;
+    text-align: center;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  mat-form-field {
+    width: 100%;
+
+    input.mat-input-element {
+      font-size: 1rem;
+      padding: 12px 14px;
+    }
+  }
+
+  .image-upload-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .image-label {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #555;
+    }
+
+    .image-preview-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .image-preview {
+      display: block;
+      max-width: 250px;
+      max-height: 250px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border: 1px solid #ddd;
+      transition: box-shadow 0.3s ease;
+
+      &:hover {
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      }
+    }
+
+    .no-image-text {
+      font-style: italic;
+      color: #999;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .image-file-input {
+      max-width: 100%;
+    }
+  }
+
+  .availability-checkbox {
+    font-size: 1.05rem;
+    color: #444;
+    margin-top: 8px;
+    padding-left: 6px;
+  }
+
+  .submit-button {
+    align-self: flex-start;
+    padding: 12px 32px;
+    font-weight: 700;
+    font-size: 1rem;
+    background-color: #ff9100;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(255, 145, 0, 0.4);
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+
+    &:hover:not(:disabled) {
+      background-color: #e07b00;
+      box-shadow: 0 6px 14px rgba(224, 123, 0, 0.6);
+    }
+
+    &:disabled {
+      background-color: #ffc87a;
+      box-shadow: none;
+      color: #ffffffcc;
+      cursor: not-allowed;
+    }
+  }
+
+  /* Accessibility focus visible style */
+  input:focus-visible,
+  .image-file-input:focus-visible,
+  button:focus-visible,
+  mat-checkbox:focus-visible {
+    outline: 3px solid #ff9100;
+    outline-offset: 2px;
+  }
+}

@@ -1,0 +1,77 @@
+/* orders-management.component.scss */
+.orders-management-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 0 10px;
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  mat-form-field {
+    width: 300px;
+    margin-bottom: 20px;
+  }
+
+  .error-message {
+    color: red;
+    margin-bottom: 15px;
+  }
+
+  .no-orders {
+    font-style: italic;
+    margin-top: 20px;
+  }
+
+  .order-card {
+    margin-bottom: 20px;
+
+    mat-card {
+      padding: 10px;
+    }
+
+    .order-details {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+
+      .order-info {
+        width: 45%;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .order-items {
+        width: 50%;
+
+        ul {
+          list-style: none;
+          padding-left: 0;
+
+          li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+
+            img {
+              margin-right: 10px;
+              border-radius: 5px;
+              object-fit: cover;
+            }
+
+            small {
+              color: gray;
+              margin-left: 5px;
+            }
+          }
+        }
+      }
+    }
+
+    mat-card-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+  }
+}
