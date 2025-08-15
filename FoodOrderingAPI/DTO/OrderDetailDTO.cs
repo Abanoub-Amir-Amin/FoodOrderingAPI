@@ -1,4 +1,5 @@
 ﻿using FoodOrderingAPI.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodOrderingAPI.DTO
@@ -10,6 +11,8 @@ namespace FoodOrderingAPI.DTO
         /// Includes order information, restaurant details, delivery info, and payment summary.
         /// </summary>
         //general Details
+        [BindNever]
+        public Guid OrderID { get; set; }
         public int OrderNumber { get; set; }
         public DateTime OrderDate { get; set; }
         public StatusEnum Status { get; set; }

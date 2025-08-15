@@ -66,16 +66,58 @@ namespace FoodOrderingAPI.Services
 
             return _mapper.Map<IEnumerable<OrderDto>>(filteredOrders);
         }
-        public async Task<Order> UpdateOrderStatusAsync(Guid orderId, StatusEnum status, string restaurantId)
-        {
-            //var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery, StatusEnum.Cancelled };
-            var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery };
 
-            if (!allowedStatuses.Contains(status))
+        public async Task<Order> UpdateOrderStatusAsync(Guid orderId, StatusEnum newStatus, string restaurantId)
+        {
+            var allowedStatuses = new[] {
+                StatusEnum.Preparing,
+                StatusEnum.Out_for_Delivery,
+                StatusEnum.Cancelled,
+                StatusEnum.WaitingToConfirm
+            };
+
+            if (!allowedStatuses.Contains(newStatus))
                 throw new ArgumentException("Invalid order status.");
 
-            return await _repository.UpdateOrderStatusAsync(orderId, status, restaurantId);
+            var order = await _repository.getOrderDetails(orderId);
+            if (order == null)
+                throw new ArgumentException("Order not found.");
+
+            if (order.RestaurantID != restaurantId)
+                throw new UnauthorizedAccessException("This restaurant does not own the order.");
+
+            var oldStatus = order.Status;
+
+            if (oldStatus == StatusEnum.WaitingToConfirm && newStatus == StatusEnum.Preparing)
+            {
+                bool confirmed = await ConfirmOrder(order);
+                if (!confirmed)
+                    throw new InvalidOperationException("Order confirmation failed.");
+
+                order.Status = StatusEnum.Preparing;
+                await _repository.saveChangesAsync();
+            }
+            else if (oldStatus == StatusEnum.WaitingToConfirm && newStatus == StatusEnum.Cancelled)
+            {
+                bool cancelled = await CancelOrder(order, "Cancelled by restaurant");
+                if (!cancelled)
+                    throw new InvalidOperationException("Order cancellation failed.");
+            }
+            else
+            {
+                order.Status = newStatus;
+                await _repository.saveChangesAsync();
+            }
+
+            if (newStatus == StatusEnum.Out_for_Delivery)
+            {
+                _notificationRepo.CreateNotificationTo(order.CustomerID,
+                    $"Order number {order.OrderNumber} is out for Out for Delivery");
+            }
+
+            return order;
         }
+
         //cancel order from restaurant
         public async Task<bool> CancelOrder(Order order,string reason)
         {
@@ -129,6 +171,8 @@ namespace FoodOrderingAPI.Services
             return true;
 
         }
+
+
         //Dashboard Summary
         public async Task<DashboardSummaryDto> GetDashboardSummaryAsync(string restaurantId)
         {
@@ -257,3 +301,4 @@ namespace FoodOrderingAPI.Services
         }
     }
 }
+
