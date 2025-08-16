@@ -1,10 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  Validators,
-  AbstractControl,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormBuilder, Validators, AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -13,10 +8,11 @@ import { CommonModule } from '@angular/common';
   selector: 'app-newpassword',
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './newpassword.html',
-  styleUrl: './newpassword.css',
+  styleUrl: './newpassword.css'
 })
 export class NewPassword {
-  successMessage: string = '';
+  
+   successMessage: string = '';
   errorMessage: string = '';
   token: string = '';
   email: string = '';
@@ -24,32 +20,25 @@ export class NewPassword {
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
 
+
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef
   ) {
-    this.form = this.fb.group(
-      {
-        newPassword: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(8),
-            Validators.pattern(
-              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_-])[A-Za-z\d@$!%*?&#_-]+$/
-            ),
-          ],
-        ],
-        confirmPassword: ['', Validators.required],
-      },
-      { validators: this.passwordsMatch }
-    );
-  }
+      this.form = this.fb.group({
+      newPassword: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_-])[A-Za-z\d@$!%*?&#_-]+$/)
+      ]],
+      confirmPassword: ['', Validators.required]
+    }, { validators: this.passwordsMatch });
+}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams.subscribe(params => {
       this.token = params['token'];
       this.email = params['email'];
     });
@@ -72,28 +61,21 @@ export class NewPassword {
 
     const newPassword = this.form.value['newPassword'];
 
-    this.http
-      .post(
-        'http://localhost:5000/api/auth/reset-password',
-        {
-          email: this.email,
-          token: this.token,
-          newPassword,
-        },
-        { responseType: 'text' }
-      )
-      .subscribe({
-        next: (res) => {
+    this.http.post('http://localhost:7060/api/auth/reset-password', {
+      email: this.email,
+      token: this.token,
+      newPassword
+    }, { responseType: 'text' }).subscribe({
+      next: (res) => {
           this.successMessage = res;
           this.errorMessage = '';
           this.cd.detectChanges();
         },
         error: (err) => {
-          this.errorMessage =
-            typeof err.error === 'string' ? err.error : 'Something went wrong.';
+          this.errorMessage = typeof err.error === 'string' ? err.error : 'Something went wrong.';
           this.successMessage = '';
           this.cd.detectChanges();
-        },
-      });
+        }
+    });
   }
 }

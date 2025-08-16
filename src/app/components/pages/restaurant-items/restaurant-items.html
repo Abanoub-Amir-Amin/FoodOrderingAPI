@@ -1,6 +1,5 @@
 <div class="container py-4 ">
   <app-main-layout></app-main-layout>
-
   <div class="col-12 mb-4">
     <!-- <h2 class="text-center">
       <i class="bi bi-clipboard2-check-fill me-2"></i> All Resturant
@@ -37,7 +36,8 @@
                 <p class="fw-bold mt-auto">{{ item.price }} EGP</p>
               </div>
               <div class="card-footer">
-                <button class="btn btn-primary w-100" >
+                <!-- <p-toast></p-toast> -->
+                <button class="btn btn-primary w-100" (click)="AddToCart(item.itemID,item.description)" >
                   <i class="bi bi-cart-plus me-2"></i> Add to Cart
                 </button>
               </div>

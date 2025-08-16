@@ -9,8 +9,16 @@
   --body-color: hsl(18, 100%, 96%);
   --container-color: hsl(26, 67%, 84%);
   --second-color: hsl(134, 29%, 63%);
-  --third-color: #ffcc80;
+    --dark-second-color: hsl(134 22% 56% / 1);
+
+
+  --third-color: rgb(255, 204, 128);
   --light-yellow-color: #fcf3e0;
+
+
+    --primary-color: var(--warning-color);
+  --secondary-color: #2eb086;
+  --text-dark: #333;
 
   /* Additional colors for better UX */
   --white-color: #ffffff;
@@ -45,12 +53,22 @@
   --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
   --shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.16);
+    --shadow-hover: 0 4px 20px rgba(255, 204, 128,0.12)
+
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+@font-face {
+  font-family: 'GravitasOne';
+  src: url('../public/Assets/GravitasOne-Regular.ttf');
+}
+@font-face {
+  font-family: 'LobsterTwo';
+  src: url('../public/Assets/LobsterTwo-Bold.ttf');
 }
 
 body {
@@ -115,7 +133,7 @@ body {
 }
 
 /* Button Styles */
-.btn {
+.btn:not(.special-btn) {
   display: inline-flex;
   align-items: center;
   justify-content: center;

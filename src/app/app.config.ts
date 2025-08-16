@@ -3,11 +3,15 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient,  withFetch, withInterceptorsFromDi } from '@angular/common/http';
 
 import { routes } from './app.routes';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from './services/auth';
 import { ProfileService } from './services/DeliveryManDashboardService/profile-service';
-
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MessageService } from 'primeng/api';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
@@ -18,6 +22,13 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(FormsModule),
     AuthService,
     ProfileService,
+    provideAnimationsAsync(),
+    providePrimeNG({
+      theme:{preset: Aura
+      }
+    }),
+    importProvidersFrom(BrowserModule,BrowserAnimationsModule),
+    MessageService
   ],
 
   

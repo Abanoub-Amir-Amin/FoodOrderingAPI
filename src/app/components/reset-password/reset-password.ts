@@ -20,7 +20,7 @@ export class ResetPassword {
     private cd: ChangeDetectorRef // ✅ Inject ChangeDetectorRef
   ) {
     this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email]]
     });
   }
 
@@ -31,12 +31,7 @@ export class ResetPassword {
     this.successMessage = '';
     this.errorMessage = '';
 
-    this.http
-      .post(
-        'http://localhost:5000/api/auth/forgot-password',
-        { email },
-        { responseType: 'text' }
-      )
+    this.http.post('http://localhost:7060/api/auth/forgot-password', { email }, { responseType: 'text' })
       .subscribe({
         next: (res) => {
           this.successMessage = res;
@@ -44,11 +39,10 @@ export class ResetPassword {
           this.cd.detectChanges(); // ✅ Ensure the view updates
         },
         error: (err) => {
-          this.errorMessage =
-            typeof err.error === 'string' ? err.error : 'Something went wrong.';
+          this.errorMessage = typeof err.error === 'string' ? err.error : 'Something went wrong.';
           this.successMessage = '';
           this.cd.detectChanges(); // ✅ Ensure the view updates
-        },
+        }
       });
   }
 }

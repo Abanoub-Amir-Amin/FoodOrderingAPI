@@ -1,0 +1,29 @@
+<div class="status-container">
+  <div class="card shadow-lg status-card" [ngClass]="isLoading?'border-primary':isOrderSuccess ? 'border-success' : 'border-danger'">
+    <div class="card-body text-center">
+         <!-- Loading Spinner -->
+        <div *ngIf="isLoading" class="loading-container">
+          <div class="spinner"></div>
+          <p>Place Order.....</p>
+        </div>
+
+      <div *ngIf="isOrderSuccess && !isLoading; ">
+        <i class="bi bi-check-circle-fill text-success status-icon"></i>
+        <h3 class="text-success mt-3">Order Confirmed!</h3>
+        <p>Your order has been placed successfully. Thank you!</p>
+      </div>
+
+      <div *ngIf="!isLoading && !isOrderSuccess">
+        <i class="bi bi-x-circle-fill text-danger status-icon"></i>
+        <h3 class="text-danger mt-3">Order Failed!</h3>
+        <p>Something went wrong. Please try again.</p>
+    <div class="text-center my-3">
+      <button (click)="TryAgain()" class="btn btn-secondary" >Try Again</button>
+      </div>
+      </div>
+    </div>
+    <div *ngIf="!isLoading" class="text-center">
+      <a href="#" class="btn btn-primary" >Go to Home</a>
+      </div> 
+  </div>
+</div>

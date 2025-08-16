@@ -28,6 +28,14 @@ import { Profile } from './components/deliveryManDashboard/profile/profile';
 import { AvailbilityStatus } from './components/deliveryManDashboard/availbility-status/availbility-status';
 import { Orders } from './components/deliveryManDashboard/orders/orders';
 import { RestaurantItems } from './components/pages/restaurant-items/restaurant-items';
+import { ShoppingCart } from './components/Shopping-cart/shopping-cart/shopping-cart';
+import { PlaceOrder } from './components/place-order/place-order';
+import { CustomerProfile } from './components/CustomerDashboard/customer-profile/customer-profile';
+import { CustomerOrders } from './components/CustomerDashboard/customer-orders/customer-orders';
+import { title } from 'process';
+import { CustomerContainer } from './components/CustomerDashboard/customer-container/customer-container';
+import { CustomerAddresses } from './components/CustomerDashboard/customer-addresses/customer-addresses';
+import { CustomerInbobox } from './components/CustomerDashboard/customer-inbobox/customer-inbobox';
 
 // Guard Functions for Angular 20
 export const authGuard = () => {
@@ -61,6 +69,8 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'action-pending', component: ActionPendingComponent },
   { path: 'restaurant-apply', component: RestaurantApply },
+  {path:'shoppingcart', component: ShoppingCart,canActivate:[roleGuard('Customer')]},
+  {path:'placeorder',component:PlaceOrder,canActivate:[roleGuard('Customer')]},
   {
     path: '',
     component: MainLayoutComponent,
@@ -94,6 +104,13 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, // Default redirect
     ],
   },
+  // {
+  //   path:'shoppingcart',
+  //   loadComponent: () =>
+  //     import('./components/Shopping-cart/shopping-cart/shopping-cart').then(
+  //       (m) => m.ShoppingCart
+  //     ),
+  // },
   {
     path: 'confirm-email',
     loadComponent: () =>
@@ -169,9 +186,43 @@ export const routes: Routes = [
     ],
     title: 'Dashboard',
   },
+  {
+    path: 'CustomerDashboard',
+    component: CustomerContainer,
+    canActivate: [authGuard, roleGuard('Customer')],
+    children: [
+      {
+        path: '',
+        redirectTo: 'customer-profile',
+        pathMatch: 'full',
+      },
+      {
+        path: 'customer-profile',
+        component: CustomerProfile,
+        canActivate: [authGuard, roleGuard('Customer')],
+      },
+      {
+        path: 'customer-addresses',
+        component: CustomerAddresses,
+        canActivate: [authGuard, roleGuard('Customer')],
+      },
+      {
+        path: 'customer-orders',
+        component: CustomerOrders,
+        canActivate: [authGuard, roleGuard('Customer')],
+      },
+      {
+        path: 'customer-inbox',
+        component: CustomerInbobox,
+        canActivate: [authGuard, roleGuard('Customer')],
+      }
+    ],
+      title: 'Customer Dashboard',
+  },
 
   { path: '**', redirectTo: '' },
 ];
+
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

@@ -12,10 +12,13 @@ import { NgClass } from '@angular/common';
 export class ConfirmEmail implements OnInit {
   message: string = '';
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) {}
+  constructor(
+    private route: ActivatedRoute,
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams.subscribe(params => {
       const userId = params['userId'];
       const token = params['token'];
 
@@ -24,11 +27,9 @@ export class ConfirmEmail implements OnInit {
         .set('userId', userId)
         .set('token', token);
 
-      this.http
-        .get(apiUrl, { params: queryParams, responseType: 'text' })
-        .subscribe({
-          next: (res) => (this.message = res),
-        });
+      this.http.get(apiUrl, { params: queryParams, responseType: 'text' }).subscribe({
+        next: (res) => this.message = res
+      });
     });
   }
 }

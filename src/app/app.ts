@@ -1,15 +1,16 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-
 import { Router, NavigationError } from '@angular/router';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HomeComponent } from './components/pages/home/home.component';
+import { ToastModule } from "primeng/toast";
 //import { AuthInterceptor } from './services/auth-token-interceptor';
+// import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet,  RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ToastModule],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
   // providers: [

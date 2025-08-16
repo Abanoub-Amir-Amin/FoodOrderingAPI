@@ -37,7 +37,7 @@ export class MapComponent {
           (L.Control as any).geocoder({defaultMarkGeocode: false})
           .on('markgeocode', (e: any) => {
           const latlng = e.geocode.center;
-          this.setLocationMarker(latlng.lat, latlng.lng); // reuse your existing method
+          this.setLocationMarker(latlng.lat, latlng.lng); 
           this.map.setView(latlng, 15);
         })
           .addTo(this.map);

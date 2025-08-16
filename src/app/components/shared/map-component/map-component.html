@@ -4,7 +4,7 @@
             Click on the map to set your location
           </p>
           <div id="map" class="map-container"></div>
-          <span [style.display]="set?'inline':'none'">{{address?.label +' - '+address?.street+', '+address?.city+' [ '+address?.latitude+' , '+address?.longitude +' ]'}}</span>
+          <span [style.display]="set?'inline':'none'">{{address?.label +' - '+address?.street+', '+address?.city}}</span>
           <span
             *ngIf="!selectedLocation && formSubmitted"
             class="error-message"
