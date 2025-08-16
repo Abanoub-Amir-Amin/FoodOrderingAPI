@@ -63,18 +63,18 @@ namespace FoodOrderingAPI.Services
         public async Task ActivateDeliveryMenAsync(string userName)
         {
             var deliveryMan = await _repository.GetDeliveryMenByUserNameAsync(userName);
-            if (deliveryMan == null) throw new KeyNotFoundException("Restaurant not found");
+            if (deliveryMan == null) throw new KeyNotFoundException("Delivery Men not found");
 
-            deliveryMan.AvailabilityStatus = true;
+            deliveryMan.AccountStatus = AccountStatusEnum.Active;
             await _repository.UpdateDeliveryManAsync(deliveryMan);
         }
 
         public async Task DeactivateDeliveryMenAsync(string userName)
         {
             var deliveryMan = await _repository.GetDeliveryMenByUserNameAsync(userName);
-            if (deliveryMan == null) throw new KeyNotFoundException("Restaurant not found");
+            if (deliveryMan == null) throw new KeyNotFoundException("Delivery Men not found");
 
-            deliveryMan.AvailabilityStatus = false;
+            deliveryMan.AccountStatus = AccountStatusEnum.Pending;
             await _repository.UpdateDeliveryManAsync(deliveryMan);
         }
 
