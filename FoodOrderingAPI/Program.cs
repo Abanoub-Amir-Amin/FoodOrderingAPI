@@ -228,7 +228,16 @@ namespace FoodOrderingAPI
                 app.UseHsts();
             }
 
-            app.UseStaticFiles();
+            //app.UseStaticFiles();
+
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "http://localhost:4200");
+                }
+            });
 
             //app.UseHttpsRedirection();
             app.UseCors("AllowAngularDevClient");

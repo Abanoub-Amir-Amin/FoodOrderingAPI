@@ -18,12 +18,14 @@ namespace FoodOrderingAPI.Models
         [MaxLength(20)]
         public string IssuedByType { get; set; }  
 
-        public int IssuedByID { get; set; }
+        public string IssuedByID { get; set; }
 
         public DateTime ExpiryDate { get; set; }
 
         public int UsageLimit { get; set; }
 
         public ICollection<Order> Orders { get; set; } = new List<Order>();
+
+
     }
 }

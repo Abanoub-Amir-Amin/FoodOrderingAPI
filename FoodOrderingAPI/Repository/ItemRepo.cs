@@ -51,16 +51,25 @@ namespace FoodOrderingAPI.Repository
         public async Task<bool> DeleteItemAsync(Guid itemId)
         {
             var item = await _context.Items
+                .Include(i => i.Discounts) 
                 .FirstOrDefaultAsync(i => i.ItemID == itemId);
             if (item == null)
                 return false;
+
+            // Remove dependent discount entries first
+            _context.Discounts.RemoveRange(item.Discounts);
+
             // Deactivate the product and price in Stripe
             await StripeService.DeleteProductStripeAsync(item);
 
+            // Remove the item itself
             _context.Items.Remove(item);
+
             await _context.SaveChangesAsync();
+
             return true;
         }
+
 
         public async Task<List<Item>> GetAllItemsAsync()
         {
@@ -116,6 +125,7 @@ namespace FoodOrderingAPI.Repository
             // Convert to List of Tuple<Item, int>
             return mostOrderedItems.Select(x => (x.Item, x.TotalQuantity)).ToList();
         }
+
         public async Task<List<string>> GetAllCategoriesAsync()
         {
             var categories = await _context.Items

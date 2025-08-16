@@ -37,7 +37,7 @@ namespace FoodOrderingAPI.Controllers
 
         }
         // ===== Orders =====
-        [Authorize(Roles = "Restaurant")]
+        //[Authorize(Roles = "Restaurant")]
 
         [HttpGet("{restaurantId}/orders")]
         public async Task<IActionResult> GetAllOrdersByRestaurantAsync(string restaurantId)
@@ -59,7 +59,7 @@ namespace FoodOrderingAPI.Controllers
         [Authorize(Roles = "Restaurant")]
 
         [HttpGet("{restaurantId}/orders/status")]
-        [Authorize(Roles = "Restaurant")]
+        //[Authorize(Roles = "Restaurant")]
 
         public async Task<IActionResult> GetOrdersByStatus(string restaurantId, [FromQuery] StatusEnum[] status)
         {
@@ -95,7 +95,7 @@ namespace FoodOrderingAPI.Controllers
         }
 
         [HttpPut("{restaurantId}/orders/{orderId}/status")]
-        [Authorize(Roles = "Restaurant")]
+        //[Authorize(Roles = "Restaurant")]
 
         public async Task<IActionResult> UpdateOrderStatus(string restaurantId, Guid orderId, [FromBody] OrderStatusUpdateDto dto)
         {
@@ -133,7 +133,7 @@ namespace FoodOrderingAPI.Controllers
 
         // ===== Dashboard Summary =====
         [HttpGet("{restaurantId}/dashboard-summary")]
-        [Authorize(Roles = "Restaurant")]
+        //[Authorize(Roles = "Restaurant")]
         public async Task<IActionResult> GetDashboardSummary(string restaurantId)
         {
             var restaurant = await _RestaurantService.GetRestaurantByIdAsync(restaurantId);
@@ -166,7 +166,7 @@ namespace FoodOrderingAPI.Controllers
         //    return BadRequest("order Status not correct");
         //}
         [HttpPut("ConfirmOrder")]
-        [Authorize(Roles = "Restaurant")]
+        //[Authorize(Roles = "Restaurant")]
 
         public async Task<IActionResult> ConfirmOrder(Guid OrderId)
         {
@@ -240,10 +240,10 @@ namespace FoodOrderingAPI.Controllers
         {
             var CustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var order = await _OrderService.getOrder(orderId);
-            if (order.CustomerID!=CustomerId)
+            if (order.CustomerID != CustomerId)
                 return Unauthorized($"this user with userId{CustomerId} not autherized to view this orderId");
 
-            var orderDetails =await _OrderService.getOrderDetails(orderId);
+            var orderDetails = await _OrderService.getOrderDetails(orderId);
             if (orderDetails == null) return NotFound();
             return Ok(orderDetails);
         }

@@ -1,6 +1,7 @@
 ﻿using FoodOrderingAPI.DTO;
 using FoodOrderingAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Stripe.Climate;
 
 namespace FoodOrderingAPI.Repository
 {
@@ -13,11 +14,12 @@ namespace FoodOrderingAPI.Repository
         }
         public async Task<IEnumerable<Review>> GetAllReviewsAsync()
         {
-            return await _context.Reviews.ToListAsync();
+            var reveiws = await _context.Reviews.Include(c => c.Customer).ThenInclude(u => u.User).ToListAsync();
+            return reveiws;
         }
         public async Task<Review> GetReviewByIdAsync(Guid reviewId)
         {
-            return await _context.Reviews.FindAsync(reviewId);
+            return await _context.Reviews.Include(c => c.Customer).ThenInclude(u => u.User).FirstOrDefaultAsync(r => r.ReviewID == reviewId);
         }
         public async Task CreateReviewAsync(Review review)
         {
@@ -39,23 +41,19 @@ namespace FoodOrderingAPI.Repository
 
         public async Task<IEnumerable<Review>> GetReviewsByOrderIdAsync(Guid orderId)
         {
-            var reviews = await _context.Reviews
-                .Where(r => r.OrderID == orderId)
-                .ToListAsync();
+            var reviews = await _context.Reviews.Where(r => r.OrderID == orderId).Include(c => c.Customer).ThenInclude(u => u.User).ToListAsync();
             return reviews;
         }
 
         public async Task<IEnumerable<Review>> GetReviewsByCustomerIdAsync(string customerId)
         {
-            var reviews = await _context.Reviews
-                .Where(r => r.CustomerID == customerId)
-                .ToListAsync();
+            var reviews = await _context.Reviews.Where(r => r.CustomerID == customerId).Include(c => c.Customer).ThenInclude(u => u.User).ToListAsync();
             return reviews;
         }
 
         public async Task<IEnumerable<Review>> GetReviewsByRestaurantIdAsync(string restaurantId)
         {
-            var reviews = await _context.Reviews.Where(r => r.RestaurantID == restaurantId).ToListAsync();
+            var reviews = await _context.Reviews.Where(r => r.RestaurantID == restaurantId).Include(c => c.Customer).ThenInclude(u => u.User).ToListAsync();
             return reviews;
         }
 

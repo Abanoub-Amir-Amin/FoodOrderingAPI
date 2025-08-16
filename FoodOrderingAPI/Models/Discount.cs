@@ -24,5 +24,7 @@ namespace FoodOrderingAPI.Models
         public Restaurant Restaurant { get; set; }
 
         public Item Item { get; set; }
+
+
     }
 }

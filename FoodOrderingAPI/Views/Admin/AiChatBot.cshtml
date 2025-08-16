@@ -1,0 +1,77 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Upload Knowledge</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 2em;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+        }
+
+        #result {
+            margin-top: 15px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="goBackToDashboard()" style="padding: 8px 16px; margin-bottom: 1em;">
+        ← Back to Dashboard
+    </button>
+
+    <h2>📥 Upload Knowledge to ChatBot</h2>
+    <textarea id="content"
+              placeholder="Write any knowledge to store..."></textarea>
+    <br />
+    <button onclick="sendContent()">Submit</button>
+    <div id="result"></div>
+
+    <script>
+        async function sendContent() {
+          const content = document.getElementById("content").value;
+          if (!content.trim()) return alert("Content is empty!");
+
+          const response = await fetch(
+            "https://localhost:44338/api/Ingest/store",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(content),
+            }
+          );
+
+          const result = document.getElementById("result");
+          if (response.ok) {
+            result.textContent = "✅ Stored successfully!";
+          } else {
+            const error = await response.text();
+            result.textContent = "❌ Error: " + error;
+            result.style.color = "red";
+          }
+        }
+
+        function goBackToDashboard() {
+            window.location.href = '@Url.Action("Dashboard", "Admin")'; 
+        }
+
+    </script>
+</body>
+</html>

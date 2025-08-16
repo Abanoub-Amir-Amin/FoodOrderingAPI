@@ -5,29 +5,39 @@ using FoodOrderingAPI.Repository;
 using FoodOrderingAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace FoodOrderingAPI.Controllers
 {
-    [EnableCors("AllowAngularDevClient")]
+    //[EnableCors("AllowAngularDevClient")]
+    //[Authorize(Roles = "Restaurant")]
     [ApiController]
     [Route("api/[controller]")]
     public class RestaurantController : ControllerBase
-    { 
-        private readonly IRestaurantService _service;    
+    {
+        private readonly ApplicationDBContext _context;
+        private readonly IRestaurantService _service;
         private readonly IMapper _mapper;
-        private readonly IConfirmationEmail confirmationEmail;
+        private readonly IWebHostEnvironment _environment;
         private readonly UserManager<User> userManager;
+        private readonly IConfirmationEmail confirmationEmail;
 
         public RestaurantController(IRestaurantService service, ApplicationDBContext context, IMapper mapper, IWebHostEnvironment environment, IConfirmationEmail confirmationEmail, UserManager<User> userManager)
-        
+
         {
             _service = service;
+            _context = context;
             _mapper = mapper;
+            _environment = environment;
             this.confirmationEmail = confirmationEmail;
             this.userManager = userManager;
+
         }
 
         // ===== Restaurant Apply to Join =====
@@ -49,7 +59,6 @@ namespace FoodOrderingAPI.Controllers
                 var result = await _service.ApplyToJoinAsync(dto);
 
                 // Return 201 Created with route to newly created resource
-                await confirmationEmail.SendConfirmationEmail(dto.User.Email, await userManager.FindByEmailAsync(dto.User.Email));
                 return CreatedAtAction(nameof(GetRestaurantById), new { id = result.UserId }, result);
             }
             catch (InvalidOperationException ex) when (ex.Message.Contains("already exists"))
@@ -81,6 +90,8 @@ namespace FoodOrderingAPI.Controllers
                     return NotFound();
 
                 var dto = _mapper.Map<RestaurantDto>(restaurant);
+                dto.ImageFile = restaurant.ImageFile;
+
                 return Ok(dto);
             }
             catch (ArgumentException ex)
@@ -124,14 +135,10 @@ namespace FoodOrderingAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
-            }
-
-            // Authorizing that the authenticated user is the owner of this restaurant ID
-            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userIdClaim != restaurantId)
-            {
-                return Forbid("You are not authorized to update this restaurant's profile.");
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage)
+                                              .ToList();
+                return BadRequest(new { errors });
             }
 
             try
@@ -143,13 +150,11 @@ namespace FoodOrderingAPI.Controllers
                     return NotFound($"Restaurant with ID '{restaurantId}' not found.");
                 }
 
-                // Map the updated entity back to a DTO for the response
-                var responseDto = _mapper.Map<RestaurantDto>(updatedRestaurant);
-                return Ok(responseDto);
+                return Ok(updatedRestaurant);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "An error occurred while updating the restaurant profile: " + ex.Message });
+                return StatusCode(500, new { error = "An error occurred while updating the restaurant profile: " + ex.ToString() });
             }
         }
 
@@ -196,5 +201,23 @@ namespace FoodOrderingAPI.Controllers
             return BadRequest("We were unable to confirm your email address. Please try again or request a new link.");
 
         }
+
+        //===== Loction =====
+        [HttpPost]
+        public async Task<IActionResult> UpdateLocation(string restaurantId, [FromBody] RestaurantDto restaurant)
+        {
+            try
+            {
+                await _service.SetRestaurantLocation(restaurantId, restaurant.Latitude, restaurant.Longitude);
+                return Ok("Location updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                // Optionally log the exception here
+                return BadRequest(ex.Message);
+            }
+        }
+
+
     }
 }

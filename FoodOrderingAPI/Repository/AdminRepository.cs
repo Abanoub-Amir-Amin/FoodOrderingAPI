@@ -17,6 +17,7 @@ namespace FoodOrderingAPI.Repository
             _context = context;
         }
 
+        /////Restaurants//////
         public async Task<IEnumerable<Restaurant>> GetRestaurantsByActiveStatusAsync(bool isActive)
         {
             return await _context.Restaurants
@@ -54,12 +55,36 @@ namespace FoodOrderingAPI.Repository
             }
         }
 
-        public async Task<IEnumerable<DeliveryMan>> GetAllDeliveryMenAsync()
+
+
+        /////DeliveryMen//////
+        public async Task<IEnumerable<DeliveryMan>> GetDeliveryMenByActiveStatusAsync(AccountStatusEnum accountStatus)
+        {
+            return (IEnumerable<DeliveryMan>)await _context.DeliveryMen
+                .Include(r => r.User)
+                .Where(r => r.AccountStatus == accountStatus)
+                .ToListAsync();
+        }
+
+        public async Task<DeliveryMan> GetDeliveryMenByUserNameAsync(string userName)
         {
             return await _context.DeliveryMen
                 .Include(d => d.User)
-                .ToListAsync();
+                .FirstOrDefaultAsync(r => r.User.UserName == userName);
         }
+
+        public async Task UpdateDeliveryManAsync(DeliveryMan deliveryMan)
+        {
+            _context.DeliveryMen.Update(deliveryMan);
+            await _context.SaveChangesAsync();
+        }
+
+        //public async Task<IEnumerable<DeliveryMan>> GetAllDeliveryMenAsync()
+        //{
+        //    return await _context.DeliveryMen
+        //        .Include(d => d.User)
+        //        .ToListAsync();
+        //}
 
         public async Task<DeliveryMan> GetDeliveryManByIdAsync(string deliveryManId)
         {
@@ -82,47 +107,15 @@ namespace FoodOrderingAPI.Repository
             }
         }
 
+
+        /////Customers//////
+
         public async Task<IEnumerable<Customer>> GetAllCustomerAsync()
         {
             return await _context.Customers
                 .Include(d => d.User)
                 .ToListAsync();
         }
-
-        public async Task<IEnumerable<Admin>> GetAllAdminsAsync()
-        {
-            return await _context.Admins
-                .Include(a => a.User)
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(string customerId)
-        {
-            return await _context.Orders
-                .Include(o => o.OrderItems)  
-                .Where(o => o.RestaurantID == customerId)
-                .ToListAsync();
-        }
-
-        public async Task<Admin> GetAdminByUserNameAsync(string UserName)
-        {
-            return await _context.Admins
-                .Include(a => a.User)
-                .FirstOrDefaultAsync(a => a.User.UserName == UserName);
-        }
-
-        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
-        {
-            return await _context.Orders.ToListAsync();
-
-        }
-        public async Task<IEnumerable<Order>> GetOrdersByStatusAsync(StatusEnum status)
-        {
-            return await _context.Orders
-                .Where(o => o.Status == status)
-                .ToListAsync();
-        }
-
         public async Task UpdateAdminAsync(Admin admin)
         {
             _context.Admins.Update(admin);
@@ -134,6 +127,47 @@ namespace FoodOrderingAPI.Repository
 
             await _context.SaveChangesAsync();
         }
+        public async Task<Admin> GetAdminByUserNameAsync(string UserName)
+        {
+            return await _context.Admins
+                .Include(a => a.User)
+                .FirstOrDefaultAsync(a => a.User.UserName == UserName);
+        }
+
+
+        /////Admins//////
+        public async Task<IEnumerable<Admin>> GetAllAdminsAsync()
+        {
+            return await _context.Admins
+                .Include(a => a.User)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(string customerId)
+        {
+            return await _context.Orders
+                .Include(o => o.OrderItems)
+                .Where(o => o.RestaurantID == customerId)
+                .ToListAsync();
+        }
+
+
+        /////Orders//////
+
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+        {
+            return await _context.Orders.ToListAsync();
+
+        }
+
+        public async Task<IEnumerable<Order>> GetOrdersByStatusAsync(StatusEnum status)
+        {
+            return await _context.Orders
+                .Where(o => o.Status == status)
+                .ToListAsync();
+        }
+
+
 
     }
 

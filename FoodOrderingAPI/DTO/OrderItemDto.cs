@@ -2,6 +2,7 @@
 {
     public class OrderItemDto
     {
+        public Guid? OrderItemID { get; set; }
         public Guid OrderID { get; set; }
         public Guid? orderItemId { get; set; }
         public string itemName {  get; set; }

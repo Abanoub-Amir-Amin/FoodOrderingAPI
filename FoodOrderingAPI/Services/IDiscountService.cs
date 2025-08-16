@@ -1,4 +1,5 @@
-﻿using FoodOrderingAPI.Models;
+﻿using FoodOrderingAPI.DTO;
+using FoodOrderingAPI.Models;
 
 namespace FoodOrderingAPI.Services
 {
@@ -6,7 +7,10 @@ namespace FoodOrderingAPI.Services
     {
         //Discount-CRUD
         Task<Discount> AddDiscountAsync(string restaurantId, Discount discount);
-        Task<Discount> UpdateDiscountAsync(Discount discount);
+        Task<Discount> UpdateDiscountAsync(int discountId, DiscountDto dis);
         Task<bool> DeleteDiscountAsync(int discountId);
+        Task<IEnumerable<Discount>> GetDiscountsByRestaurantAsync(string restaurantId);
+        Task<Discount> GetDiscountByIDAsync(int discountId);
     }
 }
+

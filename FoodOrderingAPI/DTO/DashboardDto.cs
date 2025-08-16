@@ -7,7 +7,9 @@ namespace FoodOrderingAPI.DTO
     {
         public List<RestaurantDto> ActiveRestaurants { get; set; }
         public List<RestaurantDto> InactiveRestaurants { get; set; }
-        public List<DeliveryManDto> DeliveryMen { get; set; }
+        public List<DeliveryManDto> ActiveDeliveryMen { get; set; }
+        public List<DeliveryManDto> InactiveDeliveryMen { get; set; }
+        //public List<DeliveryManDto> DeliveryMen { get; set; }
         public List<CustomerDTO> Customers { get; set; }
         public List<AdminDto> Admins { get; set; }
         public List<OrderDto> Orders { get; set; }
