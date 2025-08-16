@@ -16,11 +16,7 @@
 
 </head>
 <body>
-    <div>
-        <input type="text" id="userName" placeholder="Enter user name">
-        <input type="text" id="password" placeholder="Enter password">
-        <button id="login">Login</button><br><br>
-    </div>
+    
 
     <button class="mobile-toggle" id="mobileToggle">
         <svg viewBox="0 0 24 24" fill="currentColor">
@@ -81,24 +77,7 @@
             let chatSessions = {}; // { customerId: [ {content, isOutgoing} ] }
             let currentCustomerId = null;
 
-            document.getElementById("login").addEventListener("click", async function (event) {
-                event.preventDefault();
-                const userName = document.getElementById("userName").value;
-                const password = document.getElementById("password").value;
-
-                const loginRes = await fetch("https://localhost:7060/api/Auth/login", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ userName, password }),
-                    credentials: "include"
-                });
-
-                if (!loginRes.ok) {
-                    console.error("Login failed.");
-                    return;
-                }
-
-                console.log("User logged in.");
+            
 
                 const idRes = await fetch("https://localhost:7060/api/chat/id", {
                     credentials: "include"
