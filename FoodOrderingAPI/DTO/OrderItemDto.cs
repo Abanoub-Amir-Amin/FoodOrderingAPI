@@ -4,7 +4,6 @@
     {
         public Guid? OrderItemID { get; set; }
         public Guid OrderID { get; set; }
-        public Guid? orderItemId { get; set; }
         public string itemName {  get; set; }
         public int Quantity { get; set; }
         public string Preferences { get; set; }
