@@ -11,7 +11,7 @@ namespace FoodOrderingAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ChatController : ControllerBase
     {
         public IHubContext<ChatHub> HubContext { get; }
@@ -29,6 +29,7 @@ namespace FoodOrderingAPI.Controllers
             {
                 return BadRequest("Invalid message data.");
             }
+            Console.WriteLine($"Sender: {dto.SenderId}, Receiver: {dto.ReceiverId}, Customer: {dto.CustomerId}, Message: {dto.Message}");
             HubContext.Clients.User(dto.ReceiverId).SendAsync("ReceiveMessage", dto.SenderId, dto.Message);
             Console.WriteLine("****************************************************\n\n");
             Console.WriteLine(dto.CustomerId);
