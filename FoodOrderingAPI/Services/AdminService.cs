@@ -103,7 +103,7 @@ namespace FoodOrderingAPI.Services
 
             foreach (var customer in customers)
             {
-                var orders = await _repository.GetOrdersByCustomerIdAsync(customer.UserID);
+                var orders = await _repository.GetOrdersByCustomerUserNameAsync(customer.User.UserName);
 
                 var totalOrders = orders.Count();
                 var deliveredOrders = orders.Count(o => o.Status == StatusEnum.Delivered);
@@ -142,9 +142,10 @@ namespace FoodOrderingAPI.Services
             var admin = await _repository.GetAdminByUserNameAsync(dto.User.UserName);
             if (admin == null) throw new KeyNotFoundException("Admin not found");
 
-            // Update related User info (like Email)
             var user = admin.User;
             if (user == null) throw new Exception("User info missing");
+            admin.User.Email = dto.User.Email;
+            admin.User.PhoneNumber = dto.User.PhoneNumber;
 
             await _repository.UpdateAdminAsync(admin);
         }

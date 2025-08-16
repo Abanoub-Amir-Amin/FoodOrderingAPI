@@ -23,7 +23,7 @@ namespace FoodOrderingAPI.Repository
         Task<IEnumerable<Customer>> GetAllCustomerAsync();
 
         /////Customers//////
-        Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(string customerId);
+        Task<IEnumerable<Order>> GetOrdersByCustomerUserNameAsync(string userName);
 
         /////Admins//////
         Task<IEnumerable<Admin>> GetAllAdminsAsync();

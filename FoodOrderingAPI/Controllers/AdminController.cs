@@ -2,16 +2,18 @@
 using FoodOrderingAPI.DTO;
 using FoodOrderingAPI.Models;
 using FoodOrderingAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq; 
 using System.Threading.Tasks;
 
 [EnableCors("AllowAngularDevClient")]
+//[Authorize(Roles = "Admin")] // Uncomment if Admin-only access is intended
 public class AdminController : Controller
 {
     private readonly IAdminService _adminService;
@@ -25,6 +27,7 @@ public class AdminController : Controller
         _signInManager = signInManager;
     }
 
+    // Dashboard GET: Load all main admin info filtered by StatusEnum
     public async Task<IActionResult> Dashboard(StatusEnum selectedStatus = StatusEnum.All, string activeTab = "restaurant")
     {
         var activeRestaurants = await _adminService.GetRestaurantsByActiveStatusAsync(true);
@@ -35,11 +38,9 @@ public class AdminController : Controller
         var admins = await _adminService.GetAllAdminsAsync();
         var allOrders = await _adminService.GetAllOrdersAsync();
 
-        var filterStatus = selectedStatus;
-
-        var filteredOrders = filterStatus == StatusEnum.All
+        var filteredOrders = selectedStatus == StatusEnum.All
             ? allOrders
-            : allOrders.Where(o => o.Status == filterStatus);
+            : allOrders.Where(o => o.Status == selectedStatus);
 
         var model = new DashboardDto
         {
@@ -53,16 +54,21 @@ public class AdminController : Controller
             SelectedStatus = selectedStatus.ToString()
         };
 
-        ViewData["StatusList"] = new SelectList(Enum.GetValues(typeof(StatusEnum))
-                                    .Cast<StatusEnum>()
-                                    .Select(s => new { Value = s.ToString(), Text = s.ToString().Replace('_', ' ') }),
-                                    "Value", "Text", selectedStatus.ToString());
+        ViewData["StatusList"] = new SelectList(
+            Enum.GetValues(typeof(FoodOrderingAPI.Models.StatusEnum))
+                .Cast<FoodOrderingAPI.Models.StatusEnum>()
+                .Select(s => new SelectListItem
+                {
+                    Value = s.ToString(),
+                    Text = s.ToString().Replace('_', ' '),
+                    Selected = s.ToString() == model.SelectedStatus
+                }),
+            "Value", "Text", model.SelectedStatus);
 
         ViewData["ActiveTab"] = activeTab;
 
         return View(model);
     }
-
 
 
 
@@ -138,10 +144,94 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteDeliveryMan(string id, string activeTab = "deliveryman")
     {
-        await _adminService.DeleteDeliveryManAsync(id);
+        try
+        {
+            await _adminService.DeleteDeliveryManAsync(id);
+        }
+        catch (Exception ex)
+        {
+            // Log error here and optionally show a friendly message
+            ModelState.AddModelError("", "Delete failed: " + ex.Message);
+            // Optionally re-display the same view or redirect with error info
+        }
         return RedirectToAction(nameof(Dashboard), new { activeTab });
     }
 
 
+    // GET: Show edit form with current admin data by UserName
+    [HttpGet]
+    public async Task<IActionResult> EditAdmin(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+            return BadRequest();
 
+        var admin = await _adminService.GetAdminByUserNameAsync(userId);
+
+        if (admin == null)
+            return NotFound();
+
+        var model = _mapper.Map<AdminDto>(admin);
+
+        if (model.User == null)
+        {
+            model.User = new UserDto();
+        }
+
+        return View(model);
+    }
+
+    // POST: Save admin update changes
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditAdmin(AdminDto model, string activeTab = "admin")
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        if (model.User == null || string.IsNullOrEmpty(model.User.UserName))
+        {
+            ModelState.AddModelError("", "User information is missing.");
+            return View(model);
+        }
+
+        try
+        {
+            await _adminService.UpdateAdminAsync(model);
+            return RedirectToAction(nameof(Dashboard), new { activeTab });
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", "Error updating admin: " + ex.Message);
+            return View(model);
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return Ok();
+    }
+
+    // GET: /Admin/AdminChat
+    [HttpGet]
+    public IActionResult AdminChat()
+    {
+        return View("AdminChat");
+    }
+
+    // GET: /Admin/AiChatBot
+    [HttpGet]
+    public IActionResult AiChatBot()
+    {
+        return View("AiChatBot");
+    }
 }
+

@@ -93,9 +93,9 @@ namespace FoodOrderingAPI.Repository
                 .FirstOrDefaultAsync(d => d.DeliveryManID == deliveryManId);
         }
 
-        public async Task DeleteDeliveryManAsync(string deliveryManId)
+        public async Task DeleteDeliveryManAsync(string userName)
         {
-            var deliveryMan = await GetDeliveryManByIdAsync(deliveryManId);
+            var deliveryMan = await GetDeliveryMenByUserNameAsync(userName);
             if (deliveryMan != null)
             {
                 if (deliveryMan.User != null)
@@ -143,11 +143,11 @@ namespace FoodOrderingAPI.Repository
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(string customerId)
+        public async Task<IEnumerable<Order>> GetOrdersByCustomerUserNameAsync(string userName)
         {
             return await _context.Orders
                 .Include(o => o.OrderItems)
-                .Where(o => o.RestaurantID == customerId)
+                .Where(o => o.Restaurant.User.UserName == userName)
                 .ToListAsync();
         }
 
