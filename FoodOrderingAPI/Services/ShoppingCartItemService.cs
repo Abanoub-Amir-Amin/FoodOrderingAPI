@@ -96,8 +96,12 @@ namespace FoodOrderingAPI.Services
                 shoppingCartItem.Quantity += Addition;
                 shoppingCartItem.TotalPrice = shoppingCartItem.Quantity * shoppingCartItem.Item.DiscountedPrice;
                 await shoppingCartServices.UpdatePrices(shoppingCart);
+                
                 await shoppingCartItemsRepository.Save();
-
+                if (shoppingCartItem.Quantity == 0)
+                {
+                    await Removeitem(shoppingCartItem.CartItemID);
+                }
 
             }
             else
@@ -112,8 +116,11 @@ namespace FoodOrderingAPI.Services
                 throw new ArgumentNullException("this item removed");
             await shoppingCartItemsRepository.Delete(shoppingCartItem);
             ShoppingCart shoppingCart = await shoppingCartRepository.getById(shoppingCartItem.CartID);
-            await shoppingCartServices.UpdatePrices(shoppingCart);
             await shoppingCartItemsRepository.Save();
+            await shoppingCartServices.UpdatePrices(shoppingCart);
+            if (shoppingCart.ShoppingCartItems.Count == 0)
+                await shoppingCartServices.Clear(shoppingCart.CartID);
+
 
         }
 

@@ -132,7 +132,7 @@ public class MappingProfile : Profile
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
                 .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender))
-                .ForPath(dest => dest.User.PhoneNumber, opt => opt.MapFrom(src => src.Phone))
+                //.ForMember(dest => dest.User.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
                 .ForMember(dest => dest.CustomerID, opt => opt.Ignore())
                 .ForMember(dest => dest.UserID, opt => opt.Ignore())
                 .ForMember(dest => dest.User, opt => opt.Ignore())
@@ -158,7 +158,7 @@ public class MappingProfile : Profile
         //.ForMember(dest => dest.Rewards, opt => opt.MapFrom(src => src.RewardHistories.Select(r => r.Reason).ToList()))
         //.ForMember(dest => dest.TotalRewardspoints, opt => opt.MapFrom(src => src.RewardHistories.Sum(r => r.PointsEarned)));
 
-
+        CreateMap<Address, AddressViewDto>();
 
         CreateMap<ShoppingCartItemAddedDTO, ShoppingCartItem>()
             .ForMember(dest => dest.CartID, opt => opt.MapFrom(src => src.CartID))
@@ -173,7 +173,8 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Preferences, opt => opt.MapFrom(src => src.Preferences))
             .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
             .ForMember(dest => dest.ItemName, opt => opt.MapFrom(src => src.Item.Name))
-            .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
+            .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice))
+            .ForMember(dest => dest.ImageFile, opt => opt.MapFrom(src => src.Item.ImageFile));
 
         CreateMap<ShoppingCart, ShoppingCartDTO>()
             .ForMember(dest => dest.RestaurantName, opt => opt.MapFrom(src => src.Restaurant != null ? src.Restaurant.RestaurantName : null))

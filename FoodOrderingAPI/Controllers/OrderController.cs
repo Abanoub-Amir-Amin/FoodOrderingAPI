@@ -198,9 +198,15 @@ namespace FoodOrderingAPI.Controllers
 
             ShoppingCart cart = await _shoppingCartRepository.getByCustomer(CustomerId);
             if (cart == null) return NotFound("customer or shopping car Not found");
-
-            CheckoutViewDTO checkout = await _OrderService.Checkout(cart);
-            return Ok(checkout);
+            try
+            {
+                CheckoutViewDTO checkout = await _OrderService.Checkout(cart);
+                return Ok(checkout);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [Authorize(Roles = "Customer")]
         [HttpPost("PlaceOrder")]
@@ -212,7 +218,7 @@ namespace FoodOrderingAPI.Controllers
             if (cart == null) return NotFound("customer or shopping car Not found");
             try
             {
-                await _OrderService.PlaceOrder(cart);
+                await _OrderService.PlaceOrder  (cart);
             }
             catch (Exception ex)
             {

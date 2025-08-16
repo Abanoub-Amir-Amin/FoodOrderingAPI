@@ -108,7 +108,7 @@ namespace FoodOrderingAPI.Controllers
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userIdClaim != Customer.CustomerID)
             {
-                return Forbid("You are not authorized to Update item from this Customer's ShoppingCart.");
+                return Forbid("You are not authorized to Update item from this Customer's ShoppingCart."+userIdClaim+" , "+Customer.CustomerID);
             }
             try
             {
@@ -147,7 +147,7 @@ namespace FoodOrderingAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error removing item: {ex.Message}");
+                return BadRequest( $"Error removing item: {ex.Message}");
             }
         }
     }

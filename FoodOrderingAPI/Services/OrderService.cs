@@ -140,12 +140,42 @@ namespace FoodOrderingAPI.Services
         //customer
         public async Task<CheckoutViewDTO> Checkout (ShoppingCart shoppingCart)
         {
-            var priceids = shoppingCart.ShoppingCartItems.Select(SC => SC.Item.StripePriceId).ToList();
-            shoppingCart.ShoppingCartItems.Select(sc => sc.Quantity);
-            CheckoutViewDTO checkout = _mapper.Map<CheckoutViewDTO>(shoppingCart);
-            checkout.Address = await _addressRepo.getDafaultAddress(shoppingCart.CustomerID);
-            checkout.PaymentLink = stripeService.CreatePaymentLink(shoppingCart.ShoppingCartItems.ToList());
-            return checkout;
+            if (shoppingCart.ShoppingCartItems == null || shoppingCart.ShoppingCartItems.Count <= 0)
+                throw new ArgumentException("ShoppingCart is empty");
+
+            if (shoppingCart.Restaurant == null)
+                throw new ArgumentException("ShoppingCart isn't assigned to Restaurant");
+           
+            if (shoppingCart.Customer == null)
+                throw new ArgumentException("ShoppingCart isn't assigned to Customer");
+            Address add = await _addressRepo.getDafaultAddress(shoppingCart.CustomerID);
+            if (add == null)
+                throw new ArgumentException("there no Addresses for this user, pleases add address and try again");
+
+            if (string.IsNullOrEmpty(shoppingCart.Customer.User.PhoneNumber))
+                throw new ArgumentException("there no phone number for this user, pleases add phone and try again");
+            try
+            {
+                TimeSpan delivaryDuration = await _openRouteService.GetTravelDurationAsync(
+                   shoppingCart.Restaurant.Latitude,
+                   shoppingCart.Restaurant.Longitude,
+                   add.Latitude,
+                   add.Longitude
+               );
+
+
+                var priceids = shoppingCart.ShoppingCartItems.Select(SC => SC.Item.StripePriceId).ToList();
+                shoppingCart.ShoppingCartItems.Select(sc => sc.Quantity);
+                CheckoutViewDTO checkout = _mapper.Map<CheckoutViewDTO>(shoppingCart);
+                 var addressdto= await _addressRepo.getDafaultAddress(shoppingCart.CustomerID);
+                checkout.Address = _mapper.Map<AddressViewDto>(addressdto);
+                checkout.PaymentLink = stripeService.CreatePaymentLink(shoppingCart.ShoppingCartItems.ToList());
+                return checkout;
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(ex.Message);
+            }
         }
         public async Task transferItemsFromCartToOrder(ShoppingCart cart, Order order)
         {
@@ -158,12 +188,12 @@ namespace FoodOrderingAPI.Services
         }
         public async Task PlaceOrder(ShoppingCart cart)
         {
+            if (cart.ShoppingCartItems == null || cart.ShoppingCartItems.Count <= 0)
+                throw new ArgumentException("ShoppingCart is empty");
+
             // التأكد من صحة البيانات المدخلة
             if (cart.Restaurant == null)
                 throw new ArgumentException("ShoppingCart isn't assigned to Restaurant");
-
-            if (cart.ShoppingCartItems == null || cart.ShoppingCartItems.Count <= 0)
-                throw new ArgumentException("ShoppingCart is empty");
 
             if (cart.Customer == null)
                 throw new ArgumentException("ShoppingCart isn't assigned to Customer");

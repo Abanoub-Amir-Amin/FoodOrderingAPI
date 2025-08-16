@@ -6,7 +6,7 @@ namespace FoodOrderingAPI.DTO
     {
         public string FirstName { set; get; }
         public string LastName { set; get; }
-        public string? Phone { set; get; }
+        public string? PhoneNumber { set; get; }
         public GenderEnum? Gender { set; get; }
     }
 }

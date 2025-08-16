@@ -7,7 +7,7 @@ namespace FoodOrderingAPI.DTO
         public string RestaurantName { get; set; }
         public List<ShoppingCartItemDto> Items { get; set; }
         public string PhoneNumber { get; set; }
-        public Address Address { get; set; }
+        public AddressViewDto Address { get; set; }
 
         public decimal SubTotal { get; set; }
 
