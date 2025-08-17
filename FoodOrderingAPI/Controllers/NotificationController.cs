@@ -29,6 +29,19 @@ namespace FoodOrderingAPI.Controllers
             return Ok(new { Message = dTO.Message });
         }
 
+        [HttpGet("GetNotifications/{userId}")]
+        public IActionResult GetNotificationsByUserId(string userId)
+        {
+            var notifications = NotificationRepo.GetNotificationsByUserId(userId);
+            return Ok(notifications);
+        }
+
+        [HttpPost("MarkAsRead/{notificationId}")]
+        public IActionResult MarkNotificationAsRead(Guid notificationId)
+        {
+            NotificationRepo.MarkNotificationAsRead(notificationId);
+            return Ok(new { NotificationId = notificationId });
+        }
     }
     public class mDTO
     {

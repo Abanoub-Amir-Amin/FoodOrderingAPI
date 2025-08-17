@@ -136,7 +136,7 @@ namespace FoodOrderingAPI
 
                         var path = context.HttpContext.Request.Path;
                         if (!string.IsNullOrEmpty(accessToken) &&
-                            path.StartsWithSegments("/chathub"))
+                            path.StartsWithSegments("/chathub") || path.StartsWithSegments("/notificationhub"))
                         {
                             context.Token = accessToken;
                         }

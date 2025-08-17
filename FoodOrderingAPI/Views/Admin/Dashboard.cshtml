@@ -15,6 +15,22 @@
 <style>
     /* Your existing styles (dark mode + general) here */
 </style>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (token) {
+        console.log('✅ Token received from Angular:', token);
+        // Save in sessionStorage for SignalR and API calls
+        sessionStorage.setItem('authToken', token);
+
+        // Remove token from URL for cleanliness
+        const newUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+    } else {
+        console.warn('⚠️ No token found in query string');
+    }
+</script>
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light sticky-top border-bottom">
     <div class="container-fluid px-4">
