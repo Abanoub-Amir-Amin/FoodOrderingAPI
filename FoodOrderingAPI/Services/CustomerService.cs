@@ -147,7 +147,7 @@ namespace FoodOrderingAPI.Services
                     await shoppingCartRepo.Save();
 
                     //add address
-                    await addressRepo.Add(user.UserName, dto.Address);
+                    await addressRepo.Add(user.Id, dto.Address);
                     await addressRepo.Save();
                     // Commit transaction if everything succeeded
                     await transaction.CommitAsync();
