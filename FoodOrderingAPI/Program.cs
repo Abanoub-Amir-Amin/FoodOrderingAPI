@@ -131,16 +131,29 @@ namespace FoodOrderingAPI
                 {
                     OnMessageReceived = context =>
                     {
-                        var accessToken = context.Request.Cookies["AuthToken"];
-                        if (!string.IsNullOrEmpty(accessToken))
+                        // 1) Read from query string for SignalR
+                        var accessToken = context.Request.Query["access_token"];
+
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            path.StartsWithSegments("/chathub") || path.StartsWithSegments("/notificationhub"))
                         {
                             context.Token = accessToken;
                         }
 
+                        // 2) Fallback to cookie (for normal API calls)
+                        if (string.IsNullOrEmpty(context.Token))
+                        {
+                            var cookieToken = context.Request.Cookies["AuthToken"];
+                            if (!string.IsNullOrEmpty(cookieToken))
+                            {
+                                context.Token = cookieToken;
+                            }
+                        }
+
                         return Task.CompletedTask;
                     }
-                }
-                ;
+                };
             });
 
             // Register Role-based authorization policies

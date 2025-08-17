@@ -40,9 +40,10 @@ namespace FoodOrderingAPI.Repository
 
         public async Task<IEnumerable<PromoCode>> GetAllPromoCodesByRestaurantAsync(string restaurantId)
         {
-            return await _context.PromoCodes
-                .Where(p => p.IssuedByID == restaurantId)
-                .ToListAsync();
+            //return await _context.PromoCodes
+            //    .Where(p => p.IssuedByID == restaurantId)
+            //    .ToListAsync();
+            return new List<PromoCode>();
         }
 
         public async Task<IEnumerable<PromoCode>> SearchPromoCodesByCodeAsync(string restaurantId, string code)
