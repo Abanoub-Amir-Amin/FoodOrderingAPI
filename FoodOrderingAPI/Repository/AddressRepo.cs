@@ -53,9 +53,9 @@ namespace FoodOrderingAPI.Repository
         {
             return await dbContext.Addresses.FirstOrDefaultAsync(A => A.CustomerID == customerId && A.IsDefault);
         }
-        public async Task<Address> Add(string Username, AddressDTO addressdto)
+        public async Task<Address> Add(string UserId, AddressDTO addressdto)
         {
-            Customer customer = await dbContext.Customers.FirstOrDefaultAsync(c => c.User.UserName == Username);
+            Customer customer = await dbContext.Customers.FirstOrDefaultAsync(c => c.CustomerID == UserId);
             bool isDefault = false;
             if(customer.Addresses==null)
                 isDefault = true;
