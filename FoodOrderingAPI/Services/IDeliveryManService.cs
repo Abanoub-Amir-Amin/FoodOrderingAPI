@@ -17,6 +17,6 @@ namespace FoodOrderingAPI.Services
         Task<DeliveryMan?> GetBestAvailableDeliveryManAsync();
         Task<DeliveryMan?> GetClosestDeliveryManAsync(double orderLatitude, double orderLongitude);
 
-        Task<Order> UpdateOrderStatusAsync(Guid OrderId, StatusEnum newStatus, string deliveryManId);
+        Task<DeliveryManUpdateOrderStatusDTO> UpdateOrderStatusAsync(Guid OrderId, StatusEnum newStatus, string deliveryManId);
     }
 }

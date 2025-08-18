@@ -3,6 +3,7 @@ using FoodOrderingAPI.Hubs;
 using FoodOrderingAPI.Interfaces;
 using FoodOrderingAPI.Models;
 using FoodOrderingAPI.Repository;
+using FoodOrderingAPI.services;
 using FoodOrderingAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -65,6 +66,14 @@ namespace FoodOrderingAPI
             // Register DeliveryMan services and repositories
             builder.Services.AddScoped<IDeliveryManService, DeliveryManService>();
             builder.Services.AddScoped<IDeliveryManRepository, DeliveryManRepository>();
+
+            // Register ChatBot services and repositories
+            builder.Services.AddScoped<IChatService, ChatServices>();
+            builder.Services.AddScoped<KnowledgeIngestionService>();
+            builder.Services.AddScoped<RetrievalService>();
+            builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+            builder.Services.AddHttpClient<IEmbeddingService, GeminiEmbeddingService>();
+
 
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IOrderRepo, OrderRepo>();

@@ -1,4 +1,5 @@
 ﻿using FoodOrderingAPI.Models;
+using FoodOrderingAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -234,5 +235,8 @@ namespace FoodOrderingAPI
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<User_ConnectionId> User_ConnectionId { get; set; }
 
+        public virtual DbSet<Chat> Chats { get; set; }
+
+        public virtual DbSet<KnowledgeChunk> KnowledgeChunks { get; set; }
     }
 }

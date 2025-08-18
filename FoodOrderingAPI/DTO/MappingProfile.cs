@@ -279,8 +279,7 @@ public class MappingProfile : Profile
         .ForMember(dest => dest.OrderID, opt => opt.MapFrom(src => src.OrderID))
         .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
         .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber))
-        .ForMember(dest => dest.itemNames, opt => opt.MapFrom(src =>
-        src.OrderItems.Select(oi => oi.Item == null ? null : oi.Item.Name).ToList()))
+        .ForMember(dest => dest.items, opt => opt.MapFrom(src => src.OrderItems))
         .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FirstName+" "+src.Customer.LastName))
         .ForMember(dest => dest.CustomerAddress, opt => opt.MapFrom(src => $"{src.Address.Label} - {src.Address.Street}, {src.Address.City}"))
         .ForMember(dest => dest.CustomerPhone, opt => opt.MapFrom(src => src.PhoneNumber))

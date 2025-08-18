@@ -1,4 +1,5 @@
-﻿using FoodOrderingAPI.Models;
+﻿using FoodOrderingAPI.DTO;
+using FoodOrderingAPI.Models;
 
 namespace FoodOrderingAPI.Repository
 {
@@ -17,6 +18,6 @@ namespace FoodOrderingAPI.Repository
         Task<List<DeliveryMan>> GetAvailableDeliveryMenAsync();
         Task<DeliveryMan?> GetClosestDeliveryManAsync(double orderLatitude, double orderLongitude);
 
-        Task<Order> UpdateOrderStatusAsync(Guid OrderId, StatusEnum status, string deliveryManId);
+        Task<DeliveryManUpdateOrderStatusDTO> UpdateOrderStatusAsync(Guid OrderId, StatusEnum status, string deliveryManId);
     }
 }

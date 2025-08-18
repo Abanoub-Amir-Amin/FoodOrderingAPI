@@ -41,48 +41,121 @@ namespace FoodOrderingAPI.Services
             return await reviewRepo.DeleteReviewAsync(reviewId);
         }
 
-        public async Task<IEnumerable<Review>> GetAllReviewsAsync()
+        public async Task<IEnumerable<ReviewGetterDTO>> GetAllReviewsAsync()
         {
-            return await reviewRepo.GetAllReviewsAsync();
+            List <ReviewGetterDTO> reviews = new();
+            var temp = await reviewRepo.GetAllReviewsAsync();
+            foreach (var review in temp)
+            {
+                reviews.Add(new ReviewGetterDTO
+                {
+                    ReviewID = review.ReviewID,
+                    CustomerID = review.CustomerID,
+                    RestaurantID = review.RestaurantID,
+                    OrderID = review.OrderID,
+                    Rating = review.Rating,
+                    Comment = review.Comment,
+                    CreatedAt = review.CreatedAt,
+                    UserName = review.Customer?.User?.UserName ?? "Unknown"
+                });
+            }
+            return reviews;
         }
 
-        public Task<Review> GetReviewByIdAsync(Guid reviewId)
+        public async Task<ReviewGetterDTO> GetReviewByIdAsync(Guid reviewId)
         {
             if (reviewId == Guid.Empty)
             {
                 throw new ArgumentException("Review ID cannot be empty.", nameof(reviewId));
             }
-            var review = reviewRepo.GetReviewByIdAsync(reviewId);
-            return review;
+            var review = await reviewRepo.GetReviewByIdAsync(reviewId);
+            ReviewGetterDTO reviewGetter = new ReviewGetterDTO
+            {
+                ReviewID = review.ReviewID,
+                CustomerID = review.CustomerID,
+                RestaurantID = review.RestaurantID,
+                OrderID = review.OrderID,
+                Rating = review.Rating,
+                Comment = review.Comment,
+                CreatedAt = review.CreatedAt,
+                UserName = review.Customer?.User?.UserName ?? "Unknown"
+            };
+
+            return reviewGetter;
         }
 
-        public Task<IEnumerable<Review>> GetReviewsByCustomerIdAsync(string customerId)
+        public async Task<IEnumerable<ReviewGetterDTO>> GetReviewsByCustomerIdAsync(string customerId)
         {
             if (string.IsNullOrEmpty(customerId))
             {
                 throw new ArgumentException("Customer ID cannot be null or empty.", nameof(customerId));
             }
-            var reviews = reviewRepo.GetReviewsByCustomerIdAsync(customerId);
+            var temp = await reviewRepo.GetReviewsByCustomerIdAsync(customerId);
+            List<ReviewGetterDTO> reviews = new();
+            foreach (var review in temp)
+            {
+                reviews.Add(new ReviewGetterDTO
+                {
+                    ReviewID = review.ReviewID,
+                    CustomerID = review.CustomerID,
+                    RestaurantID = review.RestaurantID,
+                    OrderID = review.OrderID,
+                    Rating = review.Rating,
+                    Comment = review.Comment,
+                    CreatedAt = review.CreatedAt,
+                    UserName = review.Customer?.User?.UserName ?? "Unknown"
+                });
+            }
             return reviews;
         }
 
-        public Task<IEnumerable<Review>> GetReviewsByOrderIdAsync(Guid orderId)
+        public async Task<IEnumerable<ReviewGetterDTO>> GetReviewsByOrderIdAsync(Guid orderId)
         {
             if (orderId == Guid.Empty)
             {
                 throw new ArgumentException("Order ID cannot be empty.", nameof(orderId));
             }
-            var reviews = reviewRepo.GetReviewsByOrderIdAsync(orderId);
+            var temp = await reviewRepo.GetReviewsByOrderIdAsync(orderId);
+            List<ReviewGetterDTO> reviews = new();
+            foreach (var review in temp)
+            {
+                reviews.Add(new ReviewGetterDTO
+                {
+                    ReviewID = review.ReviewID,
+                    CustomerID = review.CustomerID,
+                    RestaurantID = review.RestaurantID,
+                    OrderID = review.OrderID,
+                    Rating = review.Rating,
+                    Comment = review.Comment,
+                    CreatedAt = review.CreatedAt,
+                    UserName = review.Customer?.User?.UserName ?? "Unknown"
+                });
+            }
             return reviews;
         }
 
-        public Task<IEnumerable<Review>> GetReviewsByRestaurantIdAsync(string restaurantId)
+        public async Task<IEnumerable<ReviewGetterDTO>> GetReviewsByRestaurantIdAsync(string restaurantId)
         {
             if (string.IsNullOrEmpty(restaurantId))
             {
                 throw new ArgumentException("Restaurant ID cannot be null or empty.", nameof(restaurantId));
             }
-            var reviews = reviewRepo.GetReviewsByRestaurantIdAsync(restaurantId);
+            var temp = await reviewRepo.GetReviewsByRestaurantIdAsync(restaurantId);
+            List<ReviewGetterDTO> reviews = new();
+            foreach (var review in temp)
+            {
+                reviews.Add(new ReviewGetterDTO
+                {
+                    ReviewID = review.ReviewID,
+                    CustomerID = review.CustomerID,
+                    RestaurantID = review.RestaurantID,
+                    OrderID = review.OrderID,
+                    Rating = review.Rating,
+                    Comment = review.Comment,
+                    CreatedAt = review.CreatedAt,
+                    UserName = review.Customer?.User?.UserName ?? "Unknown"
+                });
+            }
             return reviews;
         }
     }
