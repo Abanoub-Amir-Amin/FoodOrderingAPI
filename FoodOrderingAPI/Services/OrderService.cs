@@ -156,16 +156,17 @@ namespace FoodOrderingAPI.Services
 
             if (oldStatus == StatusEnum.WaitingToConfirm && newStatus == StatusEnum.Preparing)
             {
-                var confirmResult = await ConfirmOrder(order);
-                if (!confirmResult.Success)
-                    throw new InvalidOperationException("Order confirmation failed.");
-
-                order.Status = StatusEnum.Preparing;
+                //order.Status = StatusEnum.Preparing;
                 bool assigned = await assignDelivaryManToOrder(order);
 
                 if (!assigned)
                     throw new InvalidOperationException("No delivery man available to assign to this order.");
 
+                var confirmResult = await ConfirmOrder(order);
+                if (!confirmResult.Success)
+                    throw new InvalidOperationException("Order confirmation failed.");
+
+            
                 await _repository.saveChangesAsync();
             }
             else if (oldStatus == StatusEnum.WaitingToConfirm && newStatus == StatusEnum.Cancelled)
@@ -513,17 +514,19 @@ namespace FoodOrderingAPI.Services
         }
 
         public async Task<List<OrderViewDTO>> GetOrdersByStatusAsyncForCustomer(string customerId, StatusEnum[] statuses)
-
         {
-
             var orders = await _repository.getOrders(customerId);
 
+            // Filter by status using case-insensitive comparison
             var filteredOrders = orders.Where(o => statuses.Contains(o.Status));
 
             return _mapper.Map<List<OrderViewDTO>>(filteredOrders);
-
         }
-
+        public async Task<OrderDetailDTO?> getOrderDetails(Guid orderId)
+        {
+            Order order = await _repository.GetOrderDetails(orderId);
+            return _mapper.Map<OrderDetailDTO>(order);
+        }
 
         public async Task<Order?> getOrder(Guid orderId)
 

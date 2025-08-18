@@ -234,7 +234,7 @@ namespace FoodOrderingAPI.Controllers
             if (order.CustomerID != CustomerId)
                 return Unauthorized($"this user with userId{CustomerId} not autherized to view this orderId");
 
-            var orderDetails = await _OrderService.getOrder(orderId);
+            var orderDetails = await _OrderService.getOrderDetails(orderId);
             if (orderDetails == null) return NotFound();
             return Ok(orderDetails);
         }

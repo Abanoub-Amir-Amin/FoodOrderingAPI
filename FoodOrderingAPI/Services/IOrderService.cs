@@ -29,5 +29,6 @@ namespace FoodOrderingAPI.Services
         Task<List<OrderViewDTO>> GetOrdersByStatusAsyncForCustomer(string customerId, StatusEnum[] statuses);
         Task<Order?> getOrder(Guid orderId);
         Task<List<DelivaryOrderDTO>> getOrdersForDelivarMan(string DelivaryId);
+        Task<OrderDetailDTO?> getOrderDetails(Guid orderId);
     }
 }
