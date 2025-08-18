@@ -105,7 +105,11 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/DeliveryManDashboard']);
         break;
       case 'admin':
-        window.location.href = 'http://localhost:5000/admin/dashboard';
+        const token = sessionStorage.getItem("authToken");
+        if (token) {
+          window.location.href =
+            `http://localhost:5000/admin/Dashboard?token=${encodeURIComponent(token)}`;
+        }
         break;
       case 'customer':
         this.router.navigate(['/CustomerDashboard']);
