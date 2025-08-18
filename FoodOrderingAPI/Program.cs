@@ -111,7 +111,6 @@ namespace FoodOrderingAPI
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
             })
             .AddJwtBearer(options =>
             {
@@ -131,14 +130,25 @@ namespace FoodOrderingAPI
                 {
                     OnMessageReceived = context =>
                     {
-                        // 1) Read from query string for SignalR
-                        var accessToken = context.Request.Query["access_token"];
-
+                        // 1) For SignalR: Check both query string and Authorization header
                         var path = context.HttpContext.Request.Path;
-                        if (!string.IsNullOrEmpty(accessToken) &&
-                            path.StartsWithSegments("/chathub") || path.StartsWithSegments("/notificationhub"))
+                        if (path.StartsWithSegments("/chathub") || path.StartsWithSegments("/notificationhub"))
                         {
-                            context.Token = accessToken;
+                            // First try query string
+                            var accessToken = context.Request.Query["access_token"];
+                            if (!string.IsNullOrEmpty(accessToken))
+                            {
+                                context.Token = accessToken;
+                            }
+                            // If no query string token, try Authorization header
+                            else
+                            {
+                                var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+                                if (authHeader != null && authHeader.StartsWith("Bearer "))
+                                {
+                                    context.Token = authHeader.Substring("Bearer ".Length);
+                                }
+                            }
                         }
 
                         // 2) Fallback to cookie (for normal API calls)
@@ -150,7 +160,6 @@ namespace FoodOrderingAPI
                                 context.Token = cookieToken;
                             }
                         }
-
                         return Task.CompletedTask;
                     }
                 };

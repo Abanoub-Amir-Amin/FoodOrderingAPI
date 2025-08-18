@@ -25,27 +25,52 @@ namespace FoodOrderingAPI.Controllers
         [HttpPost("SendMessage")]
         public IActionResult SendMessage([FromBody] ChatDTO dto)
         {
-            if (dto.Message == null || string.IsNullOrEmpty(dto.Message))
+            try
             {
-                return BadRequest("Invalid message data.");
+                if (dto.Message == null || string.IsNullOrEmpty(dto.Message))
+                {
+                    return BadRequest(new { error = "Invalid message data." });
+                }
+
+                Console.WriteLine($"Sender: {dto.SenderId}, Receiver: {dto.ReceiverId}, Customer: {dto.CustomerId}, Message: {dto.Message}");
+
+                var userChat = DBContext.ComplaintChats.FirstOrDefault(c => c.CustomerID == dto.CustomerId);
+
+                if (userChat == null)
+                {
+                    // Return JSON error instead of plain text
+                    return BadRequest(new { error = "Chat not found." });
+                }
+
+                // Send the message via SignalR
+                HubContext.Clients.User(dto.ReceiverId).SendAsync("ReceiveMessage", dto.SenderId, dto.Message);
+
+                var message = new ChatMessage
+                {
+                    ChatID = userChat.ChatID,
+                    MessageText = dto.Message,
+                    ReceiverID = dto.ReceiverId,
+                    SenderID = dto.SenderId,
+                    SentAt = DateTime.Now,
+                };
+
+                DBContext.ChatMessages.Add(message);
+                DBContext.SaveChanges();
+
+                return Ok(new
+                {
+                    success = true,
+                    senderId = dto.SenderId,
+                    receiverId = dto.ReceiverId,
+                    message = dto.Message,
+                    timestamp = DateTime.Now
+                });
             }
-            Console.WriteLine($"Sender: {dto.SenderId}, Receiver: {dto.ReceiverId}, Customer: {dto.CustomerId}, Message: {dto.Message}");
-            HubContext.Clients.User(dto.ReceiverId).SendAsync("ReceiveMessage", dto.SenderId, dto.Message);
-            Console.WriteLine("****************************************************\n\n");
-            Console.WriteLine(dto.CustomerId);
-            Console.WriteLine("\n\n****************************************************");
-            var userChat = DBContext.ComplaintChats.FirstOrDefault(c => c.CustomerID == dto.CustomerId);
-            var message = new ChatMessage
+            catch (Exception ex)
             {
-                ChatID = userChat.ChatID,
-                MessageText = dto.Message,
-                ReceiverID = dto.ReceiverId,
-                SenderID = dto.SenderId,
-                SentAt = DateTime.Now,
-            };
-            DBContext.ChatMessages.Add(message);
-            DBContext.SaveChanges();
-            return Ok(new { dto.SenderId, dto.ReceiverId, dto.Message });
+                Console.WriteLine($"Error in SendMessage: {ex.Message}");
+                return StatusCode(500, new { error = "Internal server error", details = ex.Message });
+            }
         }
         [HttpGet("GetChatMessages/{userId}")]
         public IActionResult GetChatMessages(string userId)
