@@ -163,14 +163,18 @@ namespace FoodOrderingAPI.Services
                 order.Status = StatusEnum.Preparing;
                 bool assigned = await assignDelivaryManToOrder(order);
 
+                _notificationRepo.CreateNotificationTo(order.DeliveryManID,
+                    $"Order number {order.OrderNumber} is confirmed and being prepared by restaurant.");
+
                 if (!assigned)
                     throw new InvalidOperationException("No delivery man available to assign to this order.");
-
                 await _repository.saveChangesAsync();
             }
             else if (oldStatus == StatusEnum.WaitingToConfirm && newStatus == StatusEnum.Cancelled)
             {
                 bool cancelled = await CancelOrder(order, "Cancelled by restaurant");
+                _notificationRepo.CreateNotificationTo(order.CustomerID,
+                    $"Order number {order.OrderNumber} was cancelled by restaurant.");
                 if (!cancelled)
                     throw new InvalidOperationException("Order cancellation failed.");
                 order.Status = StatusEnum.Cancelled; // make sure to set the status here if changed in CancelOrder
@@ -184,7 +188,7 @@ namespace FoodOrderingAPI.Services
             if (newStatus == StatusEnum.Out_for_Delivery)
             {
                 _notificationRepo.CreateNotificationTo(order.CustomerID,
-                    $"Order number {order.OrderNumber} is out for Out for Delivery");
+                    $"Order number {order.OrderNumber} is out for Out for Delivery.");
             }
 
             return order;
