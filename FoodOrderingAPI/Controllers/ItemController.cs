@@ -8,10 +8,11 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 namespace FoodOrderingAPI.Controllers
 {
-    [EnableCors("AllowAngularDevClient")]
+    //[EnableCors("AllowAngularDevClient")]
     //[Authorize(Roles = "Restaurant")]
     [ApiController]
     [Route("api/[controller]")]
@@ -33,10 +34,12 @@ namespace FoodOrderingAPI.Controllers
             _environment = environment;
 
         }
+
+
         // ===== Items CRUD =====
         [Consumes("multipart/form-data")]  // Ensure it accepts multipart/form-data
         [HttpPost("{restaurantId}/items")]
-        public async Task<IActionResult> AddItem(string restaurantId, [FromForm] ItemDto dto)
+        public async Task<IActionResult> AddItem(string restaurantId, [FromForm] ItemUpdateDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -58,19 +61,31 @@ namespace FoodOrderingAPI.Controllers
         [HttpGet("items/{itemId}")]
         public async Task<IActionResult> GetItem(Guid itemId)
         {
-           
+            try
+            {
             var item = await _ItemService.GetItemByIdAsync(itemId);
 
             if (item == null)
                 return NotFound($"There are no such item with ID '{itemId}'");
 
-            return Ok(item);
+                var dto = _mapper.Map<ItemDto>(item);
+                return Ok(dto);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+
         }
 
 
         [HttpPut("items/{itemId}")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> UpdateItem(Guid itemId, [FromForm] ItemDto dto)
+        public async Task<IActionResult> UpdateItem(Guid itemId, [FromForm] ItemUpdateDto dto)
         {
             
             var item = await _ItemService.UpdateItemAsync(itemId, dto);
@@ -92,14 +107,22 @@ namespace FoodOrderingAPI.Controllers
             return NoContent();
         }
 
-        [HttpGet("items/bycategory")]
-        public async Task<IActionResult> GetItemsByCategory([FromQuery] string category)
+
+
+        [HttpGet("{restaurantId}/items/bycategory")]
+        public async Task<IActionResult> GetItemsByCategory(string restaurantId, [FromQuery] string? category)
         {
             if (string.IsNullOrWhiteSpace(category))
                 return BadRequest("Category must be provided.");
-            var items = await _ItemService.GetItemsByCategoryAsync(category);
+
+            var restaurant = await _RestaurantService.GetRestaurantByIdAsync(restaurantId);
+            if (restaurant == null || !restaurant.IsActive)
+                return NotFound($"Restaurant with ID '{restaurantId}' not found or inactive.");
+
+            var items = await _ItemService.GetItemsByCategoryAsync(restaurantId, category);
             return Ok(items);
         }
+
         [AllowAnonymous]
         [HttpGet("items/byrestaurantname")]
         public async Task<IActionResult> GetItemsByRestaurantName([FromQuery] string restaurantName)
@@ -132,6 +155,7 @@ namespace FoodOrderingAPI.Controllers
 
             return Ok(items);
         }
+
         [HttpGet("items/categories")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllCategories()

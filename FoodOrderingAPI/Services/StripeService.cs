@@ -72,7 +72,7 @@ namespace FoodOrderingAPI.Services
                 PaymentMethodTypes = new List<string> { "card" },
                 LineItems = new List<SessionLineItemOptions>(),
                 Mode = "payment",
-                SuccessUrl = "https://example.com/success",
+                SuccessUrl = "http://localhost:4200/placeorder",
                 CancelUrl = "https://example.com/cancel"
             };
             foreach (var item in items)

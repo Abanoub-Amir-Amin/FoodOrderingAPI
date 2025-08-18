@@ -28,7 +28,26 @@ namespace FoodOrderingAPI.Repository
             };
             Context.Notifications.Add(notification);
             Context.SaveChanges();
-            HubContext.Clients.User(userId.ToString()).SendAsync("ReceiveNotification", message);
+            HubContext.Clients.User(userId.ToString()).SendAsync("ReceiveNotification", message, notification.NotificationId);
+        }
+
+        public List<Notification> GetNotificationsByUserId(string userId)
+        {
+            var notifications = Context.Notifications
+                .Where(n => n.UserId == userId)
+                .OrderByDescending(n => n.CreatedAt)
+                .ToList();
+            return notifications;
+        }
+
+        public void MarkNotificationAsRead(Guid notificationId)
+        {
+            var notification = Context.Notifications.Find(notificationId);
+            if (notification != null)
+            {
+                notification.IsRead = true;
+                Context.SaveChanges();
+            }
         }
 
         public void CreateNotificationToAll(string message)

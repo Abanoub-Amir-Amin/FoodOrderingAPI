@@ -66,7 +66,6 @@ namespace FoodOrderingAPI
 
             modelBuilder.Entity<User>().HasIndex(u => u.UserName).IsUnique();
 
-
             // Admin <-> User
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Admin)

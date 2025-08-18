@@ -1,0 +1,230 @@
+﻿@section Styles {
+    <link rel="stylesheet" href="~/css/AdminChat.css" asp-append-version="true" />
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Chat Interface</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.12/signalr.min.js"></script>
+    
+
+</head>
+<body>
+    
+
+    <button class="mobile-toggle" id="mobileToggle">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+        </svg>
+    </button>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="app-container">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">History</h2>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                    </svg>
+                </button>
+            </div>
+            <div class="chat-history-sidebar" id="chatHistorySidebar">
+                <!-- Chat sessions will be dynamically added here -->
+            </div>
+        </div>
+
+        <div class="adminChat-container">
+            <div class="adminChat-header" style="display:flex; justify-content: space-between; align-items: center;">
+                <h1 class="adminChat-title">Customers assistance</h1>
+                <a href="~/Admin/Dashboard" class="back-button">← Back to Dashboard</a>
+            </div>
+
+
+            <div class="chat-history" id="chatHistory">
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                    </svg>
+                    <p>Customers messages will appear here</p>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <textarea class="chat-input" id="chatInput" placeholder="Type your message here..." rows="1"></textarea>
+                <button class="send-button" id="sendButton">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <script>
+            (async function () {
+                    const chatHistory = document.getElementById('chatHistory');
+                    const chatInput = document.getElementById('chatInput');
+                    const sendButton = document.getElementById('sendButton');
+
+                    let connection;
+                    let senderId;
+                    let chatSessions = {}; // { customerId: [ {content, isOutgoing} ] }
+                    let currentCustomerId = null;
+
+                        
+                    const idRes = await fetch("http://localhost:5000/api/chat/id", {
+                        accessTokenFactory: () => sessionStorage.getItem("authToken")
+                    });
+
+                    if (!idRes.ok) {
+                        console.error("Failed to get user ID");
+                        return;
+                    }
+
+                    senderId = await idRes.text();
+                    console.log("Sender ID:", senderId);
+
+                    connection = new signalR.HubConnectionBuilder()
+                        .withUrl("http://localhost:5000/chathub", { accessTokenFactory: () => sessionStorage.getItem("authToken") })
+                        .build();
+
+                    connection.start().then(() => {
+                        console.log("SignalR connected.");
+                    }).catch(err => console.error("SignalR connection failed:", err));
+
+                    connection.on("ReceiveMessage", function (incomingSenderId, message) {
+                        if (!chatSessions[incomingSenderId]) {
+                            chatSessions[incomingSenderId] = [];
+                        }
+
+                        chatSessions[incomingSenderId].push({ content: message, isOutgoing: false });
+
+                        // Create new sidebar tab if it doesn't exist
+                        if (!document.getElementById(incomingSenderId)) {
+                            const chatSidebar = document.getElementById("chatHistorySidebar");
+                            const tab = document.createElement("div");
+                            tab.classList.add("chat-session");
+                            tab.id = incomingSenderId;
+                            tab.innerHTML = `
+                                <div class="chat-session-title">User: ${incomingSenderId}</div>
+                                <div class="chat-session-time">${new Date().toLocaleTimeString()}</div>
+                                <div class="chat-session-preview">${message}</div>
+                            `;
+                            tab.addEventListener("click", () => switchToChat(incomingSenderId));
+                            chatSidebar.appendChild(tab);
+                        }
+
+                        // Auto-show message if current chat
+                        if (currentCustomerId === incomingSenderId) {
+                            addMessage(message, false);
+                        }
+                    });
+
+                    function switchToChat(customerId) {
+                        debugger;
+                        currentCustomerId = customerId;
+                        chatHistory.innerHTML = ''; // Clear current chat
+
+                        const messages = chatSessions[customerId] || [];
+                        messages.forEach(m => addMessage(m.content, m.isOutgoing));
+
+                        // Highlight selected chat
+                        document.querySelectorAll('.chat-session').forEach(s => s.classList.remove('active'));
+                        const selectedTab = document.getElementById(customerId);
+                        if (selectedTab) selectedTab.classList.add('active');
+                    }
+
+                    async function sendMessage() {
+                        const message = chatInput.value.trim();
+                        if (!message || !currentCustomerId) return;
+
+                        addMessage(message, true);
+
+                        if (!chatSessions[currentCustomerId]) {
+                            chatSessions[currentCustomerId] = [];
+                        }
+                        chatSessions[currentCustomerId].push({ content: message, isOutgoing: true });
+
+                        await fetch("http://localhost:5000/api/chat/sendmessage", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                ReceiverId: currentCustomerId,
+                                senderId,
+                                message,
+                                CustomerId: currentCustomerId
+                            }),
+                            accessTokenFactory: () => sessionStorage.getItem("authToken")
+                        });
+
+                        chatInput.value = '';
+                        adjustTextareaHeight();
+                    }
+
+                    function addMessage(content, isOutgoing = false) {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = `message ${isOutgoing ? 'outgoing' : 'incoming'}`;
+                        const time = formatTime();
+                        messageDiv.innerHTML = `
+                            <div class="message-bubble">
+                                ${content}
+                                <div class="message-time">${time}</div>
+                            </div>
+                        `;
+                        chatHistory.appendChild(messageDiv);
+                        chatHistory.scrollTop = chatHistory.scrollHeight;
+                    }
+
+                    function formatTime() {
+                        return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    }
+
+                    function adjustTextareaHeight() {
+                        chatInput.style.height = 'auto';
+                        chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+                    }
+
+                    // Event listeners
+                    sendButton.addEventListener('click', sendMessage);
+
+                    chatInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            sendMessage();
+                        }
+                    });
+
+                    chatInput.addEventListener('input', adjustTextareaHeight);
+                    adjustTextareaHeight();
+
+                    // Sidebar functionality
+                    const sidebar = document.getElementById('sidebar');
+                    const sidebarToggle = document.getElementById('sidebarToggle');
+                    const mobileToggle = document.getElementById('mobileToggle');
+                    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+                    function toggleSidebar() {
+                        sidebar.classList.toggle('visible');
+                        sidebarOverlay.classList.toggle('visible');
+                    }
+
+                    function closeSidebar() {
+                        sidebar.classList.remove('visible');
+                        sidebarOverlay.classList.remove('visible');
+                    }
+
+                    mobileToggle.addEventListener('click', toggleSidebar);
+                    sidebarOverlay.addEventListener('click', closeSidebar);
+                    })();
+        </script>
+
+</body>
+</html>

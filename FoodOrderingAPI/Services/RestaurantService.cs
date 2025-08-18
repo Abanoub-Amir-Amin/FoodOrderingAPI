@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using FoodOrderingAPI.DTO;
 using FoodOrderingAPI.DTO.FoodOrderingAPI.DTO;
-using Microsoft.AspNetCore.Http;
 using FoodOrderingAPI.Models;
 using FoodOrderingAPI.Repository;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Index.HPRtree;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,20 +34,12 @@ namespace FoodOrderingAPI.Services
         // Create User + Restaurant when applying to join
         public async Task<Restaurant> ApplyToJoinAsync(RestaurantUpdateDto dto)
         {
-            // 1. Validate DTO and nested user info
-            if (dto == null)
-                throw new ArgumentNullException(nameof(dto));
-            if (dto.User == null)
-                throw new ArgumentException("User info must be provided", nameof(dto.User));
-            if (string.IsNullOrWhiteSpace(dto.User.Email))
-                throw new ArgumentException("Email is required", nameof(dto.User.Email));
-            if (string.IsNullOrWhiteSpace(dto.User.Password))
-                throw new ArgumentException("Password is required", nameof(dto.User.Password));
-            if (string.IsNullOrWhiteSpace(dto.User.UserName))
-                throw new ArgumentException("Username is required", nameof(dto.User.UserName));
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            if (dto.User == null) throw new ArgumentException("User info must be provided", nameof(dto.User));
+            if (string.IsNullOrWhiteSpace(dto.User.Email)) throw new ArgumentException("Email is required", nameof(dto.User.Email));
+            if (string.IsNullOrWhiteSpace(dto.User.Password)) throw new ArgumentException("Password is required", nameof(dto.User.Password));
+            if (string.IsNullOrWhiteSpace(dto.User.UserName)) throw new ArgumentException("Username is required", nameof(dto.User.UserName));
 
-            Console.WriteLine($"Applying to join with User: {dto.User.UserName}, Email: {dto.User.Email}");
-            // 2. Check for existing users with same email or username
             var existingUserByEmail = await _userManager.FindByEmailAsync(dto.User.Email);
             if (existingUserByEmail != null)
                 throw new InvalidOperationException("A user with this email already exists.");
@@ -54,60 +48,72 @@ namespace FoodOrderingAPI.Services
             if (existingUserByUsername != null)
                 throw new InvalidOperationException("A user with this username already exists.");
 
-            // 3. Map User DTO to User entity
-            var newUser = _mapper.Map<User>(dto.User);
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
-            // 4. Set system properties (do NOT set Id manually unless really needed)
-            newUser.Role = RoleEnum.Restaurant;
-            newUser.CreatedAt = DateTime.UtcNow;
-
-            // 5. Create user with hashed password via UserManager
-            var userCreateResult = await _userManager.CreateAsync(newUser, dto.User.Password);
-            if (!userCreateResult.Succeeded)
+            try
             {
-                var errors = string.Join("; ", userCreateResult.Errors.Select(e => e.Description));
-                throw new InvalidOperationException($"Failed to create user: {errors}");
-            }
+                // Map and create the new user
+                var newUser = _mapper.Map<User>(dto.User);
+                newUser.Role = RoleEnum.Restaurant;
+                newUser.CreatedAt = DateTime.UtcNow;
 
-            // 6. Assign the "Restaurant" role to this user
-            var roleAssignResult = await _userManager.AddToRoleAsync(newUser, "Restaurant");
-            if (!roleAssignResult.Succeeded)
+                var userCreateResult = await _userManager.CreateAsync(newUser, dto.User.Password);
+                if (!userCreateResult.Succeeded)
+                {
+                    var errors = string.Join("; ", userCreateResult.Errors.Select(e => e.Description));
+                    throw new InvalidOperationException($"Failed to create user: {errors}");
+                }
+
+                var roleAssignResult = await _userManager.AddToRoleAsync(newUser, "Restaurant");
+                if (!roleAssignResult.Succeeded)
+                {
+                    var errors = string.Join("; ", roleAssignResult.Errors.Select(e => e.Description));
+                    throw new InvalidOperationException($"Failed to assign role: {errors}");
+                }
+
+                // Save logo file if provided
+                if (dto.LogoFile != null && dto.LogoFile.Length > 0)
+                {
+                    dto.ImageUrl = await SaveImageAsync(dto.LogoFile);
+                }
+
+                // Map restaurant dto and assign references
+                var restaurantEntity = _mapper.Map<Restaurant>(dto);
+                restaurantEntity.RestaurantID = newUser.Id;
+                restaurantEntity.User = newUser;
+                restaurantEntity.ImageFile = dto.ImageUrl;
+
+                if (string.IsNullOrWhiteSpace(restaurantEntity.RestaurantID))
+                {
+                    restaurantEntity.RestaurantID = Guid.NewGuid().ToString();
+                }
+
+                restaurantEntity.IsActive = false;
+
+                restaurantEntity.User.Restaurant = null;
+
+                // Save restaurant to DB
+                await _repository.ApplyToJoinAsync(restaurantEntity);
+
+                // Commit transaction only if all succeeded
+                await transaction.CommitAsync();
+
+                return restaurantEntity;
+            }
+            catch
             {
-                var errors = string.Join("; ", roleAssignResult.Errors.Select(e => e.Description));
-                throw new InvalidOperationException($"Failed to assign role: {errors}");
+                // Rollback transaction contacts everything created within this scope
+                await transaction.RollbackAsync();
+
+                // delete user if created outside transaction (UserManager may create user outside EF)
+                var userToDelete = await _userManager.FindByNameAsync(dto.User.UserName);
+                if (userToDelete != null)
+                {
+                    await _userManager.DeleteAsync(userToDelete);
+                }
+
+                throw; // rethrow error
             }
-
-            // 7. Map Restaurant DTO to entity and link to created user
-            var restaurantEntity = _mapper.Map<Restaurant>(dto);
-            restaurantEntity.RestaurantID = newUser.Id;
-            restaurantEntity.User = newUser;
-            //update to restaurant to get order time
-            restaurantEntity.Longitude = dto.Longitude;
-            restaurantEntity.Latitude = dto.Latitude;
-            restaurantEntity.orderTime = dto.orderTime;
-            restaurantEntity.DelivaryPrice=dto.DelivaryPrice;
-            // Assign new Guid if RestaurantID is empty
-            if (string.IsNullOrWhiteSpace(restaurantEntity.RestaurantID))
-            {
-                restaurantEntity.RestaurantID = Guid.NewGuid().ToString();
-            }
-
-            // 8. Save logo file if provided, assign relative URL to LogoUrl property
-            if (dto.LogoFile != null && dto.LogoFile.Length > 0)
-            {
-                restaurantEntity.ImageFile = await SaveImageAsync(dto.LogoFile);
-            }
-            else
-            {
-                restaurantEntity.ImageFile = "wwwroot/restaurantLogo.jpg"; // default logo
-            }
-
-            // 8. Initialize restaurant inactive pending approval
-            restaurantEntity.IsActive = false;
-
-            restaurantEntity.User.Restaurant = null;
-
-            return await _repository.ApplyToJoinAsync(restaurantEntity);
         }
 
 
@@ -142,7 +148,16 @@ namespace FoodOrderingAPI.Services
                 existingRestaurant.OpenHours = dto.OpenHours;
 
             if (dto.LogoFile != null && dto.LogoFile.Length > 0)
-                existingRestaurant.ImageFile = await SaveImageAsync(dto.LogoFile);
+            {
+                var imageUrl = await SaveImageAsync(dto.LogoFile);
+                existingRestaurant.ImageFile = imageUrl;
+            }
+            else if (!string.IsNullOrWhiteSpace(dto.ImageUrl))
+            {
+                // If client explicitly sends an ImageUrl to update (to remove or change to existing URL)
+                existingRestaurant.ImageFile = dto.ImageUrl;
+            }
+            // else keep existingRestaurant.ImageFile as is (no change)
 
             if (dto.IsAvailable.HasValue)
                 existingRestaurant.IsAvailable = dto.IsAvailable.Value;
@@ -150,18 +165,8 @@ namespace FoodOrderingAPI.Services
             if (!string.IsNullOrWhiteSpace(dto.User.Email))
                 existingRestaurant.User.Email = dto.User.Email;
 
-            if (!string.IsNullOrWhiteSpace(dto.User.Phone))
-                existingRestaurant.User.PhoneNumber = dto.User.Phone;
-
-            if (dto.Longitude==0)
-                existingRestaurant.Longitude = dto.Longitude;
-
-            if (dto.Latitude == 0)
-                existingRestaurant.Latitude = dto.Latitude;
-
-            if (dto.orderTime != TimeSpan.Zero)
-                existingRestaurant.orderTime = dto.orderTime;
-
+            if (!string.IsNullOrWhiteSpace(dto.User.PhoneNumber))
+                existingRestaurant.User.PhoneNumber = dto.User.PhoneNumber;
 
             return await _repository.UpdateRestaurantAsync(existingRestaurant);
         }
@@ -201,5 +206,23 @@ namespace FoodOrderingAPI.Services
             return $"/uploads/{uniqueFileName}";
         }
 
+
+        //Setting Location
+        public async Task SetRestaurantLocation(string restaurantId, double latitude, double longitude)
+        {
+            if (latitude < -90 || latitude > 90)
+                throw new ArgumentOutOfRangeException(nameof(latitude), "Latitude must be between -90 and 90.");
+            if (longitude < -180 || longitude > 180)
+                throw new ArgumentOutOfRangeException(nameof(longitude), "Longitude must be between -180 and 180.");
+
+            var restaurant = await _repository.GetRestaurantByIdAsync(restaurantId);
+            if (restaurant == null)
+                throw new ArgumentException("Invalid restaurant ID.");
+
+            restaurant.Latitude = latitude;
+            restaurant.Longitude = longitude;
+
+            await _repository.UpdateRestaurantAsync(restaurant);
+        }
     }
 }

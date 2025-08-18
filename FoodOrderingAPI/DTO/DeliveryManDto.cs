@@ -1,4 +1,5 @@
 ﻿using FoodOrderingAPI.Models;
+using System.Text.Json.Serialization;
 
 namespace FoodOrderingAPI.DTO
 {
@@ -11,6 +12,8 @@ namespace FoodOrderingAPI.DTO
         public float? Rank { get; set; }
         public bool AvailabilityStatus { get; set; }
 
+        [JsonIgnore]
+        public AccountStatusEnum AccountStatus { get; set; } = AccountStatusEnum.Pending;
         public UserDto User { get; set; }
     }
 }

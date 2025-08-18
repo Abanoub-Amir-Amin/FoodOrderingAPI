@@ -55,7 +55,7 @@ namespace FoodOrderingAPI.Services
         }
         public async Task<bool> UpdateCustomer(string id, UpdateCustomerDTO customerDto)
 
-        { 
+        {
             Customer? Foundcustomer = await customerRepo.GetById(id);
 
             if (Foundcustomer == null) return false;
@@ -65,6 +65,7 @@ namespace FoodOrderingAPI.Services
             //if(!string.IsNullOrWhiteSpace(customerDto.Phone))
             //    Foundcustomer.User.PhoneNumber = customerDto.Phone;
             _mapper.Map(customerDto, Foundcustomer);
+            Foundcustomer.User.PhoneNumber = customerDto.PhoneNumber;
             customerRepo.Update(Foundcustomer);
             return true;
         }
@@ -146,7 +147,7 @@ namespace FoodOrderingAPI.Services
                     await shoppingCartRepo.Save();
 
                     //add address
-                    await addressRepo.Add(user.UserName, dto.Address);
+                    await addressRepo.Add(user.Id, dto.Address);
                     await addressRepo.Save();
                     // Commit transaction if everything succeeded
                     await transaction.CommitAsync();

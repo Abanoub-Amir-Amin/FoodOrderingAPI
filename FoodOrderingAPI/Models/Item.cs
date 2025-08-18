@@ -38,5 +38,7 @@ namespace FoodOrderingAPI.Models
         public ICollection<Discount> Discounts { get; set; } = new List<Discount>();
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public ICollection<ShoppingCartItem> ShoppingCartItems { get; set; } = new List<ShoppingCartItem>();
+
+
     }
 }

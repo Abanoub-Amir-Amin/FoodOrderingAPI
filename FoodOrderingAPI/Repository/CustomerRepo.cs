@@ -45,6 +45,7 @@ namespace FoodOrderingAPI.Repository
         }
         public async Task<Customer> Update(Customer customer)
         {
+            dbContext.Users.Update(customer.User);
             dbContext.Customers.Update(customer);
             return customer;
         }

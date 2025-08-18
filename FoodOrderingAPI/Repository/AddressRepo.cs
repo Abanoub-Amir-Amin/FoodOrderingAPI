@@ -12,10 +12,10 @@ namespace FoodOrderingAPI.Repository
         public AddressRepo(ApplicationDBContext dbContext) {
             this.dbContext = dbContext;
         }
-        public Task<List<Address>> GetAllAddresses(string Username)
+        public Task<List<Address>> GetAllAddresses(string UserId)
         {
             return dbContext.Addresses
-                .Where(A => A.Customer.User.UserName == Username)
+                .Where(A => A.Customer.CustomerID == UserId)
                 .ToListAsync();
         }
         public async Task<Address> GetAddress(Guid addressId)
@@ -27,16 +27,17 @@ namespace FoodOrderingAPI.Repository
        
         public async Task<Address> MakeDefault(Guid AddressId)
         {
-            
+            var allAdresses = await dbContext.Addresses.ToListAsync();
             var address= await dbContext.Addresses
                 .Include(A => A.Customer)
                 .FirstOrDefaultAsync(A => A.AddressID == AddressId);
             if (address != null)
             {
                 Customer customer = address.Customer;
-                foreach (var addr in customer.Addresses)
+                foreach (var addr in allAdresses)
                 {
-                    addr.IsDefault = false;
+                    if(addr.CustomerID==address.CustomerID)
+                        addr.IsDefault = false;
                 }
 
                 // نخلي العنوان المختار هو بس اللي IsDefault = true
@@ -52,9 +53,9 @@ namespace FoodOrderingAPI.Repository
         {
             return await dbContext.Addresses.FirstOrDefaultAsync(A => A.CustomerID == customerId && A.IsDefault);
         }
-        public async Task<Address> Add(string Username, AddressDTO addressdto)
+        public async Task<Address> Add(string UserId, AddressDTO addressdto)
         {
-            Customer customer = await dbContext.Customers.FirstOrDefaultAsync(c => c.User.UserName == Username);
+            Customer customer = await dbContext.Customers.FirstOrDefaultAsync(c => c.CustomerID == UserId);
             bool isDefault = false;
             if(customer.Addresses==null)
                 isDefault = true;
@@ -89,6 +90,12 @@ namespace FoodOrderingAPI.Repository
             Address address = await GetAddress(AddressId);
             if (address == null) { return false; }
             dbContext.Addresses.Remove(address);
+            if (address.IsDefault)
+            {
+                var newDefaultAddress = await dbContext.Addresses.FirstOrDefaultAsync();
+                if(newDefaultAddress!=null)
+                    newDefaultAddress.IsDefault = true;
+            }
             //dbContext.SaveChanges();
             return true;
         }

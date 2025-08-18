@@ -28,7 +28,7 @@ namespace FoodOrderingAPI.Services
             _environment = environment ?? throw new ArgumentNullException(nameof(environment));
         }
         //Item-CRUD
-        public async Task<Item> AddItemAsync(string restaurantId, ItemDto dto)
+        public async Task<Item> AddItemAsync(string restaurantId, ItemUpdateDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Category))
                 throw new ArgumentException("Category is required.");
@@ -46,18 +46,20 @@ namespace FoodOrderingAPI.Services
 
             if (dto.ImageFile != null && dto.ImageFile.Length > 0)
             {
-                item.ImageFile = await SaveImageAsync(dto.ImageFile);
+                dto.ImageUrl = await SaveImageAsync(dto.ImageFile);
             }
+
+            item.ImageFile = dto.ImageUrl;
 
             return await _repository.AddItemAsync(restaurantId, item);
         }
 
-        public async Task CreateItemAsync(string restaurantId, ItemDto item)
+        public async Task CreateItemAsync(string restaurantId, ItemUpdateDto item)
         {
             await HubContext.Clients.All.SendAsync("ReceiveItem", item);
         }
 
-        public async Task<Item> UpdateItemAsync(Guid itemId, ItemDto dto)
+        public async Task<Item> UpdateItemAsync(Guid itemId, ItemUpdateDto dto)
         {
             var existingItem = await _repository.GetItemByIdAsync(itemId);
             if (existingItem == null)
@@ -69,9 +71,9 @@ namespace FoodOrderingAPI.Services
 
             if (dto.ImageFile != null && dto.ImageFile.Length > 0)
             {
-                existingItem.ImageFile = await SaveImageAsync(dto.ImageFile);
+                dto.ImageUrl = await SaveImageAsync(dto.ImageFile);
             }
-
+            existingItem.ImageFile = dto.ImageUrl;
             return await _repository.UpdateItemAsync(existingItem);
         }
 
@@ -91,11 +93,19 @@ namespace FoodOrderingAPI.Services
 
         public async Task<Item> GetItemByIdAsync(Guid itemId)
         {
+
+            if (itemId.ToString() == string.Empty)
+                throw new ArgumentException("UserId is invalid", nameof(itemId));
+
             return await _repository.GetItemByIdAsync(itemId);
         }
 
-        public async Task<IEnumerable<Item>> GetItemsByCategoryAsync(string category)
+        public async Task<IEnumerable<Item>> GetItemsByCategoryAsync(string restaurantId, string category)
         {
+            if (string.IsNullOrWhiteSpace(category))
+                throw new ArgumentException("Category must be provided.", nameof(category));
+            if (string.IsNullOrWhiteSpace(restaurantId))
+                throw new ArgumentException("Restaurant ID must be provided.", nameof(restaurantId));
             return await _repository.GetItemsByCategoryAsync(category);
         }
 
@@ -153,5 +163,6 @@ namespace FoodOrderingAPI.Services
             // Get all distinct categories from the Items table
             return await _repository.GetAllCategoriesAsync();
         }
+
     }
 }

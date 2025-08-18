@@ -20,6 +20,10 @@ namespace FoodOrderingAPI.Services
 
         //Image Upload
         Task<string> SaveImageAsync(IFormFile file);
+
+
+        //Setting Location
+        Task SetRestaurantLocation(string restaurantId, double latitude, double longitude);
     }
 
 }

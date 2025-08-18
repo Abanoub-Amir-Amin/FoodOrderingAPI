@@ -22,6 +22,8 @@ namespace FoodOrderingAPI.Services
             _userManager = userManager;
         }
 
+
+        ////Restaurant////
         public async Task<IEnumerable<Restaurant>> GetRestaurantsByActiveStatusAsync(bool isActive)
         {
             return await _repository.GetRestaurantsByActiveStatusAsync(isActive);
@@ -50,16 +52,44 @@ namespace FoodOrderingAPI.Services
             await _repository.DeleteRestaurantAsync(restaurantId);
         }
 
-        public async Task<IEnumerable<DeliveryMan>> GetAllDeliveryMenAsync()
+
+        ////DeliveryMan////
+
+        public async Task<IEnumerable<DeliveryMan>> GetDeliveryMenByAvailabilityStatusAsync(AccountStatusEnum AccountStatus)
         {
-            return await _repository.GetAllDeliveryMenAsync();
+            return await _repository.GetDeliveryMenByActiveStatusAsync(AccountStatus);
         }
+
+        public async Task ActivateDeliveryMenAsync(string userName)
+        {
+            var deliveryMan = await _repository.GetDeliveryMenByUserNameAsync(userName);
+            if (deliveryMan == null) throw new KeyNotFoundException("Delivery Men not found");
+
+            deliveryMan.AccountStatus = AccountStatusEnum.Active;
+            await _repository.UpdateDeliveryManAsync(deliveryMan);
+        }
+
+        public async Task DeactivateDeliveryMenAsync(string userName)
+        {
+            var deliveryMan = await _repository.GetDeliveryMenByUserNameAsync(userName);
+            if (deliveryMan == null) throw new KeyNotFoundException("Delivery Men not found");
+
+            deliveryMan.AccountStatus = AccountStatusEnum.Pending;
+            await _repository.UpdateDeliveryManAsync(deliveryMan);
+        }
+
+        //public async Task<IEnumerable<DeliveryMan>> GetAllDeliveryMenAsync()
+        //{
+        //    return await _repository.GetAllDeliveryMenAsync();
+        //}
 
         public async Task DeleteDeliveryManAsync(string deliveryManId)
         {
             await _repository.DeleteDeliveryManAsync(deliveryManId);
         }
 
+
+        ////Customer////
         public async Task<IEnumerable<Customer>> GetAllCustomerAsync()
         {
             return await _repository.GetAllCustomerAsync();
@@ -73,14 +103,14 @@ namespace FoodOrderingAPI.Services
 
             foreach (var customer in customers)
             {
-                var orders = await _repository.GetOrdersByCustomerIdAsync(customer.UserID);
+                var orders = await _repository.GetOrdersByCustomerUserNameAsync(customer.User.UserName);
 
                 var totalOrders = orders.Count();
                 var deliveredOrders = orders.Count(o => o.Status == StatusEnum.Delivered);
                 //var cancelledOrders = orders.Count(o => o.Status == StatusEnum.Cancelled);
 
 
-                var inProcessOrders = _mapper.Map<List<OrderDto>>(orders.Where(o => o.Status == StatusEnum.Preparing||o.Status == StatusEnum.Out_for_Delivery).ToList());
+                var inProcessOrders = _mapper.Map<List<OrderDto>>(orders.Where(o => o.Status == StatusEnum.Preparing || o.Status == StatusEnum.Out_for_Delivery).ToList());
 
                 var customerDto = _mapper.Map<CustomerDTO>(customer);
 
@@ -96,6 +126,7 @@ namespace FoodOrderingAPI.Services
         }
 
 
+        ////Admin////
         public async Task<IEnumerable<Admin>> GetAllAdminsAsync()
         {
             return await _repository.GetAllAdminsAsync();
@@ -106,6 +137,22 @@ namespace FoodOrderingAPI.Services
             return await _repository.GetAdminByUserNameAsync(UserName);
         }
 
+        public async Task UpdateAdminAsync(AdminDto dto)
+        {
+            var admin = await _repository.GetAdminByUserNameAsync(dto.User.UserName);
+            if (admin == null) throw new KeyNotFoundException("Admin not found");
+
+            var user = admin.User;
+            if (user == null) throw new Exception("User info missing");
+            admin.User.Email = dto.User.Email;
+            admin.User.PhoneNumber = dto.User.PhoneNumber;
+
+            await _repository.UpdateAdminAsync(admin);
+        }
+
+
+        ////Order////
+
         public async Task<IEnumerable<Order>> GetAllOrdersAsync(StatusEnum status = StatusEnum.All)
         {
             if (status == StatusEnum.All)
@@ -114,17 +161,7 @@ namespace FoodOrderingAPI.Services
             return await _repository.GetOrdersByStatusAsync(status);
         }
 
-        public async Task UpdateAdminAsync(AdminDto dto)
-        {
-            var admin = await _repository.GetAdminByUserNameAsync(dto.User.UserName);
-            if (admin == null) throw new KeyNotFoundException("Admin not found");
 
-            // Update related User info (like Email)
-            var user = admin.User;
-            if (user == null) throw new Exception("User info missing");
-
-            await _repository.UpdateAdminAsync(admin);
-        }
 
     }
 

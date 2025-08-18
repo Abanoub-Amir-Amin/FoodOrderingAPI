@@ -84,7 +84,7 @@
                     {
                         throw new Exception($"No route found between the specified locations. This could be due to: isolated areas, water bodies, or locations too close together. Original coordinates: ({originLat}, {originLng}) to ({destLat}, {destLng})");
                     }
-                    else if (responseBody.Contains("code\":2009"))
+                    if (responseBody.Contains("code\":2009"))
                     {
                         throw new Exception($"Routing service cannot find a valid path between the locations. Please check if both locations are accessible by car.");
                     }
@@ -101,6 +101,8 @@
                 // التحقق من وجود routes
                 if (!root.TryGetProperty("routes", out var routes) || routes.GetArrayLength() == 0)
                 {
+                    return new TimeSpan(0, 0, 0);
+
                     throw new Exception("No routes found in API response");
                 }
 
@@ -108,13 +110,15 @@
                 var firstRoute = routes[0];
                 if (!firstRoute.TryGetProperty("summary", out var summary))
                 {
+                    return new TimeSpan(0, 0, 0);
+
                     throw new Exception("No summary found in route data");
                 }
 
                 // التحقق من وجود duration
                 if (!summary.TryGetProperty("duration", out var durationProperty))
                 {
-                    throw new Exception("No duration found in route summary");
+                    return new TimeSpan(0, 0, 0);
                 }
 
                 double durationInSeconds = durationProperty.GetDouble();

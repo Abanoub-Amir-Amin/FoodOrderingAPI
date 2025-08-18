@@ -49,7 +49,6 @@ namespace FoodOrderingAPI.Repository
         }
         public async Task<Restaurant> UpdateRestaurantAsync(Restaurant restaurant)
         {
-            _context.Restaurants.Update(restaurant);
             await _context.SaveChangesAsync();
             return restaurant;
         }
@@ -61,22 +60,9 @@ namespace FoodOrderingAPI.Repository
                 .ToListAsync();
         }
 
+
     }
 }
-
-
-    //        //Depugging
-    //        Console.WriteLine("Tracked entities:");
-    //            foreach (var entry in _context.ChangeTracker.Entries())
-    //            {
-    //                Console.WriteLine($"Entity: {entry.Entity.GetType().Name}, State: {entry.State}");
-
-    //                if (entry.Entity is User u)
-    //                {
-    //                    Console.WriteLine($"  User Email: '{u.Email}'");
-    //                }
-    //}
-
 
 
 

@@ -13,19 +13,28 @@ namespace FoodOrderingAPI.Services
         Task DeactivateRestaurantAsync(string userName);
         Task DeleteRestaurantAsync(string restaurantId);
 
-        Task<IEnumerable<DeliveryMan>> GetAllDeliveryMenAsync();
-        Task DeleteDeliveryManAsync(string deliveryManId);
-        Task<IEnumerable<Customer>> GetAllCustomerAsync();
 
+        Task<IEnumerable<DeliveryMan>> GetDeliveryMenByAvailabilityStatusAsync(AccountStatusEnum AccountStatus);
+        Task ActivateDeliveryMenAsync(string userName);
+        Task DeactivateDeliveryMenAsync(string userName);
+        //Task<IEnumerable<DeliveryMan>> GetAllDeliveryMenAsync();
+        Task DeleteDeliveryManAsync(string deliveryManId);
+
+
+        Task<IEnumerable<Customer>> GetAllCustomerAsync();
         Task<IEnumerable<CustomerDTO>> GetCustomersOrderSummaryAsync();
 
+
+
         Task<IEnumerable<Admin>> GetAllAdminsAsync();
-
         Task<Admin> GetAdminByUserNameAsync(string UserName);
-
-        Task<IEnumerable<Order>> GetAllOrdersAsync(StatusEnum status = StatusEnum.All); // null == all status orders
-
         Task UpdateAdminAsync(AdminDto dto);
+
+
+
+        Task<IEnumerable<Order>> GetAllOrdersAsync(StatusEnum status = StatusEnum.All);
+
+
     }
 
 }

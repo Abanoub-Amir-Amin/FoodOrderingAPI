@@ -10,8 +10,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using System.Text;
 
 
@@ -52,7 +54,9 @@ namespace FoodOrderingAPI
                 .AddJsonOptions(opts =>
                 {
                     opts.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                    //opts.JsonSerializerOptions.ReferenceHandler = null;
                     opts.JsonSerializerOptions.MaxDepth = 64;
+                    opts.JsonSerializerOptions.NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals;
                 });
 
             // Register Restaurant services and repositories
@@ -95,6 +99,8 @@ namespace FoodOrderingAPI
 
             builder.Services.AddScoped<IReviewService, ReviewService>();
             builder.Services.AddScoped<IReviewRepo, ReviewRepo>();
+
+
 
             builder.Services.AddSignalR();
             // Register AutoMapper
@@ -140,16 +146,29 @@ namespace FoodOrderingAPI
                 {
                     OnMessageReceived = context =>
                     {
-                        var accessToken = context.Request.Cookies["AuthToken"];
-                        if (!string.IsNullOrEmpty(accessToken))
+                        // 1) Read from query string for SignalR
+                        var accessToken = context.Request.Query["access_token"];
+
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            path.StartsWithSegments("/chathub") || path.StartsWithSegments("/notificationhub"))
                         {
                             context.Token = accessToken;
                         }
 
+                        // 2) Fallback to cookie (for normal API calls)
+                        if (string.IsNullOrEmpty(context.Token))
+                        {
+                            var cookieToken = context.Request.Cookies["AuthToken"];
+                            if (!string.IsNullOrEmpty(cookieToken))
+                            {
+                                context.Token = cookieToken;
+                            }
+                        }
+
                         return Task.CompletedTask;
                     }
-                }
-                ;
+                };
             });
 
             // Register Role-based authorization policies
@@ -237,7 +256,16 @@ namespace FoodOrderingAPI
                 app.UseHsts();
             }
 
-            app.UseStaticFiles();
+            //app.UseStaticFiles();
+
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "http://localhost:4200");
+                }
+            });
 
             //app.UseHttpsRedirection();
             app.UseCors("AllowAngularDevClient");
