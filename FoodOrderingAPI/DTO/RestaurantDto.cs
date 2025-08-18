@@ -5,6 +5,8 @@ namespace FoodOrderingAPI.DTO
 {
     public class RestaurantDto
     {
+        [BindNever]
+        public string? RestaurantID { get; set; }
         public string RestaurantName { get; set; }
         public string Location { get; set; }
         public string OpenHours { get; set; }

@@ -1,33 +1,33 @@
 ﻿using FoodOrderingAPI.DTO;
 using FoodOrderingAPI.DTO.FoodOrderingAPI.DTO;
 using FoodOrderingAPI.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FoodOrderingAPI.Services
 {
     public interface IOrderService
     {
-        //Order-CRUD
-        Task<IEnumerable<Order>> GetAllOrdersByRestaurantAsync(string restaurantId);
-        Task<IEnumerable<OrderDto>> GetOrdersByStatusAsync(string restaurantId, StatusEnum[] statuses);
-
+        // Order-CRUD
+        Task<IEnumerable<OrderDto>> GetAllOrdersByRestaurantAsync(string restaurantId);
+        Task<IEnumerable<OrderDto>> GetOrdersByStatusAsync(string restaurantId, StatusEnum status);
         Task<Order> UpdateOrderStatusAsync(Guid orderId, StatusEnum status, string restaurantId);
 
-        //Dashboard Summary
+        // Dashboard Summary
         Task<DashboardSummaryDto> GetDashboardSummaryAsync(string restaurantId);
 
-        //operation of restaurant to order
-        //public Task<bool> CancelOrder(Order order,string reason);
-        public Task<bool> ConfirmOrder(Order order);
-        public Task<bool> assignDelivaryManToOrder(Order order);
+        // Operations on orders by restaurant
+        Task<(bool Success, string Message)> ConfirmOrder(Order order);
+        Task<bool> assignDelivaryManToOrder(Order order);
+        Task<(bool Success, string Message)> assignDelivaryManToOrderDetailed(Order order);
 
-        //customer
-        public Task<CheckoutViewDTO> Checkout(ShoppingCart shoppingCart);
-        public Task PlaceOrder(ShoppingCart cart);
-        public Task<List<OrderViewDTO>> getOrders(string customerId);
-        public Task<List<OrderViewDTO>> GetOrdersByStatusAsyncForCustomer(string customerId, StatusEnum[] statuses);
-        public Task<OrderDetailDTO?> getOrderDetails(Guid orderId);
-        public Task<Order?> getOrder(Guid orderId);
-        public Task<List<DelivaryOrderDTO>> getOrdersForDelivarMan(string DelivaryId);
-
+        // Customer operations
+        Task<CheckoutViewDTO> Checkout(ShoppingCart shoppingCart);
+        Task PlaceOrder(ShoppingCart cart);
+        Task<List<OrderViewDTO>> getOrders(string customerId);
+        Task<List<OrderViewDTO>> GetOrdersByStatusAsyncForCustomer(string customerId, StatusEnum[] statuses);
+        Task<Order?> getOrder(Guid orderId);
+        Task<List<DelivaryOrderDTO>> getOrdersForDelivarMan(string DelivaryId);
     }
 }
