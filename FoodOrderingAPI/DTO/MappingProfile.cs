@@ -265,7 +265,7 @@ public class MappingProfile : Profile
         //orderDetails
         CreateMap<OrderItem, OrderItemDto>()
         .ForMember(dest => dest.itemName, opt => opt.MapFrom(src => src.Item.Name))
-        .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Item.ImageFile))
+        .ForMember(dest => dest.ImageFile, opt => opt.MapFrom(src => src.Item.ImageFile))
         .ForMember(dest => dest.OrderID, opt => opt.MapFrom(src => src.OrderID))
         .ForMember(dest => dest.Preferences, opt => opt.MapFrom(src => src.Preferences))
         .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))

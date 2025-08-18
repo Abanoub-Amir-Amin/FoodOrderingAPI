@@ -20,28 +20,34 @@ namespace FoodOrderingAPI.Repository
         public async Task<IEnumerable<OrderDto>> GetAllOrdersByRestaurantAsync(string restaurantId)
         {
             var orders = await _context.Orders
-                .Where(o => o.RestaurantID == restaurantId)
-                .Select(o => new OrderDto
+            .Where(o => o.RestaurantID == restaurantId)
+            .Select(o => new OrderDto
+            {
+                OrderID = o.OrderID,
+                OrderNumber = o.OrderNumber,
+                AddressID = o.AddressID,
+                RestaurantID = o.RestaurantID,
+                DeliveryManID = o.DeliveryManID,
+                Status = o.Status,
+                OrderDate = o.OrderDate,
+                DeliveredAt = o.DeliveredAt,
+                TotalPrice = o.TotalPrice,
+                Customer = new CustomerDTO
                 {
-                    OrderID = o.OrderID,
-                    OrderNumber = o.OrderNumber,
-                    AddressID = o.AddressID,
-                    RestaurantID = o.RestaurantID,
-                    DeliveryManID = o.DeliveryManID,
-                    Status = o.Status,
-                    OrderDate = o.OrderDate,
-                    DeliveredAt = o.DeliveredAt,
-                    TotalPrice = o.TotalPrice,
-                    Customer = new CustomerDTO
-                    {
-                        FirstName = o.Customer.FirstName,
-                        LastName = o.Customer.LastName,
-                        Email = o.Customer.User.Email,
-                        PhoneNumber = o.Customer.User.PhoneNumber
-                    }
-                })
-                .ToListAsync();
-
+                    FirstName = o.Customer.FirstName,
+                    LastName = o.Customer.LastName,
+                    Email = o.Customer.User.Email,
+                    PhoneNumber = o.Customer.User.PhoneNumber
+                },
+                OrderItems = o.OrderItems.Select(oi => new OrderItemDto
+                {
+                    itemName = oi.Item.Name,
+                    ImageFile = oi.Item.ImageFile,
+                    Quantity = oi.Quantity,
+                    Preferences = oi.Preferences
+                }).ToList()
+            })
+            .ToListAsync();
             return orders;
         }
 
