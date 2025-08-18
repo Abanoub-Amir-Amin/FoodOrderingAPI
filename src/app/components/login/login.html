@@ -1,49 +1,73 @@
-
 <div class="container py-5 registration-wrapper">
-  <div class="card  shadow-lg border-0 w-100" style="max-width: 600px; margin: 0 auto">
+  <div
+    class="card shadow-lg border-0 w-100"
+    style="max-width: 600px; margin: 0 auto"
+  >
     <div class="header text-center mb-4">
       <h1 class="title">Login</h1>
       <p class="subtitle">Welcome Back 🙌</p>
-   
     </div>
-<form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Username</mat-label>
-    <!-- Match formControlName casing -->
-    <input
-      matInput
-      formControlName="UserName"
-      autocomplete="username"
-      aria-label="Username"
-      placeholder="Enter your username"
-    />
-    <mat-error *ngIf="loginForm.get('UserName')?.hasError('required')">
-      Username is required
-    </mat-error>
-  </mat-form-field>
 
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Password</mat-label>
-    <!-- Match formControlName casing -->
-    <input
-      matInput
-      type="password"
-      formControlName="Password"
-      autocomplete="current-password"
-      aria-label="Password"
-      placeholder="Enter your password"
-    />
-    <mat-error *ngIf="loginForm.get('Password')?.hasError('required')">
-      Password is required
-    </mat-error>
-    <mat-error *ngIf="loginForm.get('Password')?.hasError('minlength')">
-      Password must be at least 6 characters
-    </mat-error>
-  </mat-form-field>
+    <form [formGroup]="loginForm" (ngSubmit)="submitForm()">
+      <!-- Error Message من السيرفر -->
+      <div *ngIf="errorMsg" class="alert alert-danger">
+        {{ errorMsg }}
+      </div>
 
-  <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid" class="submit-btn">
-    Submit
-  </button>
+      <!-- Username Field -->
+      <div class="field mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input
+          pInputText
+          id="username"
+          class="styled-input"
+          placeholder="Username"
+          formControlName="username"
+        />
+        <div
+          class="error-message"
+          *ngIf="
+            loginForm.get('username')?.touched &&
+            loginForm.get('username')?.hasError('required')
+          "
+        >
+          Username is required
+        </div>
+      </div>
 
-  <div *ngIf="error" class="error-msg">{{ error }}</div>
-</form>
+      <!-- Password Field -->
+      <div class="field mb-4">
+        <label for="password" class="form-label">Password</label>
+        <p-password
+          id="password"
+          class="styled-password"
+          formControlName="password"
+          [toggleMask]="true"
+          [feedback]="false"
+          placeholder="Password"
+        ></p-password>
+        <div
+          class="error-message"
+          *ngIf="
+            loginForm.get('password')?.touched &&
+            loginForm.get('password')?.hasError('required')
+          "
+        >
+          Password is required
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="button-8 w-100" [disabled]="isLoading">
+        {{ isLoading ? "Logging in..." : "Login" }}
+      </button>
+
+      <div class="text-center mt-3">
+        <small
+          >Create a new account?
+          <a class="link fw-semibold" (click)="signup()">Sign out</a>
+        </small>
+      </div>
+    </form>
+  </div>
+</div>

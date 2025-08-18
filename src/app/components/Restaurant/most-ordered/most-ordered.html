@@ -1,11 +1,14 @@
 <mat-card>
-      <h3>Most Ordered</h3>
-      <div class="most-ordered-list">
-        <ng-container *ngFor="let item of mostOrdered">
-          <div class="item-card">
-            <img [src]="item.imageUrl || 'assets/food-placeholder.jpg'" alt="img"/>
-            <span>{{item.name}}</span>
-          </div>
-        </ng-container>
-      </div>
+  <h3>Most Ordered Items</h3>
+  <ul class="most-ordered-list">
+    <li *ngFor="let item of mostOrdered">
+      <img
+        [src]="getImageUrl(item.imageFile) || 'assets/food-placeholder.jpg'"
+        alt="{{ item.name }}"
+        width="60"
+        height="40"
+      />
+      {{ item.name }} - category: {{ item.category }}
+    </li>
+  </ul>
 </mat-card>

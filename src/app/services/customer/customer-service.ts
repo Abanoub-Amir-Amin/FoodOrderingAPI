@@ -31,11 +31,11 @@ export class CustomerService {
   }
 //orders
 
-getallOrders(): Observable<OrderViewDTO[]> {
-  return this.http.get<OrderViewDTO[]>(`${this.basicUrl}Order/AllOrdersForCustomer`, { headers: this.headers });
+getallOrders(): Observable<{$id:string,$values:OrderViewDTO[]}> {
+  return this.http.get<{$id:string,$values:OrderViewDTO[]}>(`${this.basicUrl}Order/AllOrdersForCustomer`, { headers: this.headers });
 }
 getorderdetails(orderId: string): Observable<OrderDetailDTO> {
-  return this.http.get<OrderDetailDTO>(`${this.basicUrl}Order/AllOrdersForCustomer/?orderId=${orderId}`, {
+  return this.http.get<OrderDetailDTO>(`${this.basicUrl}Order/OrderDetailaForCustomer?orderId=${orderId}`, {
     headers: this.headers})
   }
   getorderforcustomerbystatus(status: StatusEnum[]): Observable<OrderViewDTO[]> {

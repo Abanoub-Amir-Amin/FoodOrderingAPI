@@ -1,19 +1,26 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  inject,
+} from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { DashboardAnalytics } from './../dashboard-analytics/dashboard-analytics';
-import { DashboardSummary } from './../dashboard-summary/dashboard-summary';
+import { DashboardSummaryComponent } from './../dashboard-summary/dashboard-summary'; // UI component import here
+import { DashboardSummaryService, DashboardSummaryDto } from './../../../services/dashboard-summary.service'; // service import here
 import { MostOrdered } from './../most-ordered/most-ordered';
 import { AuthService } from '../../../services/auth';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-restaurant-dashboard',
-  templateUrl: './dashboard.html',  // Use relative path, typically './dashboard.html'
+  templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
   standalone: true,
   imports: [
@@ -22,60 +29,66 @@ import { MatButtonModule } from '@angular/material/button';
     CommonModule,
     MatToolbarModule,
     MatProgressSpinnerModule,
-    DashboardSummary,
     DashboardAnalytics,
     MostOrdered,
+    DashboardSummaryComponent, 
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RestaurantDashboardComponent implements OnInit, AfterViewInit {
   restaurant: any = null;
   isLoading = true;
+  restaurantSummary: DashboardSummaryDto | null = null; 
 
-  // Inject via field injection (Angular 14+)
   private http = inject(HttpClient);
   private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
+  private dashboardSummaryService = inject(DashboardSummaryService); // inject the service here
 
   private baseUrl = 'http://localhost:5000/api';
 
-  constructor(private cdr: ChangeDetectorRef) {}
-
   ngOnInit(): void {
     const restaurantId = this.authService.getUserId();
-    console.log('Restaurant ID', restaurantId);
+    console.log("Restaurant ID", restaurantId);
 
-    if (restaurantId) {        
+    if (restaurantId) {
       this.loadRestaurant(restaurantId);
+
+      this.dashboardSummaryService.getSummary(restaurantId).subscribe({
+        next: (summary) => {
+          console.log("summary",summary);
+          this.restaurantSummary = summary;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          console.error('Failed to load summary', error);
+          this.cdr.markForCheck();
+        }
+      });
     } else {
       this.isLoading = false;
     }
   }
 
   ngAfterViewInit(): void {
-    // Trigger change detection to avoid ExpressionChangedAfterItHasBeenCheckedError
     this.cdr.detectChanges();
   }
 
   private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('Token') || localStorage.getItem('token');
-    console.log('Token Info', token);
+    const token = sessionStorage.getItem('authToken');
+    console.log("token info:", token);
     return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
   }
 
-  private loadRestaurant(id: string | null): void {
-    if (!id) {
-      this.isLoading = false;
-      return;
-    }
-
+  private loadRestaurant(id: string): void {
     this.isLoading = true;
     const headers = this.getAuthHeaders();
-
     this.http.get<any>(`${this.baseUrl}/restaurant/${id}`, { headers }).subscribe({
       next: (data) => {
+        console.log("Restaurant Data:", data);
+        console.log('Loaded restaurant ID:', this.restaurant?.restaurantID);
         this.restaurant = data;
         this.isLoading = false;
-        // Because OnPush strategy is used, mark for check to update view
         this.cdr.markForCheck();
       },
       error: (err) => {

@@ -1,4 +1,4 @@
-<div class="menu-management">
+<div class="menu-management ">
   <h2>Menu Management</h2>
 
   <!-- Filters -->
@@ -133,6 +133,7 @@
           aria-label="Select image file"
           title="Select image file"
         />
+        <!-- <img *ngIf="imagePreviewUrl" [src]="imagePreviewUrl" alt="Current Image" class="img-preview" /> -->
       </div>
         <button
           mat-raised-button
@@ -144,6 +145,15 @@
           Add/Update Item
         </button>
       
+        <button
+          *ngIf="editItemId"
+          mat-button
+          type="button"
+          (click)="cancelEditItem()"
+          aria-label="Cancel Edit"
+        >
+          Cancel
+        </button>
     </form>
   </section>
 
@@ -154,12 +164,7 @@
     <table mat-table [dataSource]="Discounts" class="mat-elevation-z8" aria-label="Discounts Table">
       <ng-container matColumnDef="itemName">
         <th mat-header-cell *matHeaderCellDef scope="col">Item</th>
-        <td mat-cell *matCellDef="let d">
-          <ng-container *ngIf="getItemById(d.ItemID) as foundItem; else unknownItem">
-            {{ foundItem.name }}
-          </ng-container>
-          <ng-template #unknownItem>Unknown</ng-template>
-        </td>
+        <td mat-cell *matCellDef="let d">{{d.itemName}}</td>
       </ng-container>
 
       <ng-container matColumnDef="percentage">
@@ -210,10 +215,10 @@
       <div class="form-row">
         <mat-form-field appearance="outline" class="form-field">
           <mat-label>Select Item</mat-label>
-          <mat-select formControlName="itemId" required aria-required="true">
+          <mat-select formControlName="itemID" required aria-required="true">
             <mat-option *ngFor="let item of items" [value]="item.itemID">{{ item.name }}</mat-option>
           </mat-select>
-          <mat-error *ngIf="discountForm.get('itemId')?.touched && discountForm.get('itemId')?.invalid">
+          <mat-error *ngIf="discountForm.get('itemID')?.touched && discountForm.get('itemID')?.invalid">
             Item is required
           </mat-error>
         </mat-form-field>

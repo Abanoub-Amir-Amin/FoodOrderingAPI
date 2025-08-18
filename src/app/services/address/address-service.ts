@@ -30,11 +30,23 @@ export class AddressService {
     }
 
     addAddress(address:AddressDto):Observable<AddressViewDto>{
-      return this.http.post<AddressViewDto>(`${this.basicUrl}Address`,{address},{headers:this.headers})
+      return this.http.post<AddressViewDto>(`${this.basicUrl}Address?userId=${this.userid}`,{
+        label: address.label,
+        street: address.street,
+        city: address.city,
+        latitude: address.latitude,
+        longitude: address.longitude
+      },{headers:this.headers})
     }
 
-    updateAddress(address:AddressDto):Observable<AddressViewDto>{
-      return this.http.put<AddressViewDto>(`${this.basicUrl}'Address`,{address},{headers:this.headers})
+    updateAddress(addressId:string,address:AddressDto):Observable<AddressViewDto>{
+      return this.http.put<AddressViewDto>(`${this.basicUrl}Address?AddressId=${addressId}`,{
+        label: address.label,
+        street: address.street,
+        city: address.city,
+        latitude: address.latitude,
+        longitude: address.longitude
+      },{headers:this.headers})
     }
     makeaddressDefault(AddressId:string):Observable<AddressViewDto>{
       return this.http.put<AddressViewDto>(`${this.basicUrl}Address/makeAddressDefault?AddressId=${AddressId}`,null,{headers:this.headers})

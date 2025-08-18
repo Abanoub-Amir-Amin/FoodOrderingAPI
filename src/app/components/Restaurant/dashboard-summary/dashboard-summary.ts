@@ -1,18 +1,15 @@
 import { Component, Input } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { MatCardModule } from '@angular/material/card';
+import { DashboardSummaryDto } from './../../../services/dashboard-summary.service';
 
 @Component({
   selector: 'app-dashboard-summary',
+  standalone: true,
+  imports: [CommonModule, MatCardModule],
   templateUrl: './dashboard-summary.html',
-  styleUrl: './dashboard-summary.css',
-  standalone: true,            
-  imports: [
-    CommonModule,
-    MatCardModule,          
-  ],
+  styleUrls: ['./dashboard-summary.css'],
 })
-export class DashboardSummary {
-  @Input() restaurant: any;
+export class DashboardSummaryComponent {
+  @Input() restaurantSummary: DashboardSummaryDto | null = null;
 }

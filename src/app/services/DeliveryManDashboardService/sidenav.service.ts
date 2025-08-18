@@ -1,4 +1,3 @@
-// path: src/app/shared/services/sidenav.service.ts
 import { Injectable, signal } from '@angular/core';
 import { ISideNavToggle } from '../../models/DeliveryManDashboardInterface/ISideNavToggle.interface';
 

@@ -10,11 +10,12 @@ import { MessageService } from 'primeng/api';
 // import { ToastModule } from 'primeng/toast';
 
 
+
 bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(), 
     provideRouter(routes),
     provideAnimations(),
-    MessageService
+    MessageService,
   ],
 }).catch(err => console.error(err));

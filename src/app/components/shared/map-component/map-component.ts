@@ -15,45 +15,71 @@ export class MapComponent {
   map: any;
   marker: any;
   set:boolean = false;
+  @Input() latitude: number | null = null;
+  @Input() longitude: number | null = null;
+
   @Input() formSubmitted!: boolean;
   @Output() addressInfo = new EventEmitter<AddressDto>()
+  @Output() mapReady = new EventEmitter<L.Map>();
+
   address:AddressDto| null = null;
+  private isMapInitialized = false;
+
   constructor(
       @Inject(PLATFORM_ID) private platformId: Object
       
     ) {}
   async Intialize_Map() {
+    debugger;
       if (isPlatformBrowser(this.platformId)) {
           const L = await import('leaflet');
-    
-          this.map = await L.map('map').setView([30.0444, 31.2357], 10);
-    
+           const container = L.DomUtil.get('map');
+            if (container != null) {
+              (container as any)._leaflet_id = null; // reset id
+            }
+
+          if(!this.map){
+              this.map = await L.map('map').setView([30.0444, 31.2357], 10);
+
           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
           }).addTo(this.map);
 
-          await import('leaflet-control-geocoder');
-          // new L.Control.Geocoder().addTo(map);
-          (L.Control as any).geocoder({defaultMarkGeocode: false})
-          .on('markgeocode', (e: any) => {
-          const latlng = e.geocode.center;
-          this.setLocationMarker(latlng.lat, latlng.lng); 
-          this.map.setView(latlng, 15);
-        })
-          .addTo(this.map);
+           const geocoderModule = await import('leaflet-control-geocoder');
+          const geocoder = (L.Control as any).geocoder({
+            defaultMarkGeocode: false
+          });
 
-    }
-  }
-  async ngAfterViewInit() {
+          geocoder.on('markgeocode', (e: any) => {
+            const latlng = e.geocode.center;
+            this.setLocationMarker(latlng.lat, latlng.lng);
+            this.map?.setView(latlng, 15);
+          });
+              geocoder.addTo(this.map);
+
+          }
+            this.isMapInitialized = true;
+            this.mapReady.emit(this.map);
+
+
+        }
+
+}
+ async ngAfterViewInit() {
     await this.Intialize_Map();
-    if (navigator.geolocation) {
+    if (this.latitude !== null && this.longitude !== null && this.map) {
+      // Center map to input latitude and longitude if provided
+      this.map.setView([this.latitude, this.longitude], 15);
+      this.setLocationMarker(this.latitude, this.longitude);
+    } else if (navigator.geolocation) {
+      // fallback to user location
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
           if (this.map) {
-          this.map.setView([lat, lng], 15);
-           this.setLocationMarker(lat, lng);
+            this.map.setView([lat, lng], 15);
+            this.setLocationMarker(lat, lng);
           }
         },
         (error) => {
@@ -61,17 +87,23 @@ export class MapComponent {
         }
       );
     }
-if(this.map){
-   this.map.on('click', (e: any) => {
-      this.setLocationMarker(e.latlng.lat, e.latlng.lng);
-    });
-  }
+
+    if (this.map) {
+      this.map.on('click', (e: any) => {
+        this.setLocationMarker(e.latlng.lat, e.latlng.lng);
+      });
+    }
   }
 
+
   ngOnDestroy() {
-    if (this.map) {
-      this.map.remove();
-    }
+     if (this.map) {
+    this.map.off();  // remove all listeners
+    this.map.remove();
+    this.map = null;
+    this.marker = null;
+    this.isMapInitialized = false;
+  }
   }
 
   async setLocationMarker(lat: number, lng: number) {
@@ -141,4 +173,5 @@ try {
     console.error('Reverse geocoding failed:', err);
   }
 }
+
 }

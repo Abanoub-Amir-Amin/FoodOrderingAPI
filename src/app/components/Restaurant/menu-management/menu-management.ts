@@ -53,6 +53,7 @@ export class MenuManagement implements OnInit {
   items: ItemDto[] = [];
   filteredItems: ItemDto[] = [];
   categories: string[] = [];
+  imagePreviewUrl: string | null = null;
 
   Discounts: DiscountDto[] = [];
 
@@ -83,12 +84,14 @@ export class MenuManagement implements OnInit {
       price: [0, [Validators.required, Validators.min(0)]],
       category: ['', Validators.required],
       isAvailable: [true],
-      ImageFile: [null],
+      imageFile: [null],
+      imageUrl: [null]
+
     });
 
     this.discountForm = this.fb.group({
       discountID: [null],
-      itemId: ['', Validators.required],
+      itemID: ['', Validators.required],
       itemName: [''],
       percentage: [
         0,
@@ -215,7 +218,7 @@ export class MenuManagement implements OnInit {
     if (this.itemIdSubscriptionSet) return; // prevent multiple subscriptions
 
     this.discountForm
-      .get('itemId')
+      .get('itemID')
       ?.valueChanges.subscribe((selectedItemId) => {
         const foundItem = this.items.find(
           (item) => item.itemID === selectedItemId
@@ -229,17 +232,19 @@ export class MenuManagement implements OnInit {
     this.itemIdSubscriptionSet = true;
   }
 
-  onImageFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      this.addItemForm.patchValue({
-        ImageFile: file,
+    onImageFileChange(event: Event): void {
+      const input = event.target as HTMLInputElement;
+      if (input.files && input.files.length > 0) {
+        const file = input.files[0];  
+        this.addItemForm.patchValue({
+        imageFile: file,
       });
       // If you want to trigger validation or mark as touched
-      this.addItemForm.get('ImageFile')?.updateValueAndValidity();
+      this.addItemForm.get('imageFile')?.updateValueAndValidity();
+      this.getImageUrl('imageFile');
     }
   }
+
 
   extractCategories(): void {
     this.categories = Array.from(
@@ -268,10 +273,6 @@ export class MenuManagement implements OnInit {
     this.applyItemFilters();
   }
 
-  // *** Get item by ID ***
-  getItemById(id: string): ItemDto | undefined {
-    return this.items.find((item) => item.itemID === id);
-  }
   // submit handler to handle both adding and editing
   submitItem(): void {
     if (this.addItemForm.invalid || !this.restaurantId) {
@@ -294,8 +295,8 @@ export class MenuManagement implements OnInit {
     formData.append('RestaurantID', this.restaurantId);
 
     // Append image file if any
-    if (formValue.ImageFile) {
-      formData.append('ImageFile', formValue.ImageFile);
+    if (formValue.imageFile) {
+      formData.append('ImageFile', formValue.imageFile);
     }
 
     const headers = this.getAuthHeaders();
@@ -347,21 +348,36 @@ export class MenuManagement implements OnInit {
     }
   }
 
-  // Called when user selects an item to edit -- just patches the form
-  editItem(item: ItemUpdateDto): void {
-    console.log('Item to edit:', item);
-    this.editItemId = item.itemID || null;
-    console.log('Editing item with ID:', this.editItemId);
-    this.addItemForm.patchValue({
-      name: item.name,
-      description: item.description,
-      price: item.price,
-      category: item.category,
-      isAvailable: item.isAvailable,
-      ImageFile: null, // file inputs not patched directly, keep null initially
-    });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+// Called when user selects an item to edit -- just patches the form
+editItem(item: ItemUpdateDto): void {
+  this.editItemId = item.itemID || null;
+  this.imagePreviewUrl = this.getImageUrl(item.imageUrl);
+  this.addItemForm.patchValue({
+    name: item.name,
+    description: item.description,
+    price: item.price,
+    category: item.category,
+    isAvailable: item.isAvailable,
+    imageFile: null, // Do not patch the file input directly
+    imageUrl: item.imageUrl
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+cancelEditItem(): void {
+  this.editItemId = null;
+  this.imagePreviewUrl = null;
+  this.addItemForm.reset({
+    name: '',
+    description: '',
+    price: 0,
+    category: '',
+    isAvailable: true,
+    imageFile: null,
+    imageUrl: null,
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
   deleteItem(item: ItemDto): void {
     if (!item.itemID) {
@@ -444,7 +460,7 @@ export class MenuManagement implements OnInit {
     // Including itemId, itemName, percentage, startDate, endDate
     const dto: DiscountDto = {
       discountID: formValue.discountID, // could be null for add
-      itemID: formValue.itemId,
+      itemID: formValue.itemID,
       itemName: formValue.itemName,
       percentage: formValue.percentage,
       startDate: formValue.startDate,
@@ -464,7 +480,7 @@ export class MenuManagement implements OnInit {
     } else {
       // Add new discount, with restaurantId and itemId in URL as your API expects
       request$ = this.http.post(
-        `${this.baseUrl}/discount/${this.restaurantId}/discounts/${formValue.itemId}`,
+        `${this.baseUrl}/discount/${this.restaurantId}/discounts/${formValue.itemID}`,
         dto,
         {
           headers: this.getAuthHeaders(),
@@ -495,7 +511,7 @@ export class MenuManagement implements OnInit {
     console.log('discount:', discount);
     this.discountForm.patchValue({
       discountID: discount.discountID,
-      itemId: discount.itemID,
+      itemID: discount.itemID,
       itemName: discount.itemName,
       percentage: discount.percentage,
       startDate: this.formatDateForInput(discount.startDate),
@@ -538,7 +554,7 @@ export class MenuManagement implements OnInit {
     // Optionally reset fields to default values, e.g.:
     this.discountForm.patchValue({
       discountID: null,
-      itemId: '',
+      itemID: '',
       itemName: '',
       percentage: 0,
       startDate: '',

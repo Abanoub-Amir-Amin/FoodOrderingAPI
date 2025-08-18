@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import {MenuManagement} from '../menu-management/menu-management';
 import {RestaurantDashboardComponent} from '../dashboard/dashboard';
 import {DashboardAnalytics} from '../dashboard-analytics/dashboard-analytics';
-import {DashboardSummary} from '../dashboard-summary/dashboard-summary';
+import {DashboardSummaryComponent} from '../dashboard-summary/dashboard-summary';
 import {MostOrdered} from '../most-ordered/most-ordered';
 import {OrdersManagement} from '../orders-management/orders-management';
 import {RestaurantProfileComponent} from '../restaurant-profile/restaurant-profile';
@@ -30,9 +30,7 @@ const navbarData = [
   {
     RouterLink: '/restaurant-profile',
   },
-  // {
-  //   RouterLink: '/MainLayout/settings',
-  // },
+  
 ];
 
 @Component({
@@ -49,7 +47,7 @@ const navbarData = [
     MenuManagement,
     RestaurantDashboardComponent,
     DashboardAnalytics,
-    DashboardSummary,
+    DashboardSummaryComponent,
     MostOrdered,
     OrdersManagement,
     RestaurantProfileComponent
@@ -93,10 +91,10 @@ export class MainLayoutComponent implements OnInit {
     }
   }
 
-  toggleTheme() {
-    this.isDarkMode = !this.isDarkMode;
-    document.body.classList.toggle('dark-theme', this.isDarkMode);
-  }
+  // toggleTheme() {
+  //   this.isDarkMode = !this.isDarkMode;
+  //   document.body.classList.toggle('dark-theme', this.isDarkMode);
+  // }
 
   logout() {
     this.authService.logout();
@@ -105,9 +103,10 @@ export class MainLayoutComponent implements OnInit {
   
   public getImageUrl(imageFile?: string): string {
   if (!imageFile) {
-    return 'assets/restaurantLogo';
+    return 'public/assets/restaurantLogo.jpg';
   }
-  return this.authService.getImageUrl(imageFile);
+  const url = this.authService.getImageUrl(imageFile);
+  return url;
 }
 
 }

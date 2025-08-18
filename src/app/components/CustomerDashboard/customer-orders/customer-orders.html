@@ -1,6 +1,363 @@
 <div class="outer-container">
-  <!-- Inner Container -->
-  <div class="inner-container">
-    
+    <div class="inner-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-shopping-bag icon"></i>
+                My Orders
+            </h1>
+            <p class="text-muted mb-0">Track and manage your orders</p>
+        </div>
+
+        <!-- Status Timeline Filter -->
+        <div class="status-timeline">
+            <h5 class="mb-3" style="color: var(--primary-color); font-weight: 600;">
+                <i class="fas fa-filter me-2"></i>Filter by Status
+            </h5>
+            <div class="timeline-container">
+                <div class="timeline-line"></div>
+
+                <div class="timeline-step active" data-status="0">
+                    <div class="step-circle">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <div class="step-label">All Orders</div>
+                </div>
+
+                <div class="timeline-step" data-status="1">
+                    <div class="step-circle">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="step-label">Waiting to Confirm</div>
+                </div>
+
+                <div class="timeline-step" data-status="2">
+                    <div class="step-circle">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="step-label">Preparing</div>
+                </div>
+
+                <div class="timeline-step" data-status="3">
+                    <div class="step-circle">
+                        <i class="fas fa-motorcycle"></i>
+                    </div>
+                    <div class="step-label">Out for Delivery</div>
+                </div>
+
+                <div class="timeline-step" data-status="4">
+                    <div class="step-circle">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="step-label">Delivered</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="orders-container">
+            <div class="table-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-receipt me-2"></i>Orders List
+                </h5>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order #</th>
+                            <th>Restaurant</th>
+                            <th>Items</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        @for (item of OrdersView; track $index) {
+                        <tr>
+                            <td data-label="Order #">#{{item.orderNumber}}</td>
+                            <td data-label="Restaurant">{{item.restaurantName}}</td>
+                            <td data-label="Items">{{getitems(item.itemNames.$values)}}</td>
+                            <td data-label="Date">{{item.orderDate|date}}</td>
+                            <td data-label="Status">
+                                <span class="order-status"
+                                    [ngClass]="item.status==1?'status-waiting':item.status==2?'status-preparing':item.status==3?'status-delivery':'status-delivered'">
+                                    {{item.status==1?'Waiting':item.status==2?'Preparing':item.status==3?'Out-for-delivery':'Delivered'}}
+                                </span>
+                            </td>
+                            <td data-label="Total">{{item.totalPrice}}</td>
+                            <td data-label="Actions">
+                                <button class="btn-icon btn-view" title="View Details"
+                                    (click)="openModal('details',item.orderID)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button [style.display]="item.status==4?'inline':'none'" class="btn-icon btn-review" title="Leave Review"
+                                    (click)="openModal('review',item.orderID)">
+                                    <i class="fas fa-star"></i>
+                                </button>
+
+                            </td>
+                        </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- Review Modal
+<div class="modal" id="reviewModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-star me-2"></i>
+                    Leave a Review
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reviewForm">
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-star me-2" style="color: var(--primary-color);"></i>Rating
+                        </label>
+                        <div class="star-rating" id="starRating">
+                            <span class="star" data-rating="1"><i class="fas fa-star"></i></span>
+                            <span class="star" data-rating="2"><i class="fas fa-star"></i></span>
+                            <span class="star" data-rating="3"><i class="fas fa-star"></i></span>
+                            <span class="star" data-rating="4"><i class="fas fa-star"></i></span>
+                            <span class="star" data-rating="5"><i class="fas fa-star"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reviewComment" class="form-label">
+                            <i class="fas fa-comment me-2" style="color: var(--primary-color);"></i>Comment
+                        </label>
+                        <textarea class="form-control" id="reviewComment" rows="4"
+                            placeholder="Share your experience..."></textarea>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> -->
+<ng-template #DetailsModal>
+  <div class="modal fade show d-block">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+          <i class="fas fa-receipt"></i>
+            Order Details <span id="modalOrderNumber"></span>
+            </h5>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+        <div *ngIf="ErrorMessage" id="errorAlert" class="alert alert-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="errorMessage">{{ErrorMessageDetails}}</span>
+            </div>
+    <div *ngIf="!IsLoadingDetails && selectedOrderDetails">
+          <!-- Order Header Info -->
+          <div class="order-header">
+            <div class="order-info">
+              <div class="info-item">
+                <div class="info-label">Order #</div>
+                <div class="info-value">#{{ selectedOrderDetails.orderNumber }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Restaurant</div>
+                <div class="info-value">{{ selectedOrderDetails.restaurantName }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Location</div>
+                <div class="info-value">{{ selectedOrderDetails.restaurantLocation }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Date</div>
+                <div class="info-value">{{ selectedOrderDetails.orderDate | date:'MMM d, yyyy HH:mm' }}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Status</div>
+                <div class="info-value">
+                  <span class="status-badge" [ngClass]="getStatusClass(selectedOrderDetails.status)">
+                    <i class="fas" [ngClass]="getStatusIcon(selectedOrderDetails.status)"></i>
+                    {{selectedOrderDetails.status|statustitle:StatusEnum}} 
+                  </span>
+                </div>
+              </div>
+              <div class="info-item" *ngIf="selectedOrderDetails.orderTimeToComplete">
+                <div class="info-label">Est. Time</div>
+                <div class="info-value">{{ selectedOrderDetails.orderTimeToComplete }}</div>
+              </div>
+            </div>
+
+            <!-- Delivery Address -->
+            <div class="delivery-info" *ngIf="selectedOrderDetails.address">
+              <div class="info-item address-item">
+                <div class="info-label">
+                  <i class="fas fa-map-marker-alt"></i>
+                  Delivery Address
+                </div>
+                <div class="info-value">{{ selectedOrderDetails.address }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Items -->
+          <div class="items-section">
+            <h6 class="section-title">
+              <i class="fas fa-hamburger"></i>
+              Order Items ({{ selectedOrderDetails.items.length }})
+            </h6>
+            
+            <div class="items-container">
+              <div class="order-item" *ngFor="let item of selectedOrderDetails.items; let i = index">
+                <div class="item-image">
+                  <img 
+                    [src]="item.imageUrl" 
+                    [alt]="item.itemName" 
+                    *ngIf="item.imageUrl; else defaultIcon"
+                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                  <ng-template #defaultIcon>
+                    <i class="fas fa-utensils fa-2x" style="color: var(--primary-orange);"></i>
+                  </ng-template>
+                  <i class="fas fa-utensils fa-2x" 
+                     style="color: var(--primary-orange); display: none;"
+                     [style.display]="!item.imageUrl ? 'flex' : 'none'"></i>
+                </div>
+                <div class="item-details">
+                  <div class="item-name">{{ item.itemName }}</div>
+                  <div class="item-description" *ngIf="item.preferences">
+                    <strong>Preferences:</strong> {{ item.preferences }}
+                  </div>
+                </div>
+                <div class="item-price">
+                  <div class="item-quantity">Qty: {{ item.quantity }}</div>
+                  <div class="item-total">${{ item.totalPrice | number:'1.2-2' }}</div>
+                </div>
+              </div>
+
+              <!-- Empty State -->
+              <div class="empty-items" *ngIf="selectedOrderDetails.items.length === 0">
+                <i class="fas fa-shopping-cart fa-3x"></i>
+                <p>No items found in this order</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Summary -->
+          <div class="order-summary">
+            <div class="summary-row">
+              <span class="summary-label">Subtotal:</span>
+              <span class="summary-value">${{ selectedOrderDetails.subTotal | number:'1.2-2' }}</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Delivery Fee:</span>
+              <span class="summary-value">${{ selectedOrderDetails.delivaryPrice | number:'1.2-2' }}</span>
+            </div>
+            <div class="summary-row" *ngIf="selectedOrderDetails.discountAmount > 0">
+              <span class="summary-label">
+                <i class="fas fa-tag"></i>
+                Discount:
+              </span>
+              <span class="summary-value" style="color: #28a745;">-${{ selectedOrderDetails.discountAmount | number:'1.2-2' }}</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label"><strong>Total:</strong></span>
+              <span class="summary-value" style="color: var(--primary-orange); font-weight: 700; font-size: 1.2rem;">
+                ${{ selectedOrderDetails.totalPrice | number:'1.2-2' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error State -->
+        <div class="error-state" *ngIf="!IsLoadingDetails && !selectedOrderDetails">
+          <i class="fas fa-exclamation-triangle fa-3x"></i>
+          <h6>Failed to Load Order Details</h6>
+          <p>Please try again or contact support if the problem persists.</p>
+          <button class="btn btn-primary-custom" (click)="closeModal()">
+            <i class="fas fa-times"></i>
+            Close
+          </button>
+        </div>
+    </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Backdrop -->
+  <div class="modal-backdrop fade show"></div>
+</ng-template>
+
+
+<!-- Second Modal Template -->
+<ng-template #ReviewModal>
+  <div class="modal fade show d-block">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-star me-2"></i>
+                    Leave a Review
+                </h5>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+                <form id="reviewForm">
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-star me-2" style="color: var(--primary-color);"></i>Rating
+                        </label>
+                        <div class="star-rating" id="starRating">
+                            <span class="star" data-rating="1"><i class="fas fa-star"></i></span>
+                            <span class="star" data-rating="2"><i class="fas fa-star"></i></span>
+                            <span class="star" data-rating="3"><i class="fas fa-star"></i></span>
+                            <span class="star" data-rating="4"><i class="fas fa-star"></i></span>
+                            <span class="star" data-rating="5"><i class="fas fa-star"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reviewComment" class="form-label">
+                            <i class="fas fa-comment me-2" style="color: var(--primary-color);"></i>Comment
+                        </label>
+                        <textarea class="form-control" id="reviewComment" rows="4"
+                            placeholder="Share your experience..."></textarea>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                    </div>
+                </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-orange" (click)="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Backdrop -->
+  <div class="modal-backdrop fade show"></div>
+</ng-template>
+
+
+<!-- Render Modals Dynamically -->
+<ng-container *ngIf="isDetailsModalOpen" [ngTemplateOutlet]="DetailsModal"></ng-container>
+<ng-container *ngIf="isReviewModalOpen" [ngTemplateOutlet]="ReviewModal"></ng-container>

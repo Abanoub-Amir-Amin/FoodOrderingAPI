@@ -1,77 +1,83 @@
-/* orders-management.component.scss */
 .orders-management-container {
   max-width: 900px;
   margin: 20px auto;
   padding: 0 10px;
+}
 
-  h2 {
-    margin-bottom: 20px;
-  }
+.orders-management-container h2 {
+  margin-bottom: 20px;
+}
 
-  mat-form-field {
-    width: 300px;
-    margin-bottom: 20px;
-  }
+.orders-management-container mat-form-field {
+  width: 300px;
+  margin-bottom: 20px;
+}
 
-  .error-message {
-    color: red;
-    margin-bottom: 15px;
-  }
+.orders-management-container .error-message {
+  color: red;
+  margin-bottom: 15px;
+}
 
-  .no-orders {
-    font-style: italic;
-    margin-top: 20px;
-  }
+.orders-management-container .no-orders {
+  font-style: italic;
+  margin-top: 20px;
+}
 
-  .order-card {
-    margin-bottom: 20px;
+.orders-management-container .order-card {
+  margin-bottom: 20px;
+}
 
-    mat-card {
-      padding: 10px;
-    }
+.orders-management-container .order-card mat-card {
+  padding: 10px;
+  border: 1px solid #ddd;
+  box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+}
 
-    .order-details {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
+.orders-management-container .order-details {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
 
-      .order-info {
-        width: 45%;
-        font-size: 14px;
-        line-height: 1.4;
-      }
+.orders-management-container .order-details .order-info {
+  width: 45%;
+  min-width: 250px;
+  font-size: 14px;
+  line-height: 1.4;
+}
 
-      .order-items {
-        width: 50%;
+.orders-management-container .order-details .order-items {
+  width: 50%;
+  min-width: 280px;
+}
 
-        ul {
-          list-style: none;
-          padding-left: 0;
+.orders-management-container .order-details .order-items ul {
+  list-style: none;
+  padding-left: 0;
+}
 
-          li {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
+.orders-management-container .order-details .order-items ul li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
 
-            img {
-              margin-right: 10px;
-              border-radius: 5px;
-              object-fit: cover;
-            }
+.orders-management-container .order-details .order-items ul li img {
+  margin-right: 10px;
+  border-radius: 5px;
+  object-fit: cover;
+  width: 60px;
+  height: 40px;
+}
 
-            small {
-              color: gray;
-              margin-left: 5px;
-            }
-          }
-        }
-      }
-    }
+.orders-management-container .order-details .order-items ul li small {
+  color: gray;
+  margin-left: 5px;
+}
 
-    mat-card-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-    }
-  }
+.orders-management-container mat-card-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
 }

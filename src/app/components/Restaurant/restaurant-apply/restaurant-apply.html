@@ -1,101 +1,102 @@
 <div class="container py-5 registration-wrapper">
-  <div class="card  shadow-lg border-0 w-100" style="max-width: 600px; margin: 0 auto">
+  <div class="card shadow-lg border-0 w-100" style="max-width: 600px; margin: 0 auto">
     <div class="header text-center mb-4">
       <h1 class="title">Create an Account</h1>
       <p class="subtitle">Be our Partner - Apply as Restaurant</p>
     </div>
- 
- <form [formGroup]="applyForm" (ngSubmit)="onSubmit()" novalidate class="registration-form container py-4">
-  <div class="card shadow-sm p-4">
-    <h3 class="mb-3 text-center">Restaurant Application</h3>
 
-    <div class="mb-3">
-      <label class="form-label">Restaurant Logo</label>
-      <input type="file" class="form-control" (change)="onLogoFileSelected($event)" accept="image/*" />
-      <div *ngIf="logoPreview" class="text-center mt-2">
-        <img [src]="logoPreview" alt="Logo Preview" width="150" height="150" class="rounded border" />
-      </div>
-    </div>
+    <form [formGroup]="applyForm" (ngSubmit)="onSubmit()" novalidate class="registration-form container py-4">
+      <div class="card shadow-sm p-4">
+        <h3 class="mb-3 text-center">Restaurant Application</h3>
 
-    <div class="mb-3">
-      <label class="form-label">Restaurant Name</label>
-      <input formControlName="RestaurantName" type="text" class="form-control" placeholder="Enter restaurant name" />
-      <div *ngIf="applyForm.get('RestaurantName')?.invalid && applyForm.get('RestaurantName')?.touched" class="text-danger small">
-        Restaurant Name is required.
-      </div>
-    </div>
+        <div class="mb-3">
+          <label class="form-label">Restaurant Logo</label>
+          <input type="file" class="form-control" (change)="onLogoFileSelected($event)" accept="image/*" placeholder="image"/>
+          <div *ngIf="logoPreview" class="text-center mt-2">
+            <img [src]="logoPreview" alt="Logo Preview" width="150" height="150" class="rounded border" />
+          </div>
+        </div>
 
-    <!-- <div class="mb-3">
-      <label class="form-label">Location</label>
-      <input formControlName="Location" type="text" class="form-control" placeholder="Enter location" />
-      <div *ngIf="applyForm.get('Location')?.invalid && applyForm.get('Location')?.touched" class="text-danger small">
-        Location is required.
-      </div>
-    </div> -->
-      <app-map-component (addressInfo)="setAddress($event)"  [formSubmitted]="success"></app-map-component>
-    
-    <div class="mb-3">
-      <label class="form-label">Open Hours</label>
-      <input formControlName="OpenHours" type="text" class="form-control" placeholder="e.g., 9 AM - 10 PM" />
-    </div>
+        <div class="mb-3">
+          <label class="form-label">Restaurant Name</label>
+          <input formControlName="restaurantName" type="text" class="form-control" placeholder="Enter restaurant name" />
+          <div *ngIf="applyForm.get('restaurantName')?.invalid && applyForm.get('restaurantName')?.touched" class="text-danger small">
+            Restaurant Name is required.
+          </div>
+        </div>
 
-    <div class="mb-3">
-      <label class="form-label">Order Time</label>
-      <input formControlName="OrderTime" type="time" class="form-control" placeholder="e.g., 1:30:00" />
-    </div>
-   
+        <div class="mb-3">
+          <label class="form-label">Location</label>
+          <input formControlName="location" type="text" class="form-control" placeholder="Enter location" />
+          <div *ngIf="applyForm.get('location')?.invalid && applyForm.get('location')?.touched" class="text-danger small">
+            Location is required.
+          </div>
+        </div>
 
-    <div class="mb-3">
-      <label class="form-label">Delivary Price</label>
-      <input formControlName="DelivaryPrice" type="Price" class="form-control" placeholder="Enter Delivary Price" />
-    </div>
-   
-    <div class="mb-3">
-      <label class="form-label">Username</label>
-      <input formControlName="UserName" type="text" class="form-control" placeholder="Choose a username" />
-      <div *ngIf="applyForm.get('UserName')?.invalid && applyForm.get('UserName')?.touched" class="text-danger small">
-        Username is required.
-      </div>
-    </div>
+        <app-map-component (addressInfo)="setAddress($event)" [formSubmitted]="success"></app-map-component>
 
-    <div class="mb-3">
-      <label class="form-label">Email</label>
-      <input formControlName="Email" type="email" class="form-control" placeholder="you@example.com" />
-      <div *ngIf="applyForm.get('Email')?.invalid && applyForm.get('Email')?.touched" class="text-danger small">
-        <span *ngIf="applyForm.get('Email')?.errors?.['required']">Email is required.</span>
-        <span *ngIf="applyForm.get('Email')?.errors?.['Email']">Enter a valid email.</span>
-      </div>
-    </div>
+        <div class="mb-3">
+          <label class="form-label">Open Hours</label>
+          <input formControlName="openHours" type="text" class="form-control" placeholder="e.g., 9 AM - 10 PM" />
+        </div>
 
-    <div class="mb-3">
-      <label class="form-label">Phone</label>
-      <input formControlName="Phone" type="text" class="form-control" placeholder="01xxxxxxxxx" />
-    </div>
+        <div class="mb-3">
+          <label class="form-label">Order Time</label>
+          <input formControlName="orderTime" type="time" class="form-control" placeholder="e.g., 1:30:00" />
+        </div>
 
-    <div class="mb-3">
-      <label class="form-label">Password</label>
-      <div class="password-input-wrapper position-relative">
-      <input formControlName="Password" [type]="showPassword ? 'text' : 'password'" class="form-control" placeholder="Enter password" />
-       <button type="button" class="btn btn-sm btn-link position-absolute top-50 end-0 translate-middle-y me-2" (click)="togglePasswordVisibility()">
-            {{ showPassword ? '🙈' : '👁️' }}
-          </button>
-      <div *ngIf="applyForm.get('Password')?.invalid && applyForm.get('Password')?.touched" class="text-danger small">
-        <span *ngIf="applyForm.get('Password')?.errors?.['required']">Password is required.</span>
-        <span *ngIf="applyForm.get('Password')?.errors?.['minlength']">
-          Password must be at least 6 characters.
-        </span>
-      </div>
-      </div>
-    </div>
+        <div class="mb-3">
+          <label class="form-label">Delivary Price</label>
+          <input formControlName="delivaryPrice" type="text" class="form-control" placeholder="Enter Delivary Price" />
+        </div>
 
-    <button type="submit" [disabled]="applyForm.invalid || applying" class="btn btn-primary w-100">
-      Submit
-    </button>
+        <!-- Nested user group controls -->
+        <div formGroupName="user">
+  <div class="mb-3">
+    <label class="form-label">Username</label>
+    <input formControlName="userName" type="text" class="form-control" placeholder="Choose a username" />
+    <div *ngIf="applyForm.get('user.userName')?.invalid && applyForm.get('user.userName')?.touched" class="text-danger small">
+      Username is required.
+    </div>
   </div>
-</form>
 
+  <div class="mb-3">
+    <label class="form-label">Email</label>
+    <input formControlName="email" type="email" class="form-control" placeholder="you@example.com" />
+    <div *ngIf="applyForm.get('user.email')?.invalid && applyForm.get('user.email')?.touched" class="text-danger small">
+      <span *ngIf="applyForm.get('user.email')?.errors?.['required']">Email is required.</span>
+      <span *ngIf="applyForm.get('user.email')?.errors?.['email']">Enter a valid email.</span>
+    </div>
+  </div>
 
-  <div *ngIf="success" class="success">Submitted successfully, redirecting...</div>
-  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  <div class="mb-3">
+    <label class="form-label">Phone</label>
+    <input formControlName="phone" type="text" class="form-control" placeholder="01xxxxxxxxx" />
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Password</label>
+    <div class="password-input-wrapper position-relative">
+      <input formControlName="password" [type]="showPassword ? 'text' : 'password'" class="form-control" placeholder="Enter password" />
+      <button type="button" class="btn btn-sm btn-link position-absolute top-50 end-0 translate-middle-y me-2" (click)="togglePasswordVisibility()">
+        {{ showPassword ? '🙈' : '👁️' }}
+      </button>
+      <div *ngIf="applyForm.get('user.password')?.invalid && applyForm.get('user.password')?.touched" class="text-danger small">
+        <span *ngIf="applyForm.get('user.password')?.errors?.['required']">Password is required.</span>
+        <span *ngIf="applyForm.get('user.password')?.errors?.['minlength']">Password must be at least 6 characters.</span>
+      </div>
+    </div>
+  </div>
 </div>
+
+
+        <button type="submit" [disabled]="applyForm.invalid || applying" class="btn btn-primary w-100">
+          Submit
+        </button>
+      </div>
+    </form>
+
+    <div *ngIf="success" class="success">Submitted successfully, redirecting...</div>
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  </div>
 </div>

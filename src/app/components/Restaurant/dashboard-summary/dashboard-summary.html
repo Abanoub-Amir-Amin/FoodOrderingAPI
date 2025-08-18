@@ -1,8 +1,16 @@
+<!-- <mat-card class="summary-card">
+  <h3>Orders Summary</h3>
+  <div class="summary-grid">
+    <div><span>Delivered:</span> <span>{{ restaurant?.deliveredOrders || 0 }}</span></div>
+    <div><span>In Process:</span> <span>{{ restaurant?.inProcessOrders || 0 }}</span></div>
+    <div><span>Cancelled:</span> <span>{{ restaurant?.cancelledOrders || 0 }}</span></div>
+  </div>
+</mat-card> -->
 <mat-card class="summary-card">
-      <h3>Orders Summary</h3>
-      <div class="summary-grid">
-        <div><span>Delivered:</span> <span>{{restaurant?.deliveredOrders || 0}}</span></div>
-        <div><span>In Process:</span> <span>{{restaurant?.inProcessOrders || 0}}</span></div>
-        <div><span>Cancelled:</span> <span>{{restaurant?.cancelledOrders || 0}}</span></div>
-      </div>
-    </mat-card>
+  <h3>Orders Summary</h3>
+  <div class="summary-grid">
+    <div><span>Delivered:</span> <span>{{ restaurantSummary?.deliveredOrders || 0 }}</span></div>
+    <div><span>Processing:</span> <span>{{ restaurantSummary?.inProcessOrders || 0 }}</span></div>
+    <div><span>Cancelled:</span> <span>{{ restaurantSummary?.cancelledOrders || 0 }}</span></div>
+  </div>
+</mat-card>

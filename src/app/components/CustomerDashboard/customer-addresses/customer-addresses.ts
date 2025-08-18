@@ -1,24 +1,49 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { AddressDto, AddressViewDto } from '../../../models/DTO.model';
 import { AddressService } from '../../../services/address/address-service';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { MapComponent } from '../../shared/map-component/map-component';
+import { Overlay, OverlayModule, OverlayRef } from '@angular/cdk/overlay';
+import { PortalModule, TemplatePortal } from '@angular/cdk/portal';
 // import { Modal } from 'bootstrap';
 
 @Component({
   selector: 'app-customer-addresses',
-  imports: [CommonModule],
+  imports: [CommonModule,MapComponent,OverlayModule,PortalModule],
   templateUrl: './customer-addresses.html',
   styleUrl: './customer-addresses.css'
 })
 export class CustomerAddresses implements OnInit {
+// private overlay = Inject(Overlay);
+private overlayRef?: OverlayRef;
+
+@ViewChild('addAddressModal') addAddressModal!: TemplateRef<any>;
+@ViewChild('mapModal') mapModal!: TemplateRef<any>;
+
+
 AddressesView:AddressViewDto[] = [];
 loading = true;
 ErrorMessage = '';
 successMessage = '';
 bootstrap:any
 
+//for add map model
+addmap!: L.Map;
+isAdded:boolean =false;
+isAddModalOpen = false;
+isMapModalOpen = false;
+addsucessMessage='';
+adderrorMessage='';
+
 //for map model to edit model
 selectedAddress: AddressDto ={
+label:"",
+street:"",
+city:"",
+latitude:0,
+longitude:0
+};
+AddedAddress: AddressDto ={
 label:"",
 street:"",
 city:"",
@@ -30,11 +55,14 @@ private map: any; // ← غيري النوع من L.Map لـ any
 private marker: any; // ← غيري النوع من L.Marker لـ any
 private L: any; // ← إضافي متغير للـ Leaflet
 private isBrowser:boolean
-private currentLat:number=0
-private currentLng:number=0
+currentLat:number=0
+set:boolean = false;
+currentLng:number=0
 MaperrorMessage:string=""
-
+selectedAddId:string = '';
 constructor(
+  private overlay: Overlay,
+  private vcr: ViewContainerRef,
   private addressService: AddressService, 
    @Inject(PLATFORM_ID) platformId: object
 )
@@ -88,8 +116,8 @@ MakeDefault(AddressId:string){
     }
   })
 }
-viewOnMap(label:string,street:string,city:string,lat:number,lng:number){
-
+viewOnMap(AddressId:string,label:string,street:string,city:string,lat:number,lng:number){
+  this.selectedAddId = AddressId;
   this.selectedAddress = {
     label: label,
     street: street,
@@ -102,19 +130,39 @@ viewOnMap(label:string,street:string,city:string,lat:number,lng:number){
     
   // Logic to open a modal or navigate to a map view can be added here
   console.log(`Viewing on map at Latitude: ${lat}, Longitude: ${lng}`);
-  if(this.isBrowser){
-    if(this.bootstrap){
-      const model = document.getElementById('mapModal');
-  if (model){
-    new this.bootstrap.Modal(model,{backdrop:'static',keyboard:false}).show();
-    setTimeout(() => {
-      this.initializeMap();
-    }, 100);
-  }
-  else
-    console.error('Map modal element not found');
+   
+    // // Initialize map after modal is shown
+    if (this.isBrowser) {
+      setTimeout(() => {
+        this.initializeMap();
+      }, 300);
+    }
+ this.openModal('map')
 }
-}
+
+closeViewMap(){
+  // debugger;
+//  const model = document.getElementById('mapModal');
+      // if (model){
+        this.selectedAddress = {
+          label: '', 
+          street: '',
+          city: '',
+          latitude: 0,
+          longitude: 0
+        };
+    // this.isMapModalOpen = false;
+    this.set = false;
+    // this.toggleBodyScroll(true);
+    
+    // Clean up map if exists
+    if (this.map) {
+      this.map.remove();
+      this.map = null;
+      this.marker = null;
+    }
+  // document.body.style.overflow = ''; // Add this line
+  this.closeModal();
 }
 DeleteAddress(AddressId:string){
   this.addressService.deleteAddress(AddressId).subscribe({
@@ -131,6 +179,23 @@ DeleteAddress(AddressId:string){
     },
   })
 }
+UpdateAddress(){
+  this.addressService.updateAddress(this.selectedAddId,this.selectedAddress).subscribe({
+    next:(res)=>{
+      this.successMessage="update this address successfully"
+      this.ErrorMessage=""
+      console.log(res)
+      this.getAddresses();
+
+    },
+    error:(err)=> {
+    this.ErrorMessage="Failed update This Address"
+      console.log(err);
+      this.successMessage=""
+    },
+  })
+}
+
  private async initializeMap(): Promise<void> {
     try {
       // Dynamic import للـ Leaflet
@@ -162,6 +227,7 @@ DeleteAddress(AddressId:string){
         [this.selectedAddress?.latitude, this.selectedAddress?.longitude],
         13
       );
+      
 
       // Add tile layer
       this.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -178,17 +244,17 @@ DeleteAddress(AddressId:string){
       if (!this.isEditingLocation) {
         this.marker.dragging?.disable();
       }
-
+      await this.updateCoordinates(this.selectedAddress.latitude, this.selectedAddress.longitude);
       // Handle marker drag end event
-      this.marker.on('dragend', (e: any) => {
+      this.marker.on('dragend', async (e: any) => {
         const position = e.target.getLatLng();
-        this.updateCoordinates(position.lat, position.lng);
+        await this.updateCoordinates(position.lat, position.lng);
       });
 
-      // Handle map click event - update location only if editing mode enabled
-      this.map.on('click', (e: any) => {
+      // Map click event (update only if editing mode enabled)
+      this.map.on('click', async (e: any) => {
         if (this.isEditingLocation) {
-          this.updateCoordinates(e.latlng.lat, e.latlng.lng);
+          await this.updateCoordinates(e.latlng.lat, e.latlng.lng);
         }
       });
     } catch (error) {
@@ -203,7 +269,7 @@ DeleteAddress(AddressId:string){
       this.currentLng = lng;
     }
   }
- getCurrentLocation(): void {
+ async getCurrentLocation(): Promise<void> {
     if (!this.isBrowser) {
       this.MaperrorMessage = 'Geolocation is not supported in this environment.';
       return;
@@ -228,7 +294,7 @@ DeleteAddress(AddressId:string){
     }
   }
 
-  private updateCoordinates(lat: number, lng: number): void {
+  private async updateCoordinates(lat: number, lng: number): Promise<void> {
     this.currentLat = lat;
     this.currentLng = lng;
     this.selectedAddress.latitude = lat;
@@ -240,19 +306,176 @@ DeleteAddress(AddressId:string){
     if (this.map) {
       this.map.setView([lat, lng]);
     }
+    await this.reverseGeocode(lat, lng)
   }
 
  updateLocationMode(): void {
+  debugger;
     this.isEditingLocation = !this.isEditingLocation;
     if (this.marker) {
       if (this.isEditingLocation) {
         this.marker.dragging?.enable();
         this.successMessage = 'Click on map or drag marker to update location';
       } else {
+        this.UpdateAddress()
         this.marker.dragging?.disable();
         this.successMessage = '';
       }
     }
   }
+  async reverseGeocode(lat: number, lng: number) {
+  // const L = await import('leaflet');
+  // await import('leaflet-control-geocoder');
+  // const geocoder = (L.Control as any).Geocoder.nominatim();
+  // console.log(geocoder)
+  // geocoder.reverse(L.latLng(lat,lng), this.map.getZoom(), (results: any) => {
+  //    console.log('Raw reverse results:', results);
 
+  //     if (results && results.length > 0) {
+  //       console.log('Reverse geocode result:', results[0]);
+  //     } else {
+  //       console.log('No address found');
+  //     }
+  // });
+try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+      {
+        headers: {
+          'Accept-Language': 'en',
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (data && data.address) {
+      this.selectedAddress = {
+        label: data.address.amenity|| 'Apartment',
+        street: (data.address.house_number||'')+ ' '+ (data.address.road || ''),
+        city: data.address.city || data.address.town || '',
+        latitude:lat,
+        longitude:lng
+      };
+      if(this.selectedAddress)
+        this.set=true
+      
+    } else {
+      console.log('No address found');
+    }
+  } catch (err) {
+    console.error('Reverse geocoding failed:', err);
+  }
+}
+
+  // UTILITY: Toggle body scroll for modal
+  private toggleBodyScroll(enable: boolean) {
+    if (this.isBrowser) {
+      if (enable) {
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+      } else {
+        document.body.classList.add('modal-open');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+  }
+//add map
+// AddonMap(){
+//   debugger;
+//    console.log('Opening add modal...');
+// ; 
+//    this.isAddModalOpen = true;
+//     this.toggleBodyScroll(false);
+//     this.isAdded = false;
+    
+//  setTimeout(() => {
+//       if (this.addmap) {
+//         this.addmap.invalidateSize();
+//       }
+//     }, 300);
+    
+//   document.body.style.overflow = 'hidden'; // Add this line
+  
+
+// }
+  onMapReady(map: L.Map) {
+    this.addmap = map;
+  }
+closeAddMap(){
+    // debugger;
+  this.AddedAddress = {
+    label: '', 
+    street: '',
+    city: '',
+    latitude: 0,
+    longitude: 0
+  };
+  this.isAdded=false
+  this.isAddModalOpen = false;
+  this.toggleBodyScroll(true);
+    document.body.style.overflow = ''; // Add this line
+
+}
+setAddress(add:AddressDto) {
+    this.AddedAddress = add;
+  }
+AddAddress(){
+  this.addressService.addAddress(this.AddedAddress).subscribe({
+    next:(res)=>{
+      this.successMessage="Add this address successfully"
+      this.ErrorMessage=""
+      console.log(res)
+      this.getAddresses();
+      this.isAdded=true
+    },
+    error:(err)=> {
+    this.ErrorMessage="Failed Adding This Address"
+      console.log(err);
+      this.successMessage=""
+    },
+  })
+}
+ onBackdropClick(event: Event, modalType: 'add' | 'map') {
+    if (event.target === event.currentTarget) {
+      if (modalType === 'add') {
+        this.closeAddMap();
+      } else {
+        this.closeViewMap();
+      }
+    }
+  }
+   openModal(templateName: 'add' | 'map') {
+        const modalTemplate = templateName === 'add' ? this.addAddressModal : this.mapModal;
+
+if (!modalTemplate) {
+      console.warn(`${templateName} not ready yet`);
+      return;
+    }
+
+    if (!this.overlayRef) {
+      this.overlayRef = this.overlay.create({
+        hasBackdrop: true,
+        backdropClass: 'modal',
+        panelClass: 'modal-container',
+        scrollStrategy: this.overlay.scrollStrategies.block()
+      });
+
+      this.overlayRef.backdropClick().subscribe(() => this.closeModal());
+    }
+
+    if (!this.overlayRef.hasAttached()) {
+      const portal = new TemplatePortal(modalTemplate, this.vcr);
+      this.overlayRef.attach(portal);
+    }
+  }
+
+  // قفل المودال
+  closeModal() {
+    if (this.overlayRef) {
+      this.overlayRef.dispose();
+      this.overlayRef = undefined;
+    }
+  }
 }

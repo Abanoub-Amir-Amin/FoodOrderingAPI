@@ -3,7 +3,7 @@
   <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" novalidate>
 
     <!-- Restaurant Name -->
-    <mat-form-field appearance="fill" class="full-width">
+     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Restaurant Name</mat-label>
       <input
         matInput
@@ -15,10 +15,9 @@
       />
       <mat-error id="restaurantNameError" *ngIf="profileForm.get('restaurantName')?.hasError('required')">
         Restaurant name is required.
-      </mat-error>
-    </mat-form-field>
-
-    <!-- Location -->
+        </mat-error>
+      </mat-form-field>
+        <!-- Location -->
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Location</mat-label>
       <input
@@ -44,29 +43,23 @@
         title="Open Hours"
       />
     </mat-form-field>
-
-    <!-- userName -->
+    <!-- User Name -->
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>User Name</mat-label>
       <input
         matInput
         formControlName="userName"
-        type="userName"
-        placeholder="Enter your user Name address"
-        title="userName"
+        placeholder="Enter your user name"
+        title="User Name"
         required
-        aria-describedby="userNameError userNamenvalidError"
+        aria-describedby="userNameError"
       />
       <mat-error id="userNameError" *ngIf="profileForm.get('userName')?.hasError('required')">
-        Email is required.
-      </mat-error>
-      <mat-error id="userNamenvalidError" *ngIf="profileForm.get('userName')?.hasError('userName')">
-        Please enter a valid email address.
+        User Name is required.
       </mat-error>
     </mat-form-field>
-
     <!-- Email -->
-    <mat-form-field appearance="fill" class="full-width">
+     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Email</mat-label>
       <input
         matInput
@@ -84,7 +77,6 @@
         Please enter a valid email address.
       </mat-error>
     </mat-form-field>
-
     <!-- Phone -->
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Phone</mat-label>
@@ -96,40 +88,67 @@
         title="Phone Number"
       />
     </mat-form-field>
-  
-    <!-- Image Upload Section -->
-    <!-- <section class="image-upload-section">
-      <label for="imageFileInput" class="image-label">Restaurant Image</label> -->
+    <!-- Map Component to select address -->
+    <app-map-component
+      (addressInfo)="setAddress($event)"
+      [latitude]="profileForm.get('latitude')?.value"
+      [longitude]="profileForm.get('longitude')?.value"
+    ></app-map-component>
 
-      <!-- Preview or fallback -->
-      <!-- <div class="image-preview-container" *ngIf="imagePreviewUrl; else noImage">
-        <img
-          [src]="imagePreviewUrl"
-          alt="{{ profileForm.get('restaurantName')?.value || 'Default Restaurant Logo' }}"
-          class="image-preview"
-          loading="lazy"
-        />
-      </div>
-      <ng-template #noImage>
-        <p class="no-image-text">No image uploaded</p>
-      </ng-template> -->
-
-      <!-- File input -->
-      <!-- <input
-        type="file"
-        id="imageFileInput"
-        (change)="onFileSelected($event)"
-        accept="image/*"
-        aria-label="Upload restaurant image"
-        class="image-file-input"
+    <!-- display latitude and longitude fields readonly-->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Latitude</mat-label>
+      <input
+        matInput
+        formControlName="latitude"
+        type="number"
+        placeholder="Latitude"
+        title="Latitude"
+        step="any"
       />
-    </section> -->
+    </mat-form-field>
 
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Longitude</mat-label>
+      <input
+        matInput
+        formControlName="longitude"
+        type="number"
+        placeholder="Longitude"
+        title="Longitude"
+        step="any"
+      />
+    </mat-form-field>
+
+    <!-- Delivery Price -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Delivary Price</mat-label>
+      <input
+        matInput
+        formControlName="delivaryPrice"
+        type="number"
+        placeholder="Enter delivary price"
+        title="Deliaery Price"
+        step="0.01"
+        min="0"
+      />
+    </mat-form-field>
+    <!-- Order Time -->
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Order Time (minutes)</mat-label>
+        <input
+        matInput
+        formControlName="orderTime"
+        type="time"
+        placeholder="Enter order time in minutes"
+        title="Order Time"
+        min="0"
+      />
+    </mat-form-field>
     <!-- Accept Orders Checkbox -->
-    <mat-checkbox formControlName="isAvailable" aria-label="Accept Orders (Is Available)" class="availability-checkbox">
+    <mat-checkbox formControlName="isAvailable" aria-label="Accept Orders (Is Available)">
       Accept Orders (Is Available)
     </mat-checkbox>
-
     <!-- Submit Button -->
     <button
       mat-raised-button
@@ -137,7 +156,6 @@
       type="submit"
       [disabled]="isSubmitting || profileForm.invalid"
       aria-label="Save Changes"
-      class="submit-button"
     >
       {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
     </button>

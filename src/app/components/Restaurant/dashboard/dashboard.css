@@ -5,71 +5,64 @@
   font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
+  padding: 0 20px;
 }
 
 .dashboard-container .mat-toolbar.toolbar {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   font-weight: 600;
-  font-size: 1.15rem;
-  padding: 0 16px;
+  font-size: 1.25rem;
+  padding: 0 24px;
+  background-color: #fff8f0;
+  border-bottom: 2px solid #ff9100;
 }
 
 .dashboard-container .spacer {
   flex: 1 1 auto;
 }
 
-.dashboard-container .dashboard-content {
+.dashboard-content {
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
-  margin: 40px 30px;
+  margin: 40px 0;
   justify-content: space-between;
   flex: 1 1 auto; /* Ensures it grows to fill space */
 }
 
-.dashboard-container section.summary-section,
-.dashboard-container section.analytics-section,
-.dashboard-container section.most-ordered-section {
-  flex: 1 1 32%;
-  min-width: 280px;
+section.summary-section,
+section.analytics-section,
+section.most-ordered-section {
+  flex: 1 1 30%;
+  min-width: 300px;
   background-color: #fff8f0;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(255, 145, 0, 0.15);
+  padding: 24px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(255, 145, 0, 0.2);
+  transition: box-shadow 0.3s ease;
 }
 
-.dashboard-container .active {
+section.summary-section:hover,
+section.analytics-section:hover,
+section.most-ordered-section:hover {
+  box-shadow: 0 6px 15px rgba(255, 145, 0, 0.3);
+}
+
+.active {
   color: #388e3c;
   font-weight: 700;
+  font-size: 1.05rem;
 }
 
-.dashboard-container .pending {
+.pending {
   color: #ff9800;
   font-weight: 700;
+  font-size: 1.05rem;
 }
 
-.dashboard-container .loader {
+.loader {
   margin: 100px auto;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-/* Dark mode overrides */
-.dark-mode {
-  background-color: #212121;
-  color: #fff;
-}
-
-.dark-mode .mat-toolbar.toolbar {
-  background-color: #2c2c2c !important;
-  color: #fff !important;
-}
-
-.dark-mode .active {
-  color: #81c784; /* lighter green in dark mode */
-}
-
-.dark-mode .pending {
-  color: #ffb74d; /* lighter orange in dark mode */
 }
