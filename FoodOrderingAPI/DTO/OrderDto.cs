@@ -8,7 +8,8 @@ namespace FoodOrderingAPI.DTO
         [BindNever]
         public Guid OrderID { get; set; }
         public Guid AddressID { get; set; }
-        public string RestaurantID { get; set; } 
+        public string RestaurantID { get; set; }
+        public int? OrderNumber { get; set; }
         public string? DeliveryManID { get; set; } 
         public StatusEnum Status { get; set; }
         public DateTime OrderDate { get; set; }

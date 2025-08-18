@@ -54,49 +54,51 @@ namespace FoodOrderingAPI.Services
             newUser.CreatedAt = DateTime.UtcNow;
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                // 5. Create user with hashed password via UserManager
-                var userCreateResult = await _userManager.CreateAsync(newUser, dto.Password);
-                if (!userCreateResult.Succeeded)
+                try
                 {
-                    var errors = string.Join("; ", userCreateResult.Errors.Select(e => e.Description));
-                    throw new InvalidOperationException($"Failed to create user: {errors}");
-                }
+                    var userCreateResult = await _userManager.CreateAsync(newUser, dto.Password);
+                    if (!userCreateResult.Succeeded)
+                    {
+                        var errors = string.Join("; ", userCreateResult.Errors.Select(e => e.Description));
+                        throw new InvalidOperationException($"Failed to create user: {errors}");
+                    }
 
-                // 6. Assign the "DeliveryMan" role to this user
-                var roleAssignResult = await _userManager.AddToRoleAsync(newUser, "DeliveryMan");
-                if (!roleAssignResult.Succeeded)
+                    var roleAssignResult = await _userManager.AddToRoleAsync(newUser, "DeliveryMan");
+                    if (!roleAssignResult.Succeeded)
+                    {
+                        var errors = string.Join("; ", roleAssignResult.Errors.Select(e => e.Description));
+                        throw new InvalidOperationException($"Failed to assign role: {errors}");
+                    }
+
+                    var DeliveryManEntity = _mapper.Map<DeliveryMan>(dto);
+                    DeliveryManEntity.UserId = newUser.Id;
+                    DeliveryManEntity.DeliveryManID = newUser.Id;
+                    DeliveryManEntity.User = newUser;
+
+                    DeliveryManEntity.AccountStatus = AccountStatusEnum.Pending;
+                    DeliveryManEntity.AvailabilityStatus = true;
+                    DeliveryManEntity.Location = new Point(DeliveryManEntity.Longitude, DeliveryManEntity.Latitude) { SRID = 4326 };
+
+                    DeliveryManEntity.User.DeliveryMan = DeliveryManEntity;
+
+                    var result = await _repository.ApplyToJoinAsync(DeliveryManEntity);
+
+                    await transaction.CommitAsync();
+
+                    return result;
+                }
+                catch
                 {
-                    var errors = string.Join("; ", roleAssignResult.Errors.Select(e => e.Description));
-                    throw new InvalidOperationException($"Failed to assign role: {errors}");
+                    // لو حصل أي مشكلة نعمل rollback
+                    await transaction.RollbackAsync();
+                    throw;
                 }
-
-                // 7. Map DeliveryMan DTO to entity and link to created user
-                var DeliveryManEntity = _mapper.Map<DeliveryMan>(dto);
-                DeliveryManEntity.UserId = newUser.Id;
-                DeliveryManEntity.DeliveryManID = newUser.Id;
-                DeliveryManEntity.User = newUser;
-
-                // 8. Initialize DeliveryMan AccountStatus pending approval and AvailabilityStatus
-                DeliveryManEntity.AccountStatus = AccountStatusEnum.Pending;
-                DeliveryManEntity.AvailabilityStatus = true;
-                // Set Location based on Longitude and Latitude
-                DeliveryManEntity.Location = new Point(DeliveryManEntity.Longitude, DeliveryManEntity.Latitude) { SRID = 4326 };
-
-
-                DeliveryManEntity.User.DeliveryMan = null;
-
-                // 9. Save DeliveryMan before commit
-                var result = await _repository.ApplyToJoinAsync(DeliveryManEntity);
-
-                // 10. Commit only after saving all entities
-                await transaction.CommitAsync();
-
-                return result;
-
-
             }
 
+
         }
+
+        
 
         public async Task<bool> GetAvailabilityStatusAsync(string userId)
         {
@@ -179,7 +181,7 @@ namespace FoodOrderingAPI.Services
             return await _repository.GetClosestDeliveryManAsync(orderLatitude, orderLongitude);
         }
 
-        public async Task<Order> UpdateOrderStatusAsync(Guid OrderId, StatusEnum newStatus, string deliveryManId)
+        public async Task<DeliveryManUpdateOrderStatusDTO> UpdateOrderStatusAsync(Guid OrderId, StatusEnum newStatus, string deliveryManId)
         {
             return await _repository.UpdateOrderStatusAsync(OrderId, newStatus, deliveryManId);
         }

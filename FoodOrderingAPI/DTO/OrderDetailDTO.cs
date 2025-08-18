@@ -40,5 +40,7 @@ namespace FoodOrderingAPI.DTO
         public decimal DiscountAmount { get; set; }
         public decimal TotalPrice { get; set; }
 
+
+
     }
 }

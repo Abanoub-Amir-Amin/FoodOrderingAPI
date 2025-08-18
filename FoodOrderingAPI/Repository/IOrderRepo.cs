@@ -1,4 +1,5 @@
-﻿using FoodOrderingAPI.DTO.FoodOrderingAPI.DTO;
+﻿using FoodOrderingAPI.DTO;
+using FoodOrderingAPI.DTO.FoodOrderingAPI.DTO;
 using FoodOrderingAPI.Models;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -8,7 +9,7 @@ namespace FoodOrderingAPI.Repository
     {
         //Order
         Task<Order> UpdateOrderStatusAsync(Guid orderId, StatusEnum status, string restaurantId);
-        Task<IEnumerable<Order>> GetAllOrdersByRestaurantAsync(string restaurantId);
+        Task<IEnumerable<OrderDto>> GetAllOrdersByRestaurantAsync(string restaurantId);
 
         public Task CancelOrder(Order order);
         public Task ConfirmOrder(Order order);
@@ -19,19 +20,19 @@ namespace FoodOrderingAPI.Repository
         Task<DashboardSummaryDto> GetDashboardSummaryAsync(string restaurantId);
 
         //customer
-        public Task<int> GenerateOrderNumberAsync();
-        public Task<IDbContextTransaction> BeginTransactionAsync();
-        public Task AddOrder(Order order);
-        public Task AddOrderItem(OrderItem orderitem);
-        public Task saveChangesAsync();
+        Task<int> GenerateOrderNumberAsync();
+        Task<IDbContextTransaction> BeginTransactionAsync();
+        Task AddOrder(Order order);
+        Task AddOrderItem(OrderItem orderitem);
+        Task saveChangesAsync();
 
 
-        public Task<List<Order>> getOrders(string customerId);
-        public Task<List<Order>> getOrdersDelivaryMan(string DelivaryId);
+        Task<List<Order>> getOrders(string customerId);
+        Task<List<Order>> getOrdersDelivaryMan(string DelivaryId);
 
-        public Task<Order?> getOrderDetails(Guid orderId);
+        Task<Order?> GetOrderDetails(Guid orderId);
 
-
+     
 
 
     }

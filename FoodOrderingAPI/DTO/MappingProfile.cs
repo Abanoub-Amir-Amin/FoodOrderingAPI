@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FoodOrderingAPI.DTO;
+using FoodOrderingAPI.DTO.FoodOrderingAPI.DTO;
 using FoodOrderingAPI.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -16,7 +17,8 @@ public class MappingProfile : Profile
 
         // Reverse mapping Restaurant → RestaurantDto
         CreateMap<Restaurant, RestaurantDto>()
-            .ForMember(dest => dest.ImageFile, opt => opt.MapFrom(src => src.ImageFile));
+            .ForMember(dest => dest.ImageFile, opt => opt.MapFrom(src => src.ImageFile))
+            .ForMember(dest => dest.RestaurantID, opt => opt.MapFrom(src => src.RestaurantID));
 
         // Map RestaurantDto → Restaurant
         CreateMap<RestaurantDto, Restaurant>()
@@ -38,7 +40,8 @@ public class MappingProfile : Profile
 
 
         // Map Order → OrderDto
-        CreateMap<Order, OrderDto>();
+        CreateMap<Order, OrderDto>()
+            .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber));
 
         // Map DeliveryManDto → DeliveryMan
         CreateMap<DeliveryManDto, DeliveryMan>()
@@ -73,7 +76,8 @@ public class MappingProfile : Profile
           .ForMember(u => u.Restaurant, opt => opt.Ignore());
 
         // Reverse mapping OrderDto → Order
-        CreateMap<OrderDto, Order>();
+        CreateMap<OrderDto, Order>()
+            .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber));
 
         CreateMap<Item, ItemUpdateDto>()
           .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageFile))
@@ -261,7 +265,7 @@ public class MappingProfile : Profile
         //orderDetails
         CreateMap<OrderItem, OrderItemDto>()
         .ForMember(dest => dest.itemName, opt => opt.MapFrom(src => src.Item.Name))
-        .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Item.ImageFile))
+        .ForMember(dest => dest.ImageFile, opt => opt.MapFrom(src => src.Item.ImageFile))
         .ForMember(dest => dest.OrderID, opt => opt.MapFrom(src => src.OrderID))
         .ForMember(dest => dest.Preferences, opt => opt.MapFrom(src => src.Preferences))
         .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))

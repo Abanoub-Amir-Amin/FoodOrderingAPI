@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FoodOrderingAPI.DTO;
+using FoodOrderingAPI.DTO.FoodOrderingAPI.DTO;
 using FoodOrderingAPI.Models;
 using FoodOrderingAPI.Repository;
 using FoodOrderingAPI.Services;
@@ -34,7 +35,6 @@ namespace FoodOrderingAPI.Controllers
             _mapper = mapper;
             _environment = environment;
             this.itemRepo = itemRepo;
-
         }
         // ===== Orders =====
         //[Authorize(Roles = "Restaurant")]
@@ -56,69 +56,51 @@ namespace FoodOrderingAPI.Controllers
 
             return Ok(ordersDto);
         }
-        [Authorize(Roles = "Restaurant")]
 
         [HttpGet("{restaurantId}/orders/status")]
         //[Authorize(Roles = "Restaurant")]
-
-        public async Task<IActionResult> GetOrdersByStatus(string restaurantId, [FromQuery] StatusEnum[] status)
+        public async Task<IActionResult> GetOrdersByStatus(string restaurantId, [FromQuery] string status)
         {
             var restaurant = await _RestaurantService.GetRestaurantByIdAsync(restaurantId);
-
             if (restaurant == null)
                 return NotFound($"Restaurant with ID '{restaurantId}' not found.");
 
-            if (!restaurant.IsActive)
-                return Forbid("Your restaurant account is not yet active.");
-
-            //var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery, StatusEnum.Cancelled };
-            var allowedStatuses = new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery };
-            StatusEnum[] requestedStatuses;
-
-            if (!status.Any())
+            // Try to parse the status string to enum, ignoring case and allowing only valid values
+            if (!Enum.TryParse<StatusEnum>(status, true, out var parsedStatus) ||
+                !new[] { StatusEnum.Preparing, StatusEnum.Out_for_Delivery, StatusEnum.WaitingToConfirm, StatusEnum.All, StatusEnum.Delivered, StatusEnum.Cancelled }.Contains(parsedStatus))
             {
-                // If no status param provided, return all allowed
-                requestedStatuses = allowedStatuses;
-            }
-            else
-            {
-                requestedStatuses = status
-                    .Where(s => allowedStatuses.Contains(s))
-                    .ToArray();
-                if (requestedStatuses.Length == 0)
-                    return BadRequest("No valid order statuses provided for filtering.");
+                return BadRequest("Invalid order status provided for filtering.");
             }
 
-            var ordersDto = await _OrderService.GetOrdersByStatusAsync(restaurantId, requestedStatuses);
-
+            var ordersDto = await _OrderService.GetOrdersByStatusAsync(restaurantId, parsedStatus);
             return Ok(ordersDto);
         }
 
         [HttpPut("{restaurantId}/orders/{orderId}/status")]
-        //[Authorize(Roles = "Restaurant")]
-
         public async Task<IActionResult> UpdateOrderStatus(string restaurantId, Guid orderId, [FromBody] OrderStatusUpdateDto dto)
         {
-            // Authentication/Authorization: Ensure the restaurant ID from the route matches the authenticated user's restaurant ID
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId != restaurantId)
+
+            if (dto == null)
             {
-                return Forbid("You are not authorized to update orders for this restaurant.");
+                return BadRequest("Request body is missing.");
             }
 
+            if (!Enum.IsDefined(typeof(StatusEnum), dto.Status))
+            {
+                return BadRequest("Invalid status value.");
+            }
 
             try
             {
                 var order = await _OrderService.UpdateOrderStatusAsync(orderId, dto.Status, restaurantId);
-
                 if (order == null)
-                    return NotFound();
-
+                    return NotFound($"Order with ID '{orderId}' not found.");
                 return Ok(order);
             }
-            catch (InvalidOperationException ex) // Catches the IsAvailable check from service
+            catch (InvalidOperationException ex)
             {
-                return Forbid(ex.Message);
+                // Log ex.Message here as needed
+                return StatusCode(403, new { error = "Operation not allowed: " + ex.Message });
             }
             catch (ArgumentException ex)
             {
@@ -126,9 +108,11 @@ namespace FoodOrderingAPI.Controllers
             }
             catch (Exception ex)
             {
+                // Log exception details for diagnostics
                 return StatusCode(500, new { error = "An error occurred while updating order status: " + ex.Message });
             }
         }
+
 
 
         // ===== Dashboard Summary =====
@@ -148,6 +132,9 @@ namespace FoodOrderingAPI.Controllers
 
             return Ok(summary);
         }
+
+
+
         //[HttpPut("CancelOrder")]
         //public async Task<IActionResult> CancelOrder(Guid OrderId, [FromBody] string reson)
         //{
@@ -165,6 +152,8 @@ namespace FoodOrderingAPI.Controllers
         //        return Ok("Order Cancelled Sucessfully");
         //    return BadRequest("order Status not correct");
         //}
+
+
         [HttpPut("ConfirmOrder")]
         //[Authorize(Roles = "Restaurant")]
 
@@ -173,19 +162,20 @@ namespace FoodOrderingAPI.Controllers
             Order order = await _OrderService.getOrder(OrderId);
             if (order == null) return NotFound("this orderid dosen't meet any order");
 
-            //check authersity of restaurant
-            var restaurantId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (restaurantId != order.RestaurantID)
-                return Unauthorized($"this user with userId{restaurantId} not autherized to confirm this orderId");
+            ////check authersity of restaurant
+            //var restaurantId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //if (restaurantId != order.RestaurantID)
+            //    return Unauthorized($"this user with userId{restaurantId} not autherized to confirm this orderId");
 
             bool Assigned = await _OrderService.assignDelivaryManToOrder(order);
             if (!Assigned)
                 return BadRequest("there are not available DelivaryMen Now");
 
-            bool confirmed = await _OrderService.ConfirmOrder(order);
+            if ((await _OrderService.ConfirmOrder(order)).Success)
+            {
+                return Ok("Order confirmed Successfully");
+            }
 
-            if (confirmed)
-                return Ok("Order confirmed Sucessfully");
             return BadRequest("order Status not correct");
 
         }
@@ -234,6 +224,7 @@ namespace FoodOrderingAPI.Controllers
             var orders = await _OrderService.getOrders(CustomerId);
             return Ok(orders);
         }
+
         [Authorize(Roles = "Customer")]
         [HttpGet("OrderDetailaForCustomer")]
         public async Task<IActionResult> GetOrderDetailsForCustomer(Guid orderId)
@@ -243,7 +234,7 @@ namespace FoodOrderingAPI.Controllers
             if (order.CustomerID != CustomerId)
                 return Unauthorized($"this user with userId{CustomerId} not autherized to view this orderId");
 
-            var orderDetails = await _OrderService.getOrderDetails(orderId);
+            var orderDetails = await _OrderService.getOrder(orderId);
             if (orderDetails == null) return NotFound();
             return Ok(orderDetails);
         }

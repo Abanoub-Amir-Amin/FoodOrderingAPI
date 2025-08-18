@@ -3,14 +3,17 @@ using FoodOrderingAPI.Hubs;
 using FoodOrderingAPI.Interfaces;
 using FoodOrderingAPI.Models;
 using FoodOrderingAPI.Repository;
+using FoodOrderingAPI.services;
 using FoodOrderingAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using System.Text;
 
 
@@ -51,7 +54,9 @@ namespace FoodOrderingAPI
                 .AddJsonOptions(opts =>
                 {
                     opts.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                    //opts.JsonSerializerOptions.ReferenceHandler = null;
                     opts.JsonSerializerOptions.MaxDepth = 64;
+                    opts.JsonSerializerOptions.NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals;
                 });
 
             // Register Restaurant services and repositories
@@ -65,6 +70,14 @@ namespace FoodOrderingAPI
             // Register DeliveryMan services and repositories
             builder.Services.AddScoped<IDeliveryManService, DeliveryManService>();
             builder.Services.AddScoped<IDeliveryManRepository, DeliveryManRepository>();
+
+            // Register ChatBot services and repositories
+            builder.Services.AddScoped<IChatService, ChatServices>();
+            builder.Services.AddScoped<KnowledgeIngestionService>();
+            builder.Services.AddScoped<RetrievalService>();
+            builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+            builder.Services.AddHttpClient<IEmbeddingService, GeminiEmbeddingService>();
+
 
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IOrderRepo, OrderRepo>();
@@ -86,6 +99,8 @@ namespace FoodOrderingAPI
 
             builder.Services.AddScoped<IReviewService, ReviewService>();
             builder.Services.AddScoped<IReviewRepo, ReviewRepo>();
+
+
 
             builder.Services.AddSignalR();
             // Register AutoMapper

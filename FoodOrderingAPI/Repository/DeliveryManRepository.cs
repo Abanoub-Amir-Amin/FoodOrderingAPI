@@ -1,4 +1,5 @@
-﻿using FoodOrderingAPI.Models;
+﻿using FoodOrderingAPI.DTO;
+using FoodOrderingAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
@@ -121,10 +122,11 @@ namespace FoodOrderingAPI.Repository
             }
         }
 
-        public async Task<Order> UpdateOrderStatusAsync(Guid OrderId, StatusEnum newStatus, string deliveryManId)
+        public async Task<DeliveryManUpdateOrderStatusDTO> UpdateOrderStatusAsync(Guid OrderId, StatusEnum newStatus, string deliveryManId)
         {
 
-            var UpdateOrder = await _context.Orders
+            var UpdateOrder = await _context.Orders.Include(d => d.Address).Include(o => o.Customer)
+                .ThenInclude(C => C.User)
                 .FirstOrDefaultAsync(or => or.OrderID == OrderId && or.DeliveryManID == deliveryManId);
 
             if (UpdateOrder == null)
@@ -165,7 +167,17 @@ namespace FoodOrderingAPI.Repository
 
             UpdateOrder.Status = newStatus;
             await _context.SaveChangesAsync();
-            return UpdateOrder;
+
+                var updated = new DeliveryManUpdateOrderStatusDTO()
+                   {
+                       OrderNumber = UpdateOrder.OrderNumber,
+                        Address = UpdateOrder.Address.Street,
+                        DeliveredAt = UpdateOrder.DeliveredAt,
+                        TotalPrice = UpdateOrder.TotalPrice,
+                        UserName = UpdateOrder.Customer.FirstName + UpdateOrder.Customer.LastName,
+                        
+                };
+            return updated;
         }
     }
 }

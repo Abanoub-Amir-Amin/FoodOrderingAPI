@@ -186,9 +186,8 @@ namespace FoodOrderingAPI.Services
                     await shoppingCartRepo.Save();
                     Console.WriteLine("Shopping cart created");
 
-                    // STEP 4: Add address
-                    Console.WriteLine("Adding address...");
-                    await addressRepo.Add(user.UserName, dto.Address);
+                    //add address
+                    await addressRepo.Add(user.Id, dto.Address);
                     await addressRepo.Save();
                     Console.WriteLine("Address added");
 

@@ -62,18 +62,18 @@ namespace FoodOrderingAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(string userName, AddressDTO address)
+        public async Task<IActionResult> Add(string userId, AddressDTO address)
         {
-            var userNameClaim = User.FindFirstValue(ClaimTypes.Name);
-            if (userNameClaim != userName)
+            var userNameClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userNameClaim != userId)
             {
                 return Forbid("You are not authorized to add adddress to this Customer's Address.");
             }
             if (ModelState.IsValid)
             {
-                var add=await addressRepo.Add(userName, address);
+                var add=await addressRepo.Add(userId, address);
                 await addressRepo.Save();
-                var addDto = mapper.Map<AddressViewDto>(address);
+                var addDto = mapper.Map<AddressViewDto>(add);
                 return Ok(new
                 {
                     Message = "Address added successfully",
