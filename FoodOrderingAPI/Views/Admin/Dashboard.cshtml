@@ -13,7 +13,49 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 <style>
-    /* Your existing styles (dark mode + general) here */
+    .custom-font {
+        font-family: 'Georgia', 'Times New Roman', serif;
+    }
+
+    .sidebar {
+        min-height: 85vh;
+        position: sticky;
+        top: 1rem;
+        padding-top: 1rem;
+    }
+    /* Orders item styling */
+    .order-item {
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 0.3rem;
+        background-color: #f9f9f9;
+    }
+    /* Buttons consistent margin */
+    .action-buttons > form {
+        display: inline-block;
+        margin-right: 0.3rem;
+    }
+    /* Dark mode adjustments */
+    body.dark-mode {
+        background-color: #121212;
+        color: #eee;
+    }
+
+        body.dark-mode .table-dark {
+            background-color: #2c2c2c;
+        }
+
+        body.dark-mode .card {
+            background-color: #1e1e1e;
+            border-color: #444;
+        }
+
+        body.dark-mode .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            color: white;
+        }
 </style>
 <script>
     const urlParams = new URLSearchParams(window.location.search);
@@ -34,7 +76,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light sticky-top border-bottom">
     <div class="container-fluid px-4">
-        <a class="navbar-brand fw-bold fs-4" href="#">Admin Dashboard</a>
+        <a class="navbar-brand fw-bold fs-4" href="#" style="font-family: 'Georgia', sans-serif;">Presto</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin"
                 aria-controls="navbarAdmin" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -109,6 +151,8 @@
                                             <th>Name</th>
                                             <th>Location</th>
                                             <th>Open Hours</th>
+                                            <th>Delivary Price</th>
+                                            <th>Order Time</th>
                                             <th class="text-center">Actions</th>
                                         </tr>
                                     </thead>
@@ -119,6 +163,8 @@
                                                 <td>@rest.RestaurantName</td>
                                                 <td>@rest.Location</td>
                                                 <td>@rest.OpenHours</td>
+                                                <td>@rest.DelivaryPrice</td>
+                                                <td>@rest.orderTime</td>
                                                 <td class="text-center">
                                                     <form asp-action="DeactivateRestaurant" method="post" class="d-inline">
                                                         @Html.AntiForgeryToken()
@@ -280,13 +326,12 @@
                                 <table class="table table-striped table-hover align-middle mb-0">
                                     <thead class="table-dark">
                                         <tr>
-                                            <th>UserName</th>
+                                            <th>User Name</th>
                                             <th>Email</th>
                                             <th>Loyalty Points</th>
                                             <th>Total Orders</th>
                                             <th>Delivered Orders</th>
-                                            <th>Cancelled Orders</th>
-                                            <th>In-Process Orders</th>
+                                            <th>In Process Orders</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -393,16 +438,23 @@
                                                 <td>@order.Status</td>
                                                 <td>@order.TotalPrice.ToString("C")</td>
                                                 <td>
-                                                    <ul class="mb-0 ps-3">
+                                                    <ul class="mb-0 ps-3" style="list-style-type: none; padding-left: 0;">
                                                         @foreach (var item in order.OrderItems)
                                                         {
-                                                            <li>@item.itemName (@item.Quantity)</li>
+                                                            <li style="margin-bottom: 0.5rem; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; background-color: #f9f9f9;">
+                                                                <div><strong>Item Name:</strong> @item.itemName</div>
+                                                                <div><strong>Preferences:</strong> @item.Preferences</div>
+                                                                <div><strong>Quantity:</strong> @item.Quantity</div>
+                                                                <div><strong>Total Price:</strong> @item.TotalPrice.ToString("C")</div>
+                                                            </li>
                                                         }
                                                     </ul>
                                                 </td>
                                             </tr>
                                         }
                                     </tbody>
+
+
                                 </table>
                             </div>
                         </div>

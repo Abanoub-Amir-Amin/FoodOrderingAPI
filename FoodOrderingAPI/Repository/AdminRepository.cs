@@ -156,7 +156,10 @@ namespace FoodOrderingAPI.Repository
 
         public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
-            return await _context.Orders.ToListAsync();
+            return await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Item)
+                .ToListAsync();
 
         }
 
