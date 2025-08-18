@@ -172,7 +172,6 @@ export class CustomerProfile {
     
     
     onSubmit(): void {
-  debugger;
       this.validateAllFields();
       Object.keys(this.formTouched).forEach((key) => {
         this.formTouched[key as keyof typeof this.formTouched] = true;

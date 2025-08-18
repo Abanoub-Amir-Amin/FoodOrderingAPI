@@ -164,9 +164,9 @@ export class CustomerHeader {
  
   markAllAsRead() {
     // Now this will work because notifications are proper objects
-    this.notifications.forEach(notification => {
+    this.notifications.forEach(async notification => {
       notification.read = true;
-      fetch(`http://localhost:5000/api/notification/MarkAsRead/${notification.id}`, {
+      await fetch(`http://localhost:5000/api/notification/MarkAsRead/${notification.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

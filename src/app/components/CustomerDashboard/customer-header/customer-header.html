@@ -75,7 +75,7 @@
               (click)="toggleUnreadFilter()"
             >
               <i class="fas fa-filter me-1"></i>
-              {{ showOnlyUnread ? 'Show All' : 'Unread Only' }}
+              {{ !showOnlyUnread ? 'Show All' : 'Unread Only' }}
             </button>
             <span class="text-muted small">
               {{ getFilteredNotifications().length }} of {{ notifications.length }} notifications

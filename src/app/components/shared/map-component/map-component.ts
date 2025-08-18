@@ -30,7 +30,6 @@ export class MapComponent {
       
     ) {}
   async Intialize_Map() {
-    debugger;
       if (isPlatformBrowser(this.platformId)) {
           const L = await import('leaflet');
            const container = L.DomUtil.get('map');
