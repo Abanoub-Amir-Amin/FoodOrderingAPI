@@ -1,8 +1,115 @@
-.bg-body-custom {
-  background-color: #F2D3BC !important;
-
+/* .bg-body-custom {
+  background-color: #f2d3bc !important;
 }
-.shape{
-   background-color: #df6a35 !important;
-;
+.shape {
+  background-color: #df6a35 !important;
+}
+
+.container-fluid {
+  position: relative;
+  background-color: var(--container-color);
+  padding: 20px;
+  border-radius: 5px;
+  height: 60vh;
+  margin-bottom: 40px;
+} */
+
+.shape {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 470px;
+  height: 470px;
+  border-radius: 64% 36% 0% 100% / 50% 0% 100% 50%;
+  background-color: var(--first-color);
+}
+.search-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.search-box {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 15px 20px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 25px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.clear-btn {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #999;
+}
+
+.clear-btn:hover {
+  color: #333;
+}
+
+.hero__wrap {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 24px;
+  align-items: center;
+  padding: 28px;
+  background: var(--container-color);
+}
+.hero__text h1 {
+  font-size: clamp(28px, 4.2vw, 46px);
+  margin: 12px 0;
+}
+.hero__text p {
+  margin: 8px 0 18px;
+}
+.hero__search {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.hero__input {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 2px solid var(--container-color);
+  background: #fff;
+}
+.hero__image {
+  position: relative;
+  min-height: 260px;
+}
+.hero__image img {
+  width: min(420px, 90%);
+  margin-left: auto;
+  filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.12));
+  animation: slideInRight 0.5s ease both;
+}
+@media (max-width: 900px) {
+  .hero__wrap {
+    grid-template-columns: 1fr;
+  }
+  .hero__image img {
+    margin-inline: auto;
+  }
+  .shape {
+    display: none;
+  }
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

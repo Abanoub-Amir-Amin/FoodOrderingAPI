@@ -3,7 +3,6 @@ import { AuthService } from '../../../services/auth';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,18 +30,23 @@ export class OrdersManagement implements OnInit {
   orders: any[] = [];
   filteredOrders: any[] = [];
   selectedStatusFilter = 'All';
-  allowedStatuses = ['All', 'Preparing', 'Out for Delivery', 'Delivered', 'Cancelled'];
+
+  allowedStatuses = ['All', 'WaitingToConfirm', 'Preparing', 'Out_for_Delivery', 'Cancelled'];
+
   isLoading = false;
   error = '';
 
   private http = inject(HttpClient);
   private auth = inject(AuthService);
   private snackBar = inject(MatSnackBar);
+  private authService = inject(AuthService);
+
   private baseUrl = 'http://localhost:5000/api';
 
   ngOnInit(): void {
     this.restaurantId = this.auth.getUserId() || '';
     console.log('Restaurant ID:', this.restaurantId);
+
     if (!this.restaurantId) {
       this.error = 'No restaurant ID found. Please log in again.';
       return;
@@ -52,7 +56,8 @@ export class OrdersManagement implements OnInit {
   }
 
   private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('Token') || localStorage.getItem('token');
+    const token = sessionStorage.getItem('authToken');
+    console.log('Token:', token);
     return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
   }
 
@@ -66,6 +71,7 @@ export class OrdersManagement implements OnInit {
     this.error = '';
 
     let url = '';
+
     if (this.selectedStatusFilter === 'All') {
       url = `${this.baseUrl}/order/${this.restaurantId}/orders`;
     } else {
@@ -73,7 +79,7 @@ export class OrdersManagement implements OnInit {
     }
 
     this.http.get<any[]>(url, { headers: this.getAuthHeaders() }).subscribe({
-      next: orders => {
+      next: (orders) => {
         this.orders = Array.isArray(orders) ? orders : [];
         this.applyFilter();
         this.isLoading = false;
@@ -90,7 +96,7 @@ export class OrdersManagement implements OnInit {
       this.filteredOrders = this.orders;
     } else {
       this.filteredOrders = this.orders.filter(
-        order => order.Status?.toLowerCase() === this.selectedStatusFilter.toLowerCase()
+        (order) => order.Status === this.selectedStatusFilter
       );
     }
   }
@@ -105,7 +111,7 @@ export class OrdersManagement implements OnInit {
   }
 
   finishOrder(order: any): void {
-    this.changeOrderStatus(order, 'Out for Delivery');
+    this.changeOrderStatus(order, 'Out_for_Delivery');
   }
 
   rejectOrder(order: any): void {
@@ -116,16 +122,18 @@ export class OrdersManagement implements OnInit {
 
   private changeOrderStatus(order: any, newStatus: string): void {
     if (!this.restaurantId || !order.OrderID) {
-      this.snackBar.open('Invalid order or restaurant ID');
+      this.snackBar.open('Invalid order or restaurant ID', 'Close', { duration: 4000 });
       return;
     }
 
     const url = `${this.baseUrl}/order/${this.restaurantId}/orders/${order.OrderID}/status`;
-    const body = { orderID: order.OrderID, status: newStatus };
+    const body = { status: newStatus };
 
     this.http.put(url, body, { headers: this.getAuthHeaders() }).subscribe({
-      next: () => {
-        this.snackBar.open(`Order #${order.OrderID} status updated to ${newStatus}`, 'Close', { duration: 4000 });
+      next: (updatedOrder) => {
+        this.snackBar.open(`Order #${order.OrderNumber || order.OrderID} status updated to ${newStatus}`, 'Close', {
+          duration: 4000,
+        });
         this.loadOrders();
       },
       error: (err) => {
@@ -133,5 +141,10 @@ export class OrdersManagement implements OnInit {
         this.snackBar.open(`Failed to update order status: ${errMsg}`, 'Close', { duration: 5000 });
       },
     });
+  }
+
+  public getImageUrl(imageFile?: string): string {
+    const url = this.authService.getImageUrl(imageFile);
+    return url;
   }
 }

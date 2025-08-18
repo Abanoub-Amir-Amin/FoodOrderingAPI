@@ -1,0 +1,194 @@
+<!-- Outer Container -->
+<div class="outer-container">
+  <!-- Inner Container -->
+  <div class="inner-container">
+    <!-- Header -->
+    <div class="profile-header">
+      <h1 class="profile-title">
+        <i class="fas fa-user-circle"></i>
+        Profile
+      </h1>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading profile...</p>
+    </div>
+
+    <!-- Error Alert -->
+    <div *ngIf="errorMessage" class="alert alert-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Success Alert -->
+    <div *ngIf="successMessage" class="alert alert-success">
+      <i class="fas fa-check-circle"></i>
+      {{ successMessage }}
+    </div>
+
+    <!-- Profile Form -->
+    <div *ngIf="!isLoading" class="profile-form-container">
+      <div class="profile-form" (submit)="onSubmit()">
+        <!-- User Name Field -->
+        <div class="form-group">
+          <label  class="form-label">
+            <i class="fas fa-user"></i>
+            User Name
+          </label>
+          <input
+            type="text"
+            id="userName"
+            [(ngModel)]="formData.userName"
+            class="form-input"
+            disabled
+          />
+      </div>   
+        <!-- Full Name Field -->
+         <div class="row">
+        <div class="form-group col-md-6">
+          <label for="firstName" class="form-label">
+            <i class="fas fa-signature"></i>
+            First Name
+          </label>
+          <input
+            type="text"
+            id="firstName"
+            [(ngModel)]="formData.firstName"
+            class="form-input"
+            [class.error]="!isValidFname && formTouched.firstName"
+            (blur)="onFieldBlur('firstName')"
+            (input)="validateFname()"
+          />
+          <div
+            *ngIf="!isValidFname && formTouched.firstName"
+            class="error-message"
+          >
+            {{ fnameError }}
+          </div>
+        </div>
+   
+        <div class="form-group col-md-6">
+          <label for="lastName" class="form-label">
+            <i class="fas fa-signature"></i>
+            Last Name
+          </label>
+          <input
+            type="text"
+            id="lastName"
+            [(ngModel)]="formData.lastName"
+            class="form-input"
+            [class.error]="!isValidLname && formTouched.lastName"
+            (blur)="onFieldBlur('lastName')"
+            (input)="validateLname()"
+          />
+          <div
+            *ngIf="!isValidLname && formTouched.lastName"
+            class="error-message"
+          >
+            {{ lnameError }}
+          </div>
+        </div>
+    </div>
+        <!-- Email Field -->
+        <div class="form-group">
+          <label  class="form-label">
+            <i class="fas fa-envelope"></i>
+            Email Address
+          </label>
+          <input
+            type="email"
+            id="email"
+            [(ngModel)]="formData.email"
+            class="form-input"
+            disabled
+          />
+      </div>
+
+        <!-- Phone Field -->
+        <div class="form-group">
+          <label for="phone" class="form-label">
+            <i class="fas fa-phone"></i>
+            Phone Number
+          </label>
+          <input
+            type="tel"
+            id="phone"
+            [(ngModel)]="formData.phone"
+            class="form-input"
+            [class.error]="!isValidPhone && formTouched.phone"
+            placeholder="01xxxxxxxxx"
+            (blur)="onFieldBlur('phone')"
+            (input)="validatePhone()"
+          />
+          <div
+            *ngIf="!isValidPhone && formTouched.phone"
+            class="error-message"
+          >
+            {{ phoneError }}
+          </div>
+        </div>
+     
+     
+     
+      <!-- Gender Field -->
+        <div class="form-group">
+            <label for="gender" class="form-label">
+                <i class="fas fa-venus-mars"></i>
+                Gender
+            </label>
+            <div class="gender-container">
+                <div class="gender-option">
+                    <div class="gender-card" data-gender="0" [class.selected]="formData.gender === 0" (click)="formData.gender = 0">
+                        <input type="radio" name="gender" value="0" [(ngModel)]="formData.gender" class="gender-radio" id="male">
+                        <div class="gender-icon">
+                            <i class="fas fa-mars"></i>
+                        </div>
+                        <p class="gender-text">Male</p>
+                        <div class="check-indicator">
+                            <i class="fas fa-check fa-xs text-white"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="gender-option">
+                    <div class="gender-card" data-gender="1" [class.selected]="formData.gender === 1" (click)="formData.gender = 1">
+                        <input type="radio" name="gender" value="1" [(ngModel)]="formData.gender" class="gender-radio" id="female">
+                        <div class="gender-icon">
+                            <i class="fas fa-venus"></i>
+                        </div>
+                        <p class="gender-text">Female</p>
+                        <div class="check-indicator">
+                            <i class="fas fa-check fa-xs text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+   <!-- Action Buttons --> 
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="!isFormValid || isUpdating"
+            (click)="onSubmit()"
+          >
+            <i *ngIf="isUpdating" class="fas fa-spinner fa-spin"></i>
+            <i *ngIf="!isUpdating" class="fas fa-save"></i>
+            {{ isUpdating ? "Updating..." : "Update Profile" }}
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="onCancel()"
+            [disabled]="isUpdating"
+          >
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

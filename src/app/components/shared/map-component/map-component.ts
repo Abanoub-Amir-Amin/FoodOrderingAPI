@@ -15,6 +15,9 @@ export class MapComponent {
   map: any;
   marker: any;
   set:boolean = false;
+
+  @Input() latitude: number | null = null;
+  @Input() longitude: number | null = null;
   @Input() formSubmitted!: boolean;
   @Output() addressInfo = new EventEmitter<AddressDto>()
   address:AddressDto| null = null;
@@ -46,14 +49,19 @@ export class MapComponent {
   }
   async ngAfterViewInit() {
     await this.Intialize_Map();
-    if (navigator.geolocation) {
+    if (this.latitude !== null && this.longitude !== null && this.map) {
+      // Center map to input latitude and longitude if provided
+      this.map.setView([this.latitude, this.longitude], 15);
+      this.setLocationMarker(this.latitude, this.longitude);
+    } else if (navigator.geolocation) {
+      // fallback to user location
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
           if (this.map) {
-          this.map.setView([lat, lng], 15);
-           this.setLocationMarker(lat, lng);
+            this.map.setView([lat, lng], 15);
+            this.setLocationMarker(lat, lng);
           }
         },
         (error) => {
@@ -61,11 +69,12 @@ export class MapComponent {
         }
       );
     }
-if(this.map){
-   this.map.on('click', (e: any) => {
-      this.setLocationMarker(e.latlng.lat, e.latlng.lng);
-    });
-  }
+
+    if (this.map) {
+      this.map.on('click', (e: any) => {
+        this.setLocationMarker(e.latlng.lat, e.latlng.lng);
+      });
+    }
   }
 
   ngOnDestroy() {
@@ -142,3 +151,29 @@ try {
   }
 }
 }
+//////////////////////////////////////////////////////////////////////////////
+
+//   async ngAfterViewInit() {
+//     await this.Intialize_Map();
+//     if (navigator.geolocation) {
+//       navigator.geolocation.getCurrentPosition(
+//         (position) => {
+//           const lat = position.coords.latitude;
+//           const lng = position.coords.longitude;
+//           if (this.map) {
+//           this.map.setView([lat, lng], 15);
+//            this.setLocationMarker(lat, lng);
+//           }
+//         },
+//         (error) => {
+//           console.log('Geolocation error:', error);
+//         }
+//       );
+//     }
+// if(this.map){
+//    this.map.on('click', (e: any) => {
+//       this.setLocationMarker(e.latlng.lat, e.latlng.lng);
+//     });
+//   }
+//   }
+

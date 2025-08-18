@@ -1,0 +1,52 @@
+<div class="results-wrapper">
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading....</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="hasError && !loading" class="error-message">
+    <p>Went Wrong try again ❌</p>
+  </div>
+
+  <!-- Results -->
+  <div *ngIf="items.length > 0 && !loading" class="results-grid">
+    <div *ngFor="let item of items" class="item-card">
+      <div class="image-container">
+        <img
+          [src]="'http://localhost:5000' + item.imageFile"
+          [alt]="item.name"
+          (error)="onImageError($event)"
+          class="item-image"
+        />
+      </div>
+
+      <div class="item-info">
+        <h3 class="item-name">{{ item.name }}</h3>
+        <p class="item-description">{{ item.description }}</p>
+        <div class="item-price">{{ item.discountedPrice }} EGP</div>
+        <div *ngIf="item.restaurantName" class="restaurant-name">
+          🍽️ {{ item.restaurantName }}
+        </div>
+      </div>
+
+      <div class="item-actions">
+        <button class="view-btn" (click)="GoToCart()">Show Details</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Results -->
+  <div
+    *ngIf="
+      !loading && items.length === 0 && searchTerm && searchTerm.trim() !== ''
+    "
+    class="no-results"
+  >
+    <div class="no-results-icon">🔍</div>
+    <h3>Can not find any result</h3>
+    <p>We can not find any result to"{{ searchTerm }}"</p>
+    <p class="suggestion">Try different words to search</p>
+  </div>
+</div>

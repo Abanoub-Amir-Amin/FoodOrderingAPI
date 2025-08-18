@@ -1,4 +1,4 @@
-<div class="dashboard-root" [ngClass]="{'dark-mode': isDarkMode}">
+<div class="dashboard-root">
   <mat-sidenav-container>
 
     <!-- Sidebar -->
@@ -7,10 +7,10 @@
         <h2>Presto</h2>
         <h1>{{ restaurant?.restaurantName || 'Loading...' }}</h1>
         <img [src]="getImageUrl(restaurant?.imageFile)" class="logo" alt="{{ restaurant?.restaurantName || 'Default Restaurant Logo' }}" />
-        
-        <button mat-icon-button (click)="toggleTheme()" aria-label="Toggle dark mode">
+
+        <!-- <button mat-icon-button (click)="toggleTheme()" aria-label="Toggle dark mode">
           <mat-icon>{{ isDarkMode ? 'dark_mode' : 'light_mode' }}</mat-icon>
-        </button>
+        </button> -->
 
         <button mat-icon-button (click)="logout()" aria-label="Logout">
           <mat-icon>logout</mat-icon>

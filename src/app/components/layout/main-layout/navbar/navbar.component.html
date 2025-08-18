@@ -1,61 +1,80 @@
-
- 
-
-  
-  <nav class=" container navbar navbar-expand-lg navbar-custom">
-    <div class="container-fluid">
-      <!-- Logo -->
-      <a class="navbar-brand d-flex align-items-center" href="#">
-        <img src="/Assets/logo.png" alt="Logo" class="logo me-0">
-       
-      </a>
-
-      <!-- Toggle button for mobile -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <!-- Navbar links -->
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-3">
-          <li class="nav-item">
-            <a class="nav-link active" href="#">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#order1">Offers</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link"  >Popular Restaurants</a>
-          </li>
-           <li class="nav-item">
-         <a routerLink="/getAllResturant" routerLinkActive="active" class="nav-link">Restaurants</a>
-
-          </li>
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="#about" >About Us</a>
-          </li> -->
-          
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/order" >Order</a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/user">user</a>
-          </li>
-        </ul>
-
-     <!-- Right icons -->
-<div class="right-icons">
-  <a routerLink="/customerRegister" class="nav-link">
-   Register
-  </a>
-  <a routerLink="/login" class="nav-link">
-    Login
-  </a>
-</div>
-
+<nav class="header">
+  <div class="container nav__bar">
+    <a class="nav__logo" routerLink="/">
+      <img src="Assets/logo.png" alt="Presto" />
+    </a>
+    <button
+      class="nav__toggle"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="isOpen()"
+    >
+      <span class="sr-only">Toggle menu</span>
+      <div class="burger" [class.open]="isOpen()">
+        <span></span><span></span><span></span>
       </div>
-    </div>
-  </nav>
-
-  
+    </button>
+    <ul class="nav__links" [class.open]="isOpen()">
+      <li>
+        <a routerLink="/home" routerLinkActive="active" (click)="closeMenu()"
+          >Home</a
+        >
+      </li>
+      <li>
+        <a
+          routerLink="/getAllResturant"
+          routerLinkActive="active"
+          (click)="closeMenu()"
+          >Restaurants</a
+        >
+      </li>
+      <li>
+        <a href="#about" routerLinkActive="active" (click)="closeMenu()"
+          >About Us</a
+        >
+      </li>
+      <li>
+        <a routerLinkActive="active" (click)="closeMenu()">Dashboard</a>
+      </li>
+      <li class="nav__auth">
+        <a
+          class="btn sign-in"
+          *ngIf="!authService.isLoggedIn()"
+          (click)="login()"
+          >Sign in</a
+        >
+        <a
+          class="btn sign-up"
+          *ngIf="authService.isLoggedIn()"
+          (click)="logout()"
+          >Sign out</a
+        >
+      </li>
+      <li>
+        <a
+          routerLink="/shoppingCart"
+          class="btn header__cart"
+          aria-label="Cart"
+        >
+          <span>Cart</span>
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M3 3h2l.4 2M7 13h10l3-8H5.4"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <circle cx="9" cy="21" r="1.8" fill="currentColor" />
+            <circle cx="18" cy="21" r="1.8" fill="currentColor" />
+          </svg>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>

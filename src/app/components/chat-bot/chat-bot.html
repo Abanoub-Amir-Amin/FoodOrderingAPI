@@ -1,0 +1,160 @@
+<!-- Floating Chat Button -->
+<div class="chatbot-Btn" [class.active]="chatVisible" (click)="toggleChat()">
+  <span class="chatbot-border">
+    <i class="ri-robot-2-line" *ngIf="!chatVisible"></i>
+    <i class="ri-close-line" *ngIf="chatVisible"></i>
+  </span>
+</div>
+
+<!-- Chat Overlay (to close chat when clicking outside) -->
+<div
+  class="chat-overlay"
+  [class.visible]="chatVisible"
+  (click)="closeChatIfClickedOutside($event)"
+></div>
+
+<!-- Main Chat Container -->
+<div
+  class="chat-wrapper"
+  [class.visible]="chatVisible"
+  (click)="$event.stopPropagation()"
+>
+  <div
+    class="sidebar-overlay"
+    [class.visible]="sidebarVisible"
+    (click)="closeSidebar()"
+  ></div>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <div
+      class="sidebar"
+      [class.visible]="sidebarVisible"
+      [class.hidden]="!sidebarVisible"
+    >
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">History</h2>
+        <button class="sidebar-toggle" (click)="closeSidebar()">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div class="chat-history-sidebar">
+        <!-- New Chat Button -->
+        <div class="chat-session" (click)="createNewChat()">
+          <div class="chat-session-title">+ New Chat</div>
+          <div class="chat-session-time">Start fresh conversation</div>
+        </div>
+
+        <!-- Chat Sessions -->
+        <div
+          *ngFor="let session of chatSessions; trackBy: trackByConversationId"
+          class="chat-session"
+          [class.active]="session.conversationId === currentConversationId"
+          (click)="selectSession(session.conversationId)"
+        >
+          <div class="chat-session-title">{{ session.title }}</div>
+          <div class="chat-session-time">
+            {{ session.timeStamp | date : "short" }}
+          </div>
+          <div class="chat-session-preview">{{ session.lastMessage }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Chat -->
+    <div class="chatbot-container">
+      <div class="chatbot-header">
+        <div class="header-left">
+          <!-- History Toggle Button -->
+          <button
+            class="history-toggle-btn"
+            (click)="toggleSidebar()"
+            title="Toggle History"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+            </svg>
+          </button>
+          <h1 class="chatbot-title">AI Chat Assistant</h1>
+        </div>
+
+        <div class="ai-model-dropdown">
+          <select
+            class="dropdown-select"
+            [(ngModel)]="selectedModel"
+            name="selectedModel"
+          >
+            <option value="gemini">Gemini 2.5 Flash</option>
+            <option value="gpt-4">gemini-2.0-flash</option>
+            <option value="claude">gemini-2.0-flash-lite</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="chat-history" #chatContainer>
+        <!-- Empty State -->
+        <div *ngIf="messages.length === 0" class="empty-state">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+            />
+          </svg>
+          <p>Start a conversation with your AI assistant</p>
+          <p style="font-size: 0.875rem; opacity: 0.7">
+            Type a message below to get started
+          </p>
+        </div>
+
+        <!-- Messages -->
+        <div
+          *ngFor="let message of messages; trackBy: trackByMessageId"
+          class="message"
+          [class.outgoing]="isUserMessage(message)"
+          [class.incoming]="!isUserMessage(message)"
+        >
+          <div class="message-bubble">
+            {{ message.message }}
+            <div class="message-time">{{ formatTime(message.timeStamp) }}</div>
+          </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div *ngIf="isLoading" class="message incoming typing-message">
+          <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="chat-input-area">
+        <textarea
+          class="chat-input"
+          [(ngModel)]="currentMessage"
+          (keypress)="onKeyPress($event)"
+          (input)="adjustTextareaHeight($event)"
+          placeholder="Type your message here..."
+          rows="1"
+          #messageInput
+        ></textarea>
+        <button
+          class="send-button"
+          (click)="sendMessage()"
+          [disabled]="isLoading || !currentMessage.trim()"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -5,22 +5,24 @@ import { CommonModule } from '@angular/common';
 
 import { ResturantInterface } from '../../../models/ResturantInterface/resturant-interface';
 import { ListOfResturant } from '../../../services/ListOfResturant/list-of-resturant';
-import { MainLayoutComponent } from "../../layout/main-layout/main-layout.component";
-import { FooterComponent } from "../../layout/footer/footer.component";
-import { ResturanrtLogo } from "../resturanrt-logo/resturanrt-logo";
+import { ResturanrtLogo } from '../resturanrt-logo/resturanrt-logo';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-getallresturant',
   standalone: true,
-  imports: [CommonModule, MainLayoutComponent, FooterComponent, ResturanrtLogo],
+  imports: [CommonModule, ResturanrtLogo],
   templateUrl: './getallresturant.html',
-  styleUrls: ['./getallresturant.css']
+  styleUrls: ['./getallresturant.css'],
 })
 export class Getallresturant implements OnInit {
   restaurants: ResturantInterface[] = [];
 
-  constructor(private restaurantService: ListOfResturant ,  private route: ActivatedRoute,private router: Router) {}
+  constructor(
+    private restaurantService: ListOfResturant,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.restaurantService.getAllRestaurants().subscribe({
@@ -28,10 +30,10 @@ export class Getallresturant implements OnInit {
         console.log('API data:', data);
         this.restaurants = data?.$values ?? [];
       },
-      error: (err) => console.error('Error fetching restaurants', err)
+      error: (err) => console.error('Error fetching restaurants', err),
     });
   }
   goToRestaurantItems(name: string) {
-  this.router.navigate(['/restaurant', name, 'items']);
-}
+    this.router.navigate(['/restaurant/:name/items', name, 'items']);
+  }
 }

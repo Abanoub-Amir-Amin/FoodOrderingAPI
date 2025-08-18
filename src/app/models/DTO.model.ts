@@ -1,5 +1,79 @@
 // src/app/models/restaurant.model.ts
+export interface AddressViewDto {
+  addressID: string; // Guid
+  customerID?: string | null;
+  label: string; // MaxLength(50)
+  street: string; // MaxLength(255)
+  city: string; // MaxLength(100)
+  isDefault: boolean;
+  latitude: number;
+  longitude: number;
+}
 
+export interface CheckoutViewDTO {
+  restaurantName: string;
+  items: ShoppingCartItemDto[];
+  phoneNumber: string;
+  address: AddressViewDto;
+  subTotal: number;
+  delivaryPrice: number;
+  discountAmount: number;
+  totalPrice: number; // بيجي من الـ API أو ممكن نحسبه في الفرونت
+  paymentLink: string;
+  // paymentMethod?: string;
+}
+export interface OrderDetailDTO {
+  orderNumber: number;
+  orderDate: string; // ISO Date string
+  status: StatusEnum;
+
+  items: OrderItemDto[];
+
+  restaurantName: string;
+  restaurantLocation: string;
+  restaurantPhone: string;
+
+  delivaryName: string;
+  orderTimeToComplete: string; // TimeSpan -> ISO string or duration format
+  address: string;
+
+  subTotal: number;
+  delivaryPrice: number;
+  discountAmount: number;
+  totalPrice: number;
+}
+
+export interface OrderViewDTO {
+  orderID: string; // Guid
+  orderNumber: number;
+  status: StatusEnum;
+  restaurantName: string;
+  itemNames: string[];
+  orderDate: string; // ISO Date string
+  totalPrice: number;
+}
+export interface UpdateCustomerDTO {
+  FirstName: string;
+  LastName: string;
+  PhoneNumber?: string | null;
+  Gender?: GenderEnum | null;
+}
+
+// تعريف GenderEnum (لازم يكون مطابق للـ C# Enum)
+export enum GenderEnum {
+  Male = 0,
+  Female = 1,
+}
+
+// لو فيه Enums أو Types مستخدمة
+export enum StatusEnum {
+  All = 0,
+  WaitingToConfirm = 1,
+  Preparing = 2,
+  Out_for_Delivery = 3,
+  Delivered = 4,
+  // Cancelled = 5
+}
 export interface RegisterCustomerDTO {
   firstName: string;
   lastName: string;
@@ -35,6 +109,10 @@ export interface RestaurantDto {
   isActive?: boolean;
   isAvailable?: boolean;
   imageFile?: string;
+  latitude?: number;
+  longitude?: number;
+  delivaryPrice?: number;
+  orderTime?: string;
   user: UserDto;
 }
 
@@ -43,13 +121,41 @@ export interface RestaurantUpdateDto {
   restaurantName: string;
   location: string;
   openHours?: string;
-  isActive?: boolean;
   isAvailable?: boolean | null; // bool? in backend, nullable boolean
   logoFile?: File; // IFormFile in backend, use File in frontend
-  imageUrl?: string;
+  latitude?: number;
+  longitude?: number;
+  delivaryPrice?: number;
+  orderTime?: string;
   user: UserDto;
 }
 
+export interface ShoppingCartDto {
+  cartID: string; // Guid
+  restaurantID?: string; // nullable
+  restaurantName?: string; // nullable
+  updatedAt: string; // DateTime => string (ISO format)
+  subTotal: number;
+  delivaryPrice: number;
+  totalAfterDiscount: number; // من الـ API أو بتحسبه
+  shoppingCartItems: {
+    $id: string;
+    $values: ShoppingCartItemDto[];
+  };
+}
+export interface ShoppingCartItemDto {
+  shoppingCartItemId: string;
+  imageFile: string;
+  itemName: string;
+  quantity: number;
+  preferences: string;
+  totalPrice: number;
+}
+export interface ShoppingCartItemAddedDTO {
+  cartID: string; // Guid → string
+  itemID: string; // Guid → string
+  preferences?: string; // nullable → optional
+}
 export interface ItemDto {
   itemID?: string;
   name: string;
@@ -57,7 +163,7 @@ export interface ItemDto {
   price: number;
   isAvailable: boolean;
   category: string;
-  imageFile?: File;
+  imageFile?: string;
   imageUrl?: string;
   restaurantID?: string;
 }
@@ -115,6 +221,7 @@ export interface OrderItemDto {
   quantity: number;
   preferences: string;
   imageUrl: string;
+  totalPrice: number;
 }
 
 export interface CustomerDto {
@@ -124,7 +231,7 @@ export interface CustomerDto {
   userName: string;
   email: string;
   phone: string;
-  gender?: string | null; // GenderEnum? nullable in backend, string enum in frontend
+  gender?: GenderEnum | null; // GenderEnum? nullable in backend, string enum in frontend
   addresses?: string[]; // Assuming addresses as array of string addresses
   loyaltyPoints?: number;
   totalOrders?: number;

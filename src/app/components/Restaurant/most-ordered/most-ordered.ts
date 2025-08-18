@@ -1,5 +1,11 @@
-// most-ordered.ts
-import { Component, Input, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -7,17 +13,13 @@ import { AuthService } from '../../../services/auth';
 
 @Component({
   selector: 'app-most-ordered',
-  templateUrl: 'most-ordered.html',
-  styleUrls: ['most-ordered.css'],
+  templateUrl: './most-ordered.html',
+  styleUrls: ['./most-ordered.css'],
   standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-  ],
+  imports: [CommonModule, MatCardModule],
 })
 export class MostOrdered implements OnInit, OnChanges {
   @Input() restaurantId!: string;
-  
   mostOrdered: any[] = [];
 
   private http = inject(HttpClient);
@@ -43,8 +45,7 @@ export class MostOrdered implements OnInit, OnChanges {
   }
 
   private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('Token') || localStorage.getItem('token');
-    console.log('Token Info', token);
+    const token = sessionStorage.getItem('authToken');
     return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
   }
 
@@ -53,21 +54,22 @@ export class MostOrdered implements OnInit, OnChanges {
       this.mostOrdered = [];
       return;
     }
-
+    console.log("Restaurant ID", this.restaurantId);
     const headers = this.getAuthHeaders();
-    console.log('Restaurant ID:', this.restaurantId);
 
     this.http.get<any[]>(`${this.baseUrl}/item/${this.restaurantId}/items/most-ordered`, { headers }).subscribe({
-      next: data => {
-        if (Array.isArray(data)) {
-          this.mostOrdered = data;
-        } else {
-          this.mostOrdered = [];
-        }
+      next: (data) => {
+        console.log("data:", data);
+        this.mostOrdered = Array.isArray(data) ? data : [];
       },
       error: () => {
         this.mostOrdered = [];
       },
     });
   }
+
+  public getImageUrl(imageFile?: string): string {
+  const url = this.authService.getImageUrl(imageFile);
+  return url;
+}
 }

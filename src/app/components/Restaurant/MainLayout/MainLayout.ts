@@ -30,9 +30,7 @@ const navbarData = [
   {
     RouterLink: '/restaurant-profile',
   },
-  // {
-  //   RouterLink: '/MainLayout/settings',
-  // },
+  
 ];
 
 @Component({
@@ -93,10 +91,10 @@ export class MainLayoutComponent implements OnInit {
     }
   }
 
-  toggleTheme() {
-    this.isDarkMode = !this.isDarkMode;
-    document.body.classList.toggle('dark-theme', this.isDarkMode);
-  }
+  // toggleTheme() {
+  //   this.isDarkMode = !this.isDarkMode;
+  //   document.body.classList.toggle('dark-theme', this.isDarkMode);
+  // }
 
   logout() {
     this.authService.logout();
@@ -105,9 +103,10 @@ export class MainLayoutComponent implements OnInit {
   
   public getImageUrl(imageFile?: string): string {
   if (!imageFile) {
-    return 'assets/restaurantLogo';
+    return 'public/assets/restaurantLogo.jpg';
   }
-  return this.authService.getImageUrl(imageFile);
+  const url = this.authService.getImageUrl(imageFile);
+  return url;
 }
 
 }

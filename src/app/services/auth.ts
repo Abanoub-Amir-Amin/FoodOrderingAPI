@@ -35,7 +35,9 @@ export class AuthService {
 
     const token = sessionStorage.getItem('authToken');
     console.log('Token Info', token);
-    return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
+    return token
+      ? new HttpHeaders({ Authorization: `Bearer ${token}` })
+      : new HttpHeaders();
   }
 
   // Check if user is authenticated
@@ -69,7 +71,7 @@ export class AuthService {
             id: res.$id,
             userId: res.userId,
             role: res.role,
-            loginTime: new Date().toISOString()
+            loginTime: new Date().toISOString(),
           })
         );
 
@@ -119,9 +121,20 @@ export class AuthService {
     return sessionStorage.getItem('userId');
   }
 
+  getUserIdChatbot(): string | null {
+    if (typeof window === 'undefined' || !sessionStorage) {
+      return null;
+    }
+    return sessionStorage.getItem('userId');
+  }
+
+  isLoggedInChatbot(): boolean {
+    return this.getUserId() !== null;
+  }
+
   loadRestaurant(id: string | null): Observable<any> {
     if (!id) {
-      return new Observable(observer => {
+      return new Observable((observer) => {
         observer.next(null);
         observer.complete();
       });
@@ -130,19 +143,21 @@ export class AuthService {
     const headers = this.getAuthHeaders();
     this.isLoading = true;
 
-    return this.http.get<any>(`${this.baseUrl}/restaurant/${id}`, { headers }).pipe(
-      tap({
-        next: data => {
-          this.restaurant = data;
-          this.isLoading = false;
-        },
-        error: err => {
-          console.error('Error loading restaurant:', err);
-          this.restaurant = null;
-          this.isLoading = false;
-        }
-      })
-    );
+    return this.http
+      .get<any>(`${this.baseUrl}/restaurant/${id}`, { headers })
+      .pipe(
+        tap({
+          next: (data) => {
+            this.restaurant = data;
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('Error loading restaurant:', err);
+            this.restaurant = null;
+            this.isLoading = false;
+          },
+        })
+      );
   }
 
   getImageUrl(imageFile: string | undefined | null): string {

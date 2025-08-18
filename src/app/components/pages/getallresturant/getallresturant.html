@@ -1,35 +1,41 @@
- <div class="container py-4">
+<div class="container py-4">
   <div class="row">
-    <app-main-layout />
-<app-resturanrt-logo/>
     <div class="col-12 mb-4">
       <!-- <h2 class="text-center">
         <i class="bi bi-clipboard2-check-fill me-2"></i> All Resturant
       </h2> -->
     </div>
     <div class="container my-4">
-  <div class="row justify-content-center gx-4 gy-4  " >
+      <div class="row justify-content-center gx-4 gy-4">
+        @for (restaurant of restaurants; track restaurant.restaurantName) {
+        <div
+          class="col-6 col-sm-4 col-md-3"
+          (click)="goToRestaurantItems(restaurant.restaurantName)"
+        >
+          <div
+            class="restaurant-card text-center shadow-sm rounded-4 overflow-hidden"
+          >
+            <img
+              class="img-fluid p-3"
+              [src]="
+                'http://localhost:5000/' +
+                (restaurant.imageFile?.startsWith('wwwroot')
+                  ? restaurant.imageFile.slice(8)
+                  : restaurant.imageFile)
+              "
+              alt="صورة المطعم"
+            />
 
-    @for (restaurant of restaurants; track restaurant.restaurantName) {
-       <div class="col-6 col-sm-4 col-md-3"  (click)="goToRestaurantItems(restaurant.restaurantName)" >
-      <div class="restaurant-card text-center shadow-sm rounded-4 overflow-hidden"> 
-        
-          <img 
-          class="img-fluid p-3"
-            [src]="'http://localhost:5000/' + (restaurant.imageFile?.startsWith('wwwroot') ? restaurant.imageFile.slice(8) : restaurant.imageFile)"
-          
-            alt="صورة المطعم"
-          />
-         
-            <h6 class="title-bar  text-white fw-bold py-2" style="  background-color: #2b211d;">
+            <h6
+              class="title-bar text-white fw-bold py-2"
+              style="background-color: #2b211d"
+            >
               {{ restaurant.restaurantName }}
             </h6>
-         
+          </div>
         </div>
+        }
       </div>
-    }
-
-    <app-footer />
+    </div>
   </div>
-</div> 
- 
+</div>
