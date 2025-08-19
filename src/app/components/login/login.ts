@@ -22,6 +22,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   styleUrls: ['./login.css'],
 })
 export class LoginComponent implements OnInit {
+
   value!: string;
   isLoading = false;
   errorMsg = '';
@@ -188,4 +189,7 @@ export class LoginComponent implements OnInit {
   signup() {
     this.router.navigate(['/customerRegister']);
   }
+  forgotPassword() {
+    this.router.navigate(['/reset-password']);
+}
 }

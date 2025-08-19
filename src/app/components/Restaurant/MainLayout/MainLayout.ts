@@ -43,14 +43,7 @@ const navbarData = [
     MatIconModule,
     MatToolbarModule,
     MatProgressSpinnerModule,
-    MatButtonModule,
-    MenuManagement,
-    RestaurantDashboardComponent,
-    DashboardAnalytics,
-    DashboardSummaryComponent,
-    MostOrdered,
-    OrdersManagement,
-    RestaurantProfileComponent
+    MatButtonModule
   ],
   templateUrl: './MainLayout.html',
   styleUrls: ['./MainLayout.css'],

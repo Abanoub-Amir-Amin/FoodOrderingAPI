@@ -3,21 +3,17 @@ import { RestaurantItem } from '../../../models/ResturantInterface/resturant-int
 import { ActivatedRoute, Router } from '@angular/router';
 import { ListOfResturant } from '../../../services/ListOfResturant/list-of-resturant';
 import { MainLayoutComponent } from "../../layout/main-layout/main-layout.component";
-import { ResturanrtLogo } from "../resturanrt-logo/resturanrt-logo";
 import { FooterComponent } from "../../layout/footer/footer.component";
 import { ShoppingCart } from '../../../services/shoppingCart/shopping-cart';
 import { ShoppingCartDto, ShoppingCartItemAddedDTO } from '../../../models/DTO.model';
 // import { ToastModule } from 'primeng/toast';
 // import { MessageService } from 'primeng/api';
-import { resolve } from 'path';
-import { rejects } from 'assert';
-import { MessageService } from 'primeng/api';
 import { ToastService } from '../../../services/toast-service';
 
 @Component({
   selector: 'app-restaurant-items',
   standalone: true,
-  imports: [MainLayoutComponent, ResturanrtLogo, FooterComponent],
+  imports: [MainLayoutComponent, FooterComponent],
   providers:[],
   templateUrl: './restaurant-items.html',
   styleUrls: ['./restaurant-items.css'] // ✅ هنا كان ناقص s

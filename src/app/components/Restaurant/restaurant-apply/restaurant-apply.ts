@@ -5,13 +5,14 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { MapComponent } from '../../shared/map-component/map-component';
 import { AddressDto } from '../../../models/DTO.model';
+import { PasswordModule } from 'primeng/password';
 
 @Component({
   selector: 'app-restaurant-apply',
   templateUrl: './restaurant-apply.html',
   styleUrls: ['./restaurant-apply.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MapComponent],
+  imports: [CommonModule, ReactiveFormsModule, MapComponent, PasswordModule],
 })
 export class RestaurantApply implements OnInit {
   applyForm!: FormGroup;

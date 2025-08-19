@@ -109,7 +109,12 @@ export class CustomerInbobox implements OnInit, OnDestroy {
   adjustTextareaHeight(): void {
     const input = this.chatInput.nativeElement;
     input.style.height = 'auto';
-    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    if (input.scrollHeight > 300) {
+input.style.height = input.scrollHeight + 'px';  
+    } else {
+    input.style.height = 'auto';
+    }
+    
   }
 
   onEnterPress(event: KeyboardEvent): void {

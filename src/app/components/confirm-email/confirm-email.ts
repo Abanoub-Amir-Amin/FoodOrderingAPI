@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { NgClass } from '@angular/common';
 
@@ -14,7 +14,8 @@ export class ConfirmEmail implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -32,4 +33,7 @@ export class ConfirmEmail implements OnInit {
       });
     });
   }
+  home() {
+    this.router.navigate(['/home']);
+}
 }

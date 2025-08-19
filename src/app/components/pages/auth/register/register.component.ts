@@ -14,6 +14,7 @@ import { FooterComponent } from "../../../layout/footer/footer.component";
 import { AddressDto, RegisterCustomerDTO } from '../../../../models/DTO.model';
 import { CustomerService } from '../../../../services/customer/customer-service';
 import { MapComponent } from '../../../shared/map-component/map-component';
+import { PasswordModule } from 'primeng/password';
 
 // validator مخصص للتحقق من تطابق كلمتي المرور
 export const passwordMatchValidator = (control: AbstractControl): ValidationErrors | null => {
@@ -31,7 +32,7 @@ export const passwordMatchValidator = (control: AbstractControl): ValidationErro
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink, MainLayoutComponent, FooterComponent,MapComponent],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, MapComponent, PasswordModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })

@@ -1,18 +1,20 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, Validators, AbstractControl, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { PasswordModule } from 'primeng/password';
 
 @Component({
   selector: 'app-newpassword',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, PasswordModule],
   templateUrl: './newpassword.html',
-  styleUrl: './newpassword.css'
+  styleUrl: './newpassword.css',
+  encapsulation: ViewEncapsulation.None
 })
 export class NewPassword {
   
-   successMessage: string = '';
+  successMessage: string = '';
   errorMessage: string = '';
   token: string = '';
   email: string = '';
@@ -25,7 +27,8 @@ export class NewPassword {
     private fb: FormBuilder,
     private http: HttpClient,
     private route: ActivatedRoute,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private router: Router
   ) {
       this.form = this.fb.group({
       newPassword: ['', [
@@ -61,7 +64,7 @@ export class NewPassword {
 
     const newPassword = this.form.value['newPassword'];
 
-    this.http.post('http://localhost:7060/api/auth/reset-password', {
+    this.http.post('http://localhost:5000/api/auth/reset-password', {
       email: this.email,
       token: this.token,
       newPassword
@@ -78,4 +81,7 @@ export class NewPassword {
         }
     });
   }
+  home() {
+    this.router.navigate(['/home']);
+}
 }

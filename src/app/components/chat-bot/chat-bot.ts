@@ -129,8 +129,12 @@ export class ChatBot implements OnInit, OnDestroy, AfterViewChecked {
       ? (event.target as HTMLTextAreaElement)
       : this.messageInput?.nativeElement;
     if (textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        textarea.style.height = 'auto';
+    if (textarea.scrollHeight > 300) {
+textarea.style.height = textarea.scrollHeight + 'px';  
+    } else {
+    textarea.style.height = 'auto';
+    }
     }
   }
 

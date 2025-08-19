@@ -7,7 +7,7 @@ import { MainLayoutComponent } from '../../layout/main-layout/main-layout.compon
 
 @Component({
   selector: 'app-customer-container',
-  imports: [CustomerSidenav,CustomerBody,CustomerHeader,MainLayoutComponent],
+  imports: [CustomerSidenav,CustomerBody,CustomerHeader],
   templateUrl: './customer-container.html',
   styleUrl: './customer-container.css'
 })

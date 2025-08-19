@@ -32,8 +32,19 @@
       </div>
 
       <div class="form-group mb-3">
-        <label class="form-label">Password</label>
-        <div class="password-input-wrapper position-relative">
+        <label for="password" class="form-label">Password</label>
+        <p-password
+          id="password"
+          class="styled-password"
+          formControlName="password"
+          [toggleMask]="true"
+          [feedback]="false"
+          placeholder="Enter your password"
+          ></p-password>
+          <!-- <small *ngIf="form.controls['newPassword'].invalid && form.controls['newPassword'].touched" class="text-danger">
+          Password must be 8+ characters, include uppercase, lowercase, number, and special character.
+          </small> -->
+        <!-- <div class="password-input-wrapper position-relative">
           <input
             [type]="showPassword ? 'text' : 'password'"
             formControlName="password"
@@ -42,14 +53,27 @@
           />
           <button type="button" class="btn btn-sm btn-link position-absolute top-50 end-0 translate-middle-y me-2" (click)="togglePasswordVisibility()">
             {{ showPassword ? '🙈' : '👁️' }}
-          </button>
-        </div>
+          </button> 
+        </div>-->
       </div>
-
-      <div class="form-group mb-3">
+      <div class="form-group mb-3 text-start position-relative">
+        <label for="confirmPassword" class="form-label">Confirm Password</label>
+        <p-password
+          id="confirmPassword"
+          class="styled-password"
+          formControlName="confirmPassword"
+          [toggleMask]="true"
+          [feedback]="false"
+          placeholder="Confirm password"
+        ></p-password>
+        <!-- <small *ngIf="form.errors?.['mismatch'] && form.controls['confirmPassword'].touched" class="text-danger">
+          Passwords do not match.
+        </small> -->
+      </div>
+      <!-- <div class="form-group mb-3">
         <label class="form-label">Confirm Password</label>
         <input type="password" formControlName="confirmPassword" class="form-control" placeholder="Confirm Password" />
-      </div>
+      </div> -->
       <app-map-component (addressInfo)="setAddress($event)"  [formSubmitted]="isRegestered"></app-map-component>
       <button type="submit" class="btn btn-primary w-100">Create Account</button>
 

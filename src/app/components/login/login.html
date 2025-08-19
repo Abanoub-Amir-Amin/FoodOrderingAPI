@@ -55,8 +55,14 @@
         >
           Password is required
         </div>
+        <small
+          >Forgot Password?
+          <a class="link fw-semibold" (click)="forgotPassword()">Reset Password</a>
+        </small>
       </div>
-
+      <!-- <div class="text-center mt-3">
+        
+      </div> -->
       <!-- Submit Button -->
       <button type="submit" class="button-8 w-100" [disabled]="isLoading">
         {{ isLoading ? "Logging in..." : "Login" }}

@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-reset-password',
@@ -17,7 +18,8 @@ export class ResetPassword {
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private cd: ChangeDetectorRef // ✅ Inject ChangeDetectorRef
+    private cd: ChangeDetectorRef, // ✅ Inject ChangeDetectorRef
+    private router: Router
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
@@ -31,7 +33,7 @@ export class ResetPassword {
     this.successMessage = '';
     this.errorMessage = '';
 
-    this.http.post('http://localhost:7060/api/auth/forgot-password', { email }, { responseType: 'text' })
+    this.http.post('http://localhost:5000/api/auth/forgot-password', { email }, { responseType: 'text' })
       .subscribe({
         next: (res) => {
           this.successMessage = res;
@@ -45,4 +47,7 @@ export class ResetPassword {
         }
       });
   }
+  home() {
+    this.router.navigate(['/home']);
+}
 }
