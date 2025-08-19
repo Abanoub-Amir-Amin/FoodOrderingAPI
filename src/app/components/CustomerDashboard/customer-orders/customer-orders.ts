@@ -5,14 +5,20 @@ import { CommonModule } from '@angular/common';
 import { Overlay, OverlayModule, OverlayRef } from '@angular/cdk/overlay';
 import { PortalModule, TemplatePortal } from '@angular/cdk/portal';
 import { StatustitlePipe } from '../../pipes/statustitle-pipe';
+import { ReviewDTO, ReviewService } from '../../../services/review/review-service';
+import { FormsModule } from '@angular/forms'; // ✅ استيراد FormsModule
 @Component({
   selector: 'app-customer-orders',
-  imports: [CommonModule,OverlayModule,PortalModule,StatustitlePipe],
+  imports: [CommonModule,OverlayModule,PortalModule,StatustitlePipe,FormsModule ],
   templateUrl: './customer-orders.html',
   styleUrl: './customer-orders.css'
 })
 export class CustomerOrders {
   StatusEnum=StatusEnum
+   reviewRating: number = 0;
+  reviewComment: string = '';
+  currentOrderId: string = '';
+
   selectedOrderDetails:OrderDetailDTO={
   orderNumber:0,
   orderDate:'',
@@ -39,6 +45,7 @@ isReviewModalOpen=false;
 @ViewChild('ReviewModal') ReviewModal!: TemplateRef<any>;
 
 
+  
   OrdersView:OrderViewDTO[]=[]
   ErrorMessage:string=''
   successMessage:string=''
@@ -46,6 +53,7 @@ isReviewModalOpen=false;
     private orderservice:CustomerService,
       private overlay: Overlay,
   private vcr: ViewContainerRef,
+  private reviewService: ReviewService,
 
   )
   {}
@@ -104,7 +112,12 @@ if (!modalTemplate) {
       this.overlayRef.attach(portal);
     }
     if(templateName=='details')
-      this.getOrderDetails(orderId)
+      {this.getOrderDetails(orderId)}
+    else if (templateName === 'review') {
+    this.currentOrderId = orderId;   // ✅ Save current order id
+    this.reviewRating = 0;
+    this.reviewComment = '';
+  }
   }
   closeModal() {
     if (this.overlayRef) {
@@ -152,4 +165,32 @@ if (!modalTemplate) {
     };
     return classMap[status] || 'status-pending';
   }
+
+submitReview() {
+  const customerId = sessionStorage.getItem('userId');   // ✅ Get from session
+  console.log('Rating:', this.reviewRating);
+  console.log('Comment:', this.reviewComment);
+  // هنا تحط الكود اللي يبعت الـ review للـ API
+
+  const review: ReviewDTO = {
+    customerId: customerId ?? '', // fallback to empty string if null
+    orderId: this.currentOrderId,
+    restaurantId:'',
+    //restaurantId: this.selectedOrderDetails?.restaurantId || '', // لو عندك
+    rating: this.reviewRating,
+    comment: this.reviewComment
+  };
+
+  this.reviewService.createReview(review).subscribe({
+    next: () => {
+      this.successMessage = 'Review submitted successfully!';
+      this.closeModal();
+    },
+    error: (err) => {
+      console.error('Error submitting review:', err);
+      this.ErrorMessage = 'Failed to submit review. Please try again later.';
+    }
+  });
+}
+
 }

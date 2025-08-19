@@ -1,0 +1,131 @@
+<div class="container">
+  <app-main-layout />
+  <div class="row">
+    <div class="restaurant-page container py-4">
+
+      @if (!loading) {
+
+        <!-- هيدر المطعم -->
+        <div class="restaurant-header card shadow-sm mb-4 border-0 overflow-hidden">
+          <div class="row g-0 align-items-center">
+            <div class="col-md-8 p-4 d-flex flex-column justify-content-center">
+              <p class="text-muted mb-1">
+                Desi Flavours with a blend of Italian aesthetics!
+              </p>
+              <h2 class="fw-bold">{{ restaurant?.restaurantName }}</h2>
+
+              <div class="d-flex gap-3 mt-3">
+                <div class="info-pill">
+                  <i class="bi bi-bicycle"></i>
+                  Delivery in 20–25 Minutes
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4 position-relative">
+              <img
+                class="restaurant-image img-fluid h-100 w-100 object-fit-cover"
+                [src]="'http://localhost:5000/' + (restaurant?.imageFile?.startsWith('wwwroot') ? restaurant.imageFile.slice(8) : restaurant.imageFile)"
+                alt="صورة المطعم">
+
+              <!-- صندوق التقييم -->
+              <div class="rating-box shadow-sm position-absolute bottom-0 start-0 p-2 bg-dark bg-opacity-75 rounded text-center">
+                <div class="text-white fw-bold">
+                  {{ restaurant?.rating || 4.5 }}
+                </div>
+                <div class="text-warning">★★★★☆</div>
+                <small class="text-muted">{{ reviews.length }} reviews</small>
+              </div>
+            </div>
+          </div>
+
+          <div class=" px-3 py-2 ">
+            Open until 3:00 AM
+          </div>
+        </div>
+
+        <!-- قائمة الأطباق -->
+        <section class="menu-section">
+          <h4 class="mb-3">Restaurant Menu</h4>
+          <div class="row g-4">
+  @for (item of items; track item.itemID) {
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div class="card border-0 shadow-lg h-60 rounded-4 overflow-hidden">
+        
+        <!-- صورة -->
+        <div class="text-center ">
+          <img
+            class="menu-img rounded-circle border border-3 border-light shadow-sm"
+            [src]="'http://localhost:5000/' + (item.imageFile?.startsWith('wwwroot') ? item.imageFile.slice(8) : item.imageFile)"
+            alt="{{ item.name }}"
+            style="width: 120px; height: 120px; object-fit: cover;">
+        </div>
+
+        <!-- تفاصيل -->
+        <div class="card-body text-center">
+          <h5 class="fw-bold mb-1 text-dark">{{ item.name }}</h5>
+          <p class="text-muted small ">{{ item.description }}</p>
+          <div class="fw-bold text-success fs-3 ">$ {{ item.price }}</div>
+          
+          <!-- زرار Add to Cart -->
+          <button class="btn btn-primary w-200 rounded-pill shadow-sm mt-2"
+                  (click)="AddToCart(item.itemID, item.description)">
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+        </section>
+
+        <!-- آراء العملاء -->
+        <section class="reviews-section">
+          <h4 class="mt-5 mb-3">Customer Reviews</h4>
+          @if (reviews.length > 0) {
+            <div class="row g-4">
+              @for (review of reviews; track review.reviewID) {
+                <div class="col-12 col-md-6 col-lg-4">
+                  <div class="review-card card shadow-sm border-0 p-3 h-100">
+                    <div class="d-flex align-items-center mb-3">
+                      <div>
+                        <strong>{{ review.userName }}</strong>
+                       <app-rating 
+  [rating]="review.rating" 
+  [maxStars]="review.rating" 
+  [readOnly]="true">
+</app-rating>
+                        <small class="text-muted">{{ review.createdAt | relativeTime }}</small>
+                      </div>
+                    </div>
+                    <p class="mb-0">{{ review.comment }}</p>
+                  
+                    
+
+                         @if (review.customerID === currentCustomerId) {
+  <button class="btn btn-sm btn-danger"
+          (click)="deleteReview(review.customerID)">
+    <i class="bi bi-trash"></i> Delete
+  </button>
+}
+             
+
+                
+                </div>
+            </div>
+              }
+            </div>
+          } @else {
+            <p class="text-muted">There are no reviews yet.</p>
+          }
+        </section>
+
+      } @else {
+        <p class="text-center py-5">Loading...</p>
+      }
+
+    </div>
+  </div>
+  <app-footer />
+</div>
