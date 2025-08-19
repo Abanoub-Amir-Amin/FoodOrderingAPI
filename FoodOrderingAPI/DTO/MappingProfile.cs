@@ -69,6 +69,9 @@ public class MappingProfile : Profile
         // Reverse mapping DeliveryMan → DeliveryManDto
         CreateMap<DeliveryMan, DeliveryManDto>();
 
+        // Reverse mapping DeliveryMan → DeliveryManByIdDTO
+        CreateMap<DeliveryMan, DeliveryManByIdDTO>();
+
         // Map UserDto → User
         CreateMap<UserDto, User>()
           .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
