@@ -146,7 +146,7 @@ namespace FoodOrderingAPI.Repository
                 .ToListAsync();
 
         }
-        public async Task<List<Order>> getOrdersDelivaryMan(string DelivaryId)
+        public async Task<List<Order>> getOrdersDelivaryMan(string DelivaryId,StatusEnum status)
         {
             return await _context.Orders
                 .Include(o => o.Address)
@@ -158,7 +158,7 @@ namespace FoodOrderingAPI.Repository
                 .Include(c => c.OrderItems)
                 .ThenInclude(OI => OI.Item)
                 //.Include(o => o.PaymentTransactions)
-                .Where(o => o.DeliveryManID == DelivaryId && o.Status== StatusEnum.Preparing)
+                .Where(o => o.DeliveryManID == DelivaryId && o.Status== status)
                 .ToListAsync();
 
         }

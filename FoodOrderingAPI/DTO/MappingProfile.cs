@@ -314,6 +314,13 @@ public class MappingProfile : Profile
         .ForMember(dest => dest.RestaurantPhone, opt => opt.MapFrom(src => src.Restaurant.User.PhoneNumber))
         .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
 
+        CreateMap<Order, DeliveryManUpdateOrderStatusDTO>()
+            .ForMember(dest => dest.Address, op => op.MapFrom(src => $"{src.Address.Label} - {src.Address.Street}, {src.Address.City}"))
+            .ForMember(dest => dest.OrderNumber, op => op.MapFrom(src => src.OrderNumber))
+            .ForMember(dest => dest.UserName, op => op.MapFrom(src => src.Customer.User))
+            .ForMember(dest => dest.TotalPrice, op => op.MapFrom(src => src.TotalPrice))
+            .ForMember(dest => dest.DeliveredAt, op => op.MapFrom(src => src.DeliveredAt));
+
 
 
         // Map from PromoCode entity to PromoCodeDto

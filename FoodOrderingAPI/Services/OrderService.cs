@@ -536,18 +536,28 @@ namespace FoodOrderingAPI.Services
 
         }
 
-        public async Task<List<DelivaryOrderDTO>> getOrdersForDelivarMan(string DelivaryId)
+        public async Task<List<DelivaryOrderDTO>> getPreparingOrdersForDelivarMan(string DelivaryId)
 
         {
 
-            List<Order> orders = await _repository.getOrdersDelivaryMan(DelivaryId);
+            List<Order> orders = await _repository.getOrdersDelivaryMan(DelivaryId,StatusEnum.Preparing);
 
             List<DelivaryOrderDTO> orderResult = _mapper.Map<List<DelivaryOrderDTO>>(orders);
 
             return orderResult;
 
         }
+        public async Task<List<DeliveryManUpdateOrderStatusDTO>> getDelivaredOrdersForDelivarMan(string DelivaryId)
 
+        {
+
+            List<Order> orders = await _repository.getOrdersDelivaryMan(DelivaryId,StatusEnum.Delivered);
+
+            List<DeliveryManUpdateOrderStatusDTO> orderResult = _mapper.Map<List<DeliveryManUpdateOrderStatusDTO>>(orders);
+
+            return orderResult;
+
+        }
     }
 
 }

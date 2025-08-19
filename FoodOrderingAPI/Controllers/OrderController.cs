@@ -254,7 +254,15 @@ namespace FoodOrderingAPI.Controllers
         public async Task<IActionResult> GetOrdersForDelivary()
         {
             var DelivaryId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var orders = await _OrderService.getOrdersForDelivarMan(DelivaryId);
+            var orders = await _OrderService.getPreparingOrdersForDelivarMan(DelivaryId);
+            return Ok(orders);
+        }
+        [Authorize(Roles = "DeliveryMan")]
+        [HttpGet("DelivaredOrdersForDelivary")]
+        public async Task<IActionResult> GetDelivaredOrdersForDelivary()
+        {
+            var DelivaryId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var orders = await _OrderService.getDelivaredOrdersForDelivarMan(DelivaryId);
             return Ok(orders);
         }
     }
