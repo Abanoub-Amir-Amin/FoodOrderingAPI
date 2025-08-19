@@ -37,8 +37,7 @@ namespace FoodOrderingAPI.Controllers
                 // Call service to apply and create DeliveryMan user
                 var result = await _service.ApplyToJoinAsync(dto);
 
-                // Return 201 Created with route to newly created resource
-                // return CreatedAtAction(nameof(GetRestaurantById), new { id = result.UserId }, result);
+
                 await confirmationEmail.SendConfirmationEmail(dto.Email, await userManager.FindByEmailAsync(dto.Email));
                 return Created();
             }
@@ -300,5 +299,35 @@ namespace FoodOrderingAPI.Controllers
             return BadRequest("We were unable to confirm your email address. Please try again or request a new link.");
 
         }
+
+        [AllowAnonymous]
+        [HttpGet("{DeliveryManId}")]
+        public async Task<IActionResult> GetDeliveryManById(string DeliveryManId)
+        {
+            try
+            {
+                var DeliveryMan = await _service.GetDeliveryManByIdAsync(DeliveryManId);
+
+                if (DeliveryMan == null)
+                    return NotFound();
+
+                var DeliverManDTO = _mapper.Map<DeliveryManByIdDTO>(DeliveryMan);
+                
+
+                return Ok(DeliverManDTO);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+
+        }
+
+
     }
+                    
 }

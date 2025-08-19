@@ -129,7 +129,6 @@
                     });
 
                     function switchToChat(customerId) {
-                        debugger;
                         currentCustomerId = customerId;
                         chatHistory.innerHTML = ''; // Clear current chat
 
@@ -189,7 +188,13 @@
 
                     function adjustTextareaHeight() {
                         chatInput.style.height = 'auto';
-                        chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+                        if (chatInput.scrollHeight > 300) {
+                            chatInput.style.height = chatInput.scrollHeight + 'px';
+                        } else {
+                        chatInput.style.height = 'auto';
+                        }
+                        // chatInput.style.height = 'auto';
+                        // chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
                     }
 
                     // Event listeners

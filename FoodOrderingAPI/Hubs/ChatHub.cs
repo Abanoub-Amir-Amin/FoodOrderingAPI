@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace FoodOrderingAPI.Hubs
 {
-    public class ChatHub:Hub
+    public class ChatHub : Hub
     {
         public ApplicationDBContext DBContext { get; }
         public UserManager<User> UserManager { get; }
@@ -14,54 +14,85 @@ namespace FoodOrderingAPI.Hubs
         {
             DBContext = dBContext;
             UserManager = userManager;
-
         }
-
-        //public async Task SendMessage(string userId, string message)
-        //{
-        //    Console.WriteLine($"Trying to send message to userId: {userId}");
-        //    await Clients.User(userId).SendAsync("ReceiveMessage", message);
-        //}
 
         public override async Task OnConnectedAsync()
         {
+            Console.WriteLine("=== ChatHub OnConnectedAsync Called ===");
+
+            // Debug authentication
+            Console.WriteLine($"Context.User.Identity.IsAuthenticated: {Context.User?.Identity?.IsAuthenticated}");
+            Console.WriteLine($"Context.UserIdentifier: {Context.UserIdentifier}");
+            Console.WriteLine($"Connection ID: {Context.ConnectionId}");
+
             var id = Context.UserIdentifier;
             if (id == null)
             {
-                Console.WriteLine("Not authenticated.");
+                Console.WriteLine("❌ User not authenticated - no UserIdentifier");
                 return;
             }
-            var userConnectionId = new User_ConnectionId
-            {
-                UserId = id,
-                ConnectionId = Context.ConnectionId
-            };
 
-            DBContext.User_ConnectionId.Add(userConnectionId);
-            if(Context.User.IsInRole("Customer"))
+            Console.WriteLine($"✅ User {id} connecting to ChatHub");
+
+            try
             {
-                var chatFound = DBContext.ComplaintChats.FirstOrDefault(c => c.CustomerID == id);
-                if (chatFound == null)
+                var userConnectionId = new User_ConnectionId
                 {
-                    var userChat = new ComplaintChat
-                    {
-                        AdminID = DBContext.Admins.FirstOrDefault().AdminID,
-                        StartedAt = DateTime.UtcNow,
-                        CustomerID = id,
-                    };
-                    DBContext.ComplaintChats.Add(userChat);
+                    UserId = id,
+                    ConnectionId = Context.ConnectionId
+                };
+
+                var user = await UserManager.FindByIdAsync(id);
+                if (user == null)
+                {
+                    Console.WriteLine($"❌ User {id} not found in UserManager");
+                    return;
                 }
+
+                var roles = await UserManager.GetRolesAsync(user);
+                Console.WriteLine($"User {id} roles: [{string.Join(", ", roles)}]");
+
+                DBContext.User_ConnectionId.Add(userConnectionId);
+
+                // Check if user is a customer
+                bool hasCustomerRole = roles.Contains("Customer");
+                bool hasCustomerRecord = DBContext.Customers.Any(c => c.UserID == id);
+                bool isCustomer = hasCustomerRole || hasCustomerRecord;
+
+                Console.WriteLine($"Has Customer role: {hasCustomerRole}");
+                Console.WriteLine($"Has Customer record: {hasCustomerRecord}");
+                Console.WriteLine($"Is Customer: {isCustomer}");
+
+                await DBContext.SaveChangesAsync();
+                Console.WriteLine("✅ Database changes saved successfully");
+
             }
-           
-            await DBContext.SaveChangesAsync();
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error in OnConnectedAsync: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            }
+
             await base.OnConnectedAsync();
+            Console.WriteLine("=== ChatHub OnConnectedAsync Completed ===");
         }
+
         public override Task OnDisconnectedAsync(Exception? exception)
         {
+            Console.WriteLine($"=== ChatHub OnDisconnectedAsync - User: {Context.UserIdentifier} ===");
+
             var id = Context.UserIdentifier;
-            var row = DBContext.User_ConnectionId.Find(id, Context.ConnectionId);
-            DBContext.Remove(row);
-            DBContext.SaveChanges();
+            if (id != null)
+            {
+                var row = DBContext.User_ConnectionId.Find(id, Context.ConnectionId);
+                if (row != null)
+                {
+                    DBContext.Remove(row);
+                    DBContext.SaveChanges();
+                    Console.WriteLine($"✅ Removed connection for user {id}");
+                }
+            }
+
             return Task.CompletedTask;
         }
     }

@@ -111,6 +111,9 @@ namespace FoodOrderingAPI.Services
         }
         public async Task<IdentityResult> Register(RegisterCustomerDTO dto)
         {
+            Console.WriteLine("=== REGISTRATION DEBUG ===");
+            Console.WriteLine($"Registering user: {dto.Email}");
+
             using var transaction = await _dbContext.Database.BeginTransactionAsync();
             User user = new User();
 
@@ -122,15 +125,47 @@ namespace FoodOrderingAPI.Services
 
             // Map registration DTO to User entity
             _mapper.Map(dto, user);
+            Console.WriteLine($"Mapped user - UserName: {user.UserName}, Email: {user.Email}");
 
             // Create user with password using Identity
             IdentityResult result = await userManager.CreateAsync(user, dto.Password);
+            Console.WriteLine($"User creation result: {result.Succeeded}");
+
+            if (result.Errors.Any())
+            {
+                Console.WriteLine("User creation errors:");
+                foreach (var error in result.Errors)
+                {
+                    Console.WriteLine($"  - {error.Description}");
+                }
+            }
 
             if (result.Succeeded)
             {
+                Console.WriteLine($"User created with ID: {user.Id}");
+
                 try
                 {
-                    // Create related Customer entity
+                    // STEP 1: Add Customer Role
+                    Console.WriteLine("Adding Customer role...");
+                    var roleResult = await userManager.AddToRoleAsync(user, "Customer");
+                    Console.WriteLine($"Role assignment result: {roleResult.Succeeded}");
+
+                    if (!roleResult.Succeeded)
+                    {
+                        Console.WriteLine("Role assignment errors:");
+                        foreach (var error in roleResult.Errors)
+                        {
+                            Console.WriteLine($"  - {error.Description}");
+                        }
+                    }
+
+                    // Verify role was added
+                    var userRoles = await userManager.GetRolesAsync(user);
+                    Console.WriteLine($"User roles after assignment: [{string.Join(", ", userRoles)}]");
+
+                    // STEP 2: Create related Customer entity
+                    Console.WriteLine("Creating Customer entity...");
                     Customer customer = new Customer
                     {
                         CustomerID = user.Id,
@@ -138,31 +173,56 @@ namespace FoodOrderingAPI.Services
                     };
                     _mapper.Map(dto, customer);
 
+                    Console.WriteLine($"Customer - CustomerID: {customer.CustomerID}, UserID: {customer.UserID}");
+
                     await customerRepo.Add(customer);
                     await customerRepo.Save();
+                    Console.WriteLine("Customer entity saved");
 
-                    // Create Shopping Cart
+                    // STEP 3: Create Shopping Cart
+                    Console.WriteLine("Creating shopping cart...");
                     ShoppingCart cart = new ShoppingCart();
                     await shoppingCartRepo.Create(cart, customer.CustomerID);
                     await shoppingCartRepo.Save();
+                    Console.WriteLine("Shopping cart created");
 
                     //add address
                     await addressRepo.Add(user.Id, dto.Address);
                     await addressRepo.Save();
-                    // Commit transaction if everything succeeded
+                    Console.WriteLine("Address added");
+
+                    // STEP 5: Commit transaction
+                    Console.WriteLine("Committing transaction...");
                     await transaction.CommitAsync();
+                    Console.WriteLine("✅ Registration completed successfully");
+
+                    // FINAL VERIFICATION
+                    Console.WriteLine("=== FINAL VERIFICATION ===");
+                    var verifyUser = await userManager.FindByIdAsync(user.Id);
+                    var verifyRoles = await userManager.GetRolesAsync(verifyUser);
+                    var verifyCustomer = await customerRepo.GetById(user.Id);
+
+                    Console.WriteLine($"User exists: {verifyUser != null}");
+                    Console.WriteLine($"User roles: [{string.Join(", ", verifyRoles)}]");
+                    Console.WriteLine($"Customer record exists: {verifyCustomer != null}");
+                    Console.WriteLine("=== END VERIFICATION ===");
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine($"❌ Registration failed: {ex.Message}");
+                    Console.WriteLine($"Stack trace: {ex.StackTrace}");
+
                     await transaction.RollbackAsync();
                     await userManager.DeleteAsync(user);
                     return IdentityResult.Failed(new IdentityError { Description = $"Registration failed: {ex.Message}" });
                 }
             }
+
+            Console.WriteLine("=== END REGISTRATION DEBUG ===");
             return result;
         }
 
-        
+
         public async Task Save()
         {
             await customerRepo.Save();

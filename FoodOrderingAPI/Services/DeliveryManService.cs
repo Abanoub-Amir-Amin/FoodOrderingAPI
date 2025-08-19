@@ -22,6 +22,13 @@ namespace FoodOrderingAPI.Services
             _mapper = mapper;
             _userManager = userManager;
         }
+
+        public async Task<DeliveryMan> GetDeliveryManByIdAsync(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentNullException("Can not find user Id", nameof(userId));
+            return await _repository.GetDeliveryManByIdAsync(userId);
+        }
         public async Task<DeliveryMan> ApplyToJoinAsync(DeliveryManApplyDto dto)
         {
             // 1. Validate DTO and nested user info
@@ -97,8 +104,6 @@ namespace FoodOrderingAPI.Services
 
 
         }
-
-        
 
         public async Task<bool> GetAvailabilityStatusAsync(string userId)
         {

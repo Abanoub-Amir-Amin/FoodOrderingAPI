@@ -39,7 +39,7 @@ namespace FoodOrderingAPI.Models
         public decimal DiscountAmount { get; set; } = 0;
 
         [Column(TypeName = "decimal(10,2)")]
-        public decimal TotalPrice => SubTotal + DelivaryPrice - DiscountAmount;
+        public decimal TotalPrice => SubTotal + DelivaryPrice;
 
         [ForeignKey(nameof(PromoCode))]
         public Guid? PromoCodeID { get; set; }

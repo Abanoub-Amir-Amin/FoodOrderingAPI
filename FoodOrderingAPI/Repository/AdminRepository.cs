@@ -159,6 +159,7 @@ namespace FoodOrderingAPI.Repository
             return await _context.Orders
                 .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Item)
+                .Include(o => o.Restaurant)
                 .ToListAsync();
 
         }

@@ -185,7 +185,7 @@ namespace FoodOrderingAPI.Services
             if (newStatus == StatusEnum.Out_for_Delivery)
             {
                 _notificationRepo.CreateNotificationTo(order.CustomerID,
-                    $"Order number {order.OrderNumber} is out for Out for Delivery");
+                    $"Order number {order.OrderNumber} is out for delivery");
             }
 
             return order;
@@ -226,7 +226,7 @@ namespace FoodOrderingAPI.Services
 
             _notificationRepo.CreateNotificationTo(order.CustomerID,
 
-                $"Order number {order.OrderNumber} cancelled,\n Reason: {reason}");
+                $"Order number {order.OrderNumber} was cancelled by restaurant.,\n Reason: {reason}");
 
             return true;
 
@@ -252,7 +252,7 @@ namespace FoodOrderingAPI.Services
 
                $"Order number {order.OrderNumber} has been confirmed.");
 
-            return (true, $"Order number {order.OrderNumber} confirmed successfully.");
+            return (true, $"Order number {order.OrderNumber} is confirmed and being prepared by restaurant.");
 
         }
 
