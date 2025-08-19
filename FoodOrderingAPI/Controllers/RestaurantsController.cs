@@ -57,7 +57,7 @@ namespace FoodOrderingAPI.Controllers
             {
                 // Call service to apply and create restaurant user
                 var result = await _service.ApplyToJoinAsync(dto);
-
+                await confirmationEmail.SendConfirmationEmail(dto.User.Email, await userManager.FindByEmailAsync(dto.User.Email));
                 // Return 201 Created with route to newly created resource
                 return CreatedAtAction(nameof(GetRestaurantById), new { id = result.UserId }, result);
             }
