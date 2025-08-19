@@ -63,37 +63,6 @@ namespace FoodOrderingAPI.Hubs
                 Console.WriteLine($"Has Customer record: {hasCustomerRecord}");
                 Console.WriteLine($"Is Customer: {isCustomer}");
 
-                if (isCustomer)
-                {
-                    var chatFound = DBContext.ComplaintChats.FirstOrDefault(c => c.CustomerID == id);
-                    Console.WriteLine($"Existing chat found: {chatFound != null}");
-
-                    if (chatFound == null)
-                    {
-                        var admin = DBContext.Admins.FirstOrDefault();
-                        if (admin == null)
-                        {
-                            Console.WriteLine("❌ No admin found in database!");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Creating new chat - Admin ID: {admin.AdminID}");
-                            var userChat = new ComplaintChat
-                            {
-                                AdminID = admin.AdminID,
-                                StartedAt = DateTime.UtcNow,
-                                CustomerID = id,
-                            };
-                            DBContext.ComplaintChats.Add(userChat);
-                            Console.WriteLine($"✅ Created new chat for customer {id}");
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine($"✅ Using existing chat ID: {chatFound.ChatID}");
-                    }
-                }
-
                 await DBContext.SaveChangesAsync();
                 Console.WriteLine("✅ Database changes saved successfully");
 

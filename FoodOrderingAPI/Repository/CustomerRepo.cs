@@ -41,6 +41,33 @@ namespace FoodOrderingAPI.Repository
         {
 
             await dbContext.Customers.AddAsync(customer);
+            var chatFound = dbContext.ComplaintChats.FirstOrDefault(c => c.CustomerID == customer.UserID);
+            Console.WriteLine($"Existing chat found: {chatFound != null}");
+
+            if (chatFound == null)
+            {
+                var admin = dbContext.Admins.FirstOrDefault();
+                if (admin == null)
+                {
+                    Console.WriteLine("❌ No admin found in database!");
+                }
+                else
+                {
+                    Console.WriteLine($"Creating new chat - Admin ID: {admin.AdminID}");
+                    var userChat = new ComplaintChat
+                    {
+                        AdminID = admin.AdminID,
+                        StartedAt = DateTime.UtcNow,
+                        CustomerID = customer.UserID,
+                    };
+                    dbContext.ComplaintChats.Add(userChat);
+                    Console.WriteLine($"✅ Created new chat for customer {customer.UserID}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"✅ Using existing chat ID: {chatFound.ChatID}");
+            }
             //await Save();
         }
         public async Task<Customer> Update(Customer customer)
