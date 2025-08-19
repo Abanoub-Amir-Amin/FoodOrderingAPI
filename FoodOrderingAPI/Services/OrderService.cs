@@ -188,7 +188,7 @@ namespace FoodOrderingAPI.Services
             if (newStatus == StatusEnum.Out_for_Delivery)
             {
                 _notificationRepo.CreateNotificationTo(order.CustomerID,
-                    $"Order number {order.OrderNumber} is out for Out for Delivery.");
+                    $"Order number {order.OrderNumber} is out for delivery");
             }
 
             return order;

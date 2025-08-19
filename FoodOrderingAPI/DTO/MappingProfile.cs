@@ -12,6 +12,14 @@ public class MappingProfile : Profile
         // Map Discount → DiscountDto
         CreateMap<Discount, DiscountDto>();
 
+        // Map Order → RestaurantOrderDto
+        CreateMap<Order, RestaurantOrderDto>()
+            .ForMember(dest => dest.items, opt => opt.MapFrom(src => src.OrderItems))
+            .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FirstName + src.Customer.LastName))
+            .ForMember(dest => dest.CustomerEmail, opt => opt.MapFrom(src => src.Customer.User.Email))
+            .ForMember(dest => dest.CustomerPhone, opt => opt.MapFrom(src => src.Customer.User.PhoneNumber));
+
+
         // Reverse mapping DiscountDto → Discount
         CreateMap<DiscountDto, Discount>();
 

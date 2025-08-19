@@ -79,7 +79,6 @@ namespace FoodOrderingAPI.Controllers
         [HttpPut("{restaurantId}/orders/{orderId}/status")]
         public async Task<IActionResult> UpdateOrderStatus(string restaurantId, Guid orderId, [FromBody] OrderStatusUpdateDto dto)
         {
-
             if (dto == null)
             {
                 return BadRequest("Request body is missing.");
@@ -95,7 +94,10 @@ namespace FoodOrderingAPI.Controllers
                 var order = await _OrderService.UpdateOrderStatusAsync(orderId, dto.Status, restaurantId);
                 if (order == null)
                     return NotFound($"Order with ID '{orderId}' not found.");
-                return Ok(order);
+
+                // Corrected the mapping issue by ensuring the mapped object is used properly
+                var restaurantOrderDto = _mapper.Map<RestaurantOrderDto>(order);
+                return Ok(restaurantOrderDto);
             }
             catch (InvalidOperationException ex)
             {
