@@ -1,0 +1,5 @@
+<span *ngFor="let star of [].constructor(maxStars); let i = index"
+      (click)="setRating(i + 1)"
+      style="cursor: pointer; font-size: 1.8rem; margin-right: 5px;">
+  <i [ngClass]="i < rating ? 'fa-solid fa-star text-warning' : 'fa-regular fa-star text-muted'"></i>
+</span>

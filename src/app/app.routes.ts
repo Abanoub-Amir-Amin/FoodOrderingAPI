@@ -27,7 +27,7 @@ import { Container } from './components/deliveryManDashboard/container/container
 import { Profile } from './components/deliveryManDashboard/profile/profile';
 import { AvailbilityStatus } from './components/deliveryManDashboard/availbility-status/availbility-status';
 import { Orders } from './components/deliveryManDashboard/orders/orders';
-import { RestaurantItems } from './components/pages/restaurant-items/restaurant-items';
+// import { RestaurantItems } from './components/pages/restaurant-items/restaurant-items';
 import { ShoppingCart } from './components/Shopping-cart/shopping-cart/shopping-cart';
 import { PlaceOrder } from './components/place-order/place-order';
 import { CustomerProfile } from './components/CustomerDashboard/customer-profile/customer-profile';
@@ -36,6 +36,7 @@ import { title } from 'process';
 import { CustomerContainer } from './components/CustomerDashboard/customer-container/customer-container';
 import { CustomerAddresses } from './components/CustomerDashboard/customer-addresses/customer-addresses';
 import { CustomerInbobox } from './components/CustomerDashboard/customer-inbobox/customer-inbobox';
+import { ResturantAllDetails } from './components/pages/resturant-all-details/resturant-all-details';
 
 // Guard Functions for Angular 20
 export const authGuard = () => {
@@ -125,6 +126,7 @@ export const routes: Routes = [
       import('./components/newpassword/newpassword').then((m) => m.NewPassword),
   },
   { path: 'getAllResturant', component: Getallresturant },
+  { path: 'restaurant/:name/items', component: ResturantAllDetails },
 
   {
     path: 'home',
@@ -139,7 +141,7 @@ export const routes: Routes = [
   { path: 'billing', component: BillingPageComponent },
   { path: 'order', component: OrderHistoryComponent },
 
-  { path: 'restaurant/:name/items', component: RestaurantItems },
+  // { path: 'restaurant/:name/items', component: RestaurantItems },
 
   {
     path: 'user',

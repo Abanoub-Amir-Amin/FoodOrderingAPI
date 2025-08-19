@@ -1,0 +1,60 @@
+/* الهيدر */
+.restaurant-header {
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.restaurant-header h2 {
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+}
+
+.open-status {
+  background: linear-gradient(90deg, #28a745, #218838);
+  font-size: 0.9rem;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+/* صندوق التقييم */
+.rating-box {
+  width: 100px;
+  border-radius: 0.75rem;
+  text-align: center;
+}
+
+.rating-box .text-warning {
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+}
+
+/* قائمة الأطباق */
+.card img.rounded-circle {
+  transition: transform 0.3s ease-in-out;
+}
+
+.card img.rounded-circle:hover {
+  transform: scale(1.05);
+}
+
+.card-body h6 {
+  font-size: 1rem;
+}
+
+.btn {
+  font-size: 0.85rem;
+}
+
+/* Customer Reviews */
+.card p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.card strong {
+  font-size: 1rem;
+}
+
+app-rating {
+  display: block;
+  margin: 2px 0;
+}
