@@ -154,14 +154,14 @@ namespace FoodOrderingAPI.Services
 
             var oldStatus = order.Status;
 
+            bool assigned = await assignDelivaryManToOrder(order);
+
+            if (!assigned)
+                throw new InvalidOperationException("No delivery man available to assign to this order.");
+
+
             if (oldStatus == StatusEnum.WaitingToConfirm && newStatus == StatusEnum.Preparing)
             {
-                //order.Status = StatusEnum.Preparing;
-                bool assigned = await assignDelivaryManToOrder(order);
-
-                if (!assigned)
-                    throw new InvalidOperationException("No delivery man available to assign to this order.");
-
                 var confirmResult = await ConfirmOrder(order);
                 if (!confirmResult.Success)
                     throw new InvalidOperationException("Order confirmation failed.");
@@ -225,8 +225,7 @@ namespace FoodOrderingAPI.Services
             */
 
             _notificationRepo.CreateNotificationTo(order.CustomerID,
-
-                $"Order number {order.OrderNumber} was cancelled by restaurant.,\n Reason: {reason}");
+                    $"Order number {order.OrderNumber} was cancelled by restaurant.");
 
             return true;
 
