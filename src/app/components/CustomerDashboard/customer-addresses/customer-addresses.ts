@@ -36,6 +36,9 @@ addsucessMessage='';
 adderrorMessage='';
 
 //for map model to edit model
+updateSuccessMessage=''
+updateErrorMessage=''
+
 selectedAddress: AddressDto ={
 label:"",
 street:"",
@@ -138,6 +141,8 @@ viewOnMap(AddressId:string,label:string,street:string,city:string,lat:number,lng
       }, 300);
     }
  this.openModal('map')
+ this.updateSuccessMessage=''
+ this.updateErrorMessage=''
 }
 
 closeViewMap(){
@@ -182,16 +187,16 @@ DeleteAddress(AddressId:string){
 UpdateAddress(){
   this.addressService.updateAddress(this.selectedAddId,this.selectedAddress).subscribe({
     next:(res)=>{
-      this.successMessage="update this address successfully"
-      this.ErrorMessage=""
+      this.updateSuccessMessage ="update this address successfully"
+      this.updateErrorMessage=""
       console.log(res)
       this.getAddresses();
 
     },
     error:(err)=> {
-    this.ErrorMessage="Failed update This Address"
+    this.updateErrorMessage="Failed update This Address"
       console.log(err);
-      this.successMessage=""
+      this.updateSuccessMessage=""
     },
   })
 }
@@ -425,13 +430,17 @@ AddAddress(){
   this.addressService.addAddress(this.AddedAddress).subscribe({
     next:(res)=>{
       this.successMessage="Add this address successfully"
-      this.ErrorMessage=""
+      this.adderrorMessage=""
       console.log(res)
       this.getAddresses();
       this.isAdded=true
+      this.closeModal()
     },
     error:(err)=> {
-    this.ErrorMessage="Failed Adding This Address"
+      if(err?.error?.addingErrors[0])
+          this.adderrorMessage=err?.error?.addingErrors[0]
+        else
+            this.adderrorMessage="Failed Adding This Address"
       console.log(err);
       this.successMessage=""
     },
@@ -469,6 +478,8 @@ if (!modalTemplate) {
       const portal = new TemplatePortal(modalTemplate, this.vcr);
       this.overlayRef.attach(portal);
     }
+    this.adderrorMessage=''
+    this.successMessage=''
   }
 
   // قفل المودال

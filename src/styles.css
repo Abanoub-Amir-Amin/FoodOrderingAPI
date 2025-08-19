@@ -31,6 +31,9 @@
   --dark-orange: #b4551b;
   --green: #63b37b;
   --light-grey: #f9f9f9;
+  --border-light: #e9ecef;
+  --text-gray: #6c757d;
+  --light-orange: #fdebd0;
 
   /* Spacing */
   --spacing-xs: 0.5rem;

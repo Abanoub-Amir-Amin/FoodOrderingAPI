@@ -16,7 +16,7 @@
                 </div>
 
                 <!-- Success Alert -->
-                <div *ngIf="successMessage" id="successAlert" class="alert alert-success" style="display: none;">
+                <div *ngIf="successMessage" id="successAlert" class="alert alert-success" >
                     <i class="fas fa-check-circle"></i>
                     <span id="successMessage">{{successMessage}}</span>
                 </div>
@@ -71,6 +71,18 @@
           <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+          <!-- Error Alert -->
+                <div *ngIf="adderrorMessage" id="errorAlert" class="alert alert-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="errorMessage">{{adderrorMessage}}</span>
+                </div>
+
+                <!-- Success Alert -->
+                <div *ngIf="addsucessMessage" id="successAlert" class="alert alert-success" >
+                    <i class="fas fa-check-circle"></i>
+                    <span id="successMessage">{{addsucessMessage}}</span>
+                </div>
+
           <app-map-component 
             (mapReady)="onMapReady($event)" 
             (addressInfo)="setAddress($event)" 
@@ -100,6 +112,17 @@
         </div>
         <div class="modal-body">
           <div class="location-section">
+             <div *ngIf="updateErrorMessage" id="errorAlert" class="alert alert-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="errorMessage">{{updateErrorMessage}}</span>
+                </div>
+
+                <!-- Success Alert -->
+                <div *ngIf="updateSuccessMessage" id="successAlert" class="alert alert-success" >
+                    <i class="fas fa-check-circle"></i>
+                    <span id="successMessage">{{updateSuccessMessage}}</span>
+                </div>
+
             <h3 class="section-title">
               <i class="fas fa-map-marker-alt"></i> Your Location
             </h3>

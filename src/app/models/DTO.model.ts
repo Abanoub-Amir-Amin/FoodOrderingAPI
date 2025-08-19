@@ -237,7 +237,7 @@ export interface OrderDetailDTO {
     orderDate: string; // ISO Date string
     status: StatusEnum;
 
-    items: OrderItemDto[];
+    items: {$id:string,$values:OrderItemDto[];}
 
     restaurantName: string;
     restaurantLocation: string;

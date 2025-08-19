@@ -17,7 +17,7 @@ export class CustomerOrders {
   orderNumber:0,
   orderDate:'',
   status:0,
-  items:[],
+  items:{$id:'',$values:[]},
   restaurantName: '',
   restaurantLocation: '',
   restaurantPhone: '',
