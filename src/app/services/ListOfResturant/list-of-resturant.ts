@@ -32,8 +32,8 @@ export class ListOfResturant {
     return this.http.get<ResturantInterface>(`${this.apiUrl}/${id}`);
   }
 
-  getItemsByRestaurantName(name: string): Observable<{ $values: RestaurantItem[] }> {
-    return this.http.get<{ $values: RestaurantItem[] }>(`${this.itemsApiUrl}?restaurantName=${name}`);
+  getItemsByRestaurantName(name: string): Observable<{ $values: RestaurantItem [] }> {
+    return this.http.get<{ $values: RestaurantItem [] }>(`${this.itemsApiUrl}?restaurantName=${name}`);
   }
 
   // ✅ دالة جديدة تجيب كل الريفيوهات

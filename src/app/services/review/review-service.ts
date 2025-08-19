@@ -7,7 +7,7 @@ import { isPlatformBrowser } from '@angular/common';
 export interface ReviewDTO {
   reviewId?: string;
   customerId: string;
-  restaurantId: string;
+
   orderId: string;
   rating: number;
   comment: string;
@@ -70,6 +70,6 @@ export class ReviewService {
 
   // DELETE - review
   deleteReview(reviewId: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${reviewId}`, { headers: this.headers });
+    return this.http.delete(`${this.apiUrl}/${reviewId}`);
   }
 }

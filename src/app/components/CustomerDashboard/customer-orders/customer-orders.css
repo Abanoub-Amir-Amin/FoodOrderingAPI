@@ -1,3 +1,19 @@
+
+.star-rating {
+  cursor: pointer;
+}
+
+.star {
+  color: #ccc; /* لون رمادي افتراضي */
+  font-size: 24px;
+  margin-right: 5px;
+  transition: color 0.3s ease;
+}
+
+.star.selected {
+  color: gold; /* لما تكون مختارة تبقى ذهبية */
+}
+
 .outer-container {
     max-width: 1150px;
     margin: 0 auto;

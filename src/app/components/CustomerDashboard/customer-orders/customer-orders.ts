@@ -6,10 +6,11 @@ import { Overlay, OverlayModule, OverlayRef } from '@angular/cdk/overlay';
 import { PortalModule, TemplatePortal } from '@angular/cdk/portal';
 import { StatustitlePipe } from '../../pipes/statustitle-pipe';
 import { ReviewDTO, ReviewService } from '../../../services/review/review-service';
-import { FormsModule } from '@angular/forms'; // ✅ استيراد FormsModule
+import { FormsModule } from '@angular/forms';
+import { Rating } from "../../pages/rating/rating"; // ✅ استيراد FormsModule
 @Component({
   selector: 'app-customer-orders',
-  imports: [CommonModule,OverlayModule,PortalModule,StatustitlePipe,FormsModule ],
+  imports: [CommonModule, OverlayModule, PortalModule, StatustitlePipe, FormsModule, Rating],
   templateUrl: './customer-orders.html',
   styleUrl: './customer-orders.css'
 })
@@ -175,7 +176,7 @@ submitReview() {
   const review: ReviewDTO = {
     customerId: customerId ?? '', // fallback to empty string if null
     orderId: this.currentOrderId,
-    restaurantId:'',
+   
     //restaurantId: this.selectedOrderDetails?.restaurantId || '', // لو عندك
     rating: this.reviewRating,
     comment: this.reviewComment
