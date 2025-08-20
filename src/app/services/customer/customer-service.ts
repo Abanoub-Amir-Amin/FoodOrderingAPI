@@ -6,7 +6,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { ApiResponse } from '../deliveryman.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CustomerService {
   userid:string = '';  

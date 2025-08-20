@@ -21,7 +21,7 @@ import { AuthService } from '../../../services/auth';
   imports: [CommonModule, MatCardModule, NgxChartsModule],
 })
 export class DashboardAnalytics implements OnInit, OnChanges {
-  @Input() restaurantID!: string;
+  @Input() restaurantId!: string;
   weeklyOrders: { name: string; value: number }[] = [];
 
   private authService = inject(AuthService);
@@ -36,8 +36,8 @@ export class DashboardAnalytics implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['restaurantID'] && !changes['restaurantID'].isFirstChange()) {
-      if (this.restaurantID) {
+    if (changes['restaurantId'] && !changes['restaurantId'].isFirstChange()) {
+      if (this.restaurantId) {
         this.loadOrders();
       } else {
         this.weeklyOrders = [];
@@ -47,49 +47,52 @@ export class DashboardAnalytics implements OnInit, OnChanges {
   }
 
   private loadOrders(): void {
-    if (!this.restaurantID) {
+    if (!this.restaurantId) {
       this.weeklyOrders = [];
       this.cdRef.markForCheck();
       return;
     }
-    console.log("Restaurant analytics ID", this.restaurantID);
+    console.log("Restaurant ID", this.restaurantId);
     const headers = this.getAuthHeaders();
 
     this.http
-      .get<any>(`${this.baseUrl}/order/${this.restaurantID}/orders?status=`, { headers })
+      .get<any[]>(`${this.baseUrl}/order/${this.restaurantId}/orders?status=`, { headers })
       .subscribe({
         next: (orders) => {
           console.log("orders:", orders);
-          // Check for nested $values array
-          const ordersArray = orders?.$values ?? orders;
-
-          if (!Array.isArray(ordersArray)) {
+          if (!Array.isArray(orders)) {
             this.weeklyOrders = [];
-            this.cdRef.markForCheck();
+            this.cdRef.detectChanges();
             return;
           }
 
           const dayMap = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
           const counts: Record<string, number> = {
-            Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0,
+            Mon: 0,
+            Tue: 0,
+            Wed: 0,
+            Thu: 0,
+            Fri: 0,
+            Sat: 0,
+            Sun: 0,
           };
 
-          ordersArray.forEach(o => {
-            if (o.orderDate) {
-              const date = new Date(o.orderDate);
+          orders.forEach((o) => {
+            if (o.createdAt) {
+              const date = new Date(o.createdAt);
               const dow = (date.getDay() + 6) % 7; // Monday=0 ... Sunday=6
               counts[dayMap[dow]]++;
             }
           });
 
-          this.weeklyOrders = dayMap.map(day => ({ name: day, value: counts[day] }));
-          this.cdRef.markForCheck();
+          this.weeklyOrders = dayMap.map((day) => ({ name: day, value: counts[day] }));
+
+          setTimeout(() => this.cdRef.detectChanges());
         },
-        error: (err) => {
-          console.error('Failed to load orders', err);
+        error: () => {
           this.weeklyOrders = [];
-          this.cdRef.markForCheck();
-        }
+          setTimeout(() => this.cdRef.detectChanges());
+        },
       });
   }
 

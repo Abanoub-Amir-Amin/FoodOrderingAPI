@@ -19,7 +19,7 @@ import { AuthService } from '../../../services/auth';
   imports: [CommonModule, MatCardModule],
 })
 export class MostOrdered implements OnInit, OnChanges {
-  @Input() restaurantID!: string;
+  @Input() restaurantId!: string;
   mostOrdered: any[] = [];
 
   private http = inject(HttpClient);
@@ -54,18 +54,18 @@ export class MostOrdered implements OnInit, OnChanges {
       this.mostOrdered = [];
       return;
     }
-    console.log("Restaurant ID", this.restaurantID);
+    console.log("Restaurant ID", this.restaurantId);
     const headers = this.getAuthHeaders();
 
-    this.http.get<any>(`${this.baseUrl}/item/${this.restaurantID}/items/most-ordered`, { headers }).subscribe({
-  next: (data) => {
-    console.log("data:", data);
-    this.mostOrdered = Array.isArray(data.$values) ? data.$values : [];
-  },
-  error: () => {
-    this.mostOrdered = [];
-  },
-});
+    this.http.get<any[]>(`${this.baseUrl}/item/${this.restaurantId}/items/most-ordered`, { headers }).subscribe({
+      next: (data) => {
+        console.log("data:", data);
+        this.mostOrdered = Array.isArray(data) ? data : [];
+      },
+      error: () => {
+        this.mostOrdered = [];
+      },
+    });
   }
 
   public getImageUrl(imageFile?: string): string {

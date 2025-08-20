@@ -1,19 +1,13 @@
 import { Component } from '@angular/core';
 
-
-
-
-
-import { MainLayoutComponent } from "../../../layout/main-layout/main-layout.component";
-import { FooterComponent } from "../../../layout/footer/footer.component";
-import { SliderComponent } from "../slider/slider.component";
+import { MainLayoutComponent } from '../../../layout/main-layout/main-layout.component';
+import { Footer } from '../../../layout/footer/footer';
+import { SliderComponent } from '../slider/slider.component';
 
 @Component({
   selector: 'app-mainuser',
-  imports: [ MainLayoutComponent, FooterComponent, SliderComponent],
+  imports: [MainLayoutComponent, Footer, SliderComponent],
   templateUrl: './mainuser.component.html',
-  styleUrl: './mainuser.component.css'
+  styleUrl: './mainuser.component.css',
 })
-export class MainuserComponent {
-
-}
+export class MainuserComponent {}

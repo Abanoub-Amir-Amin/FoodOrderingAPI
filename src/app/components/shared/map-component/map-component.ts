@@ -73,11 +73,19 @@ export class MapComponent {
       this.setLocationMarker(this.latitude, this.longitude);
     } else if (navigator.geolocation) {
       // fallback to user location
+    if (this.latitude !== null && this.longitude !== null && this.map) {
+      // Center map to input latitude and longitude if provided
+      this.map.setView([this.latitude, this.longitude], 15);
+      this.setLocationMarker(this.latitude, this.longitude);
+    } else if (navigator.geolocation) {
+      // fallback to user location
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
           if (this.map) {
+            this.map.setView([lat, lng], 15);
+            this.setLocationMarker(lat, lng);
             this.map.setView([lat, lng], 15);
             this.setLocationMarker(lat, lng);
           }
@@ -93,8 +101,14 @@ export class MapComponent {
         this.setLocationMarker(e.latlng.lat, e.latlng.lng);
       });
     }
-  }
 
+    if (this.map) {
+      this.map.on('click', (e: any) => {
+        this.setLocationMarker(e.latlng.lat, e.latlng.lng);
+      });
+    }
+  }
+ }
 
   ngOnDestroy() {
      if (this.map) {
@@ -105,7 +119,6 @@ export class MapComponent {
     this.isMapInitialized = false;
   }
   }
-
   async setLocationMarker(lat: number, lng: number) {
     const L = await import('leaflet');
 
@@ -173,5 +186,4 @@ try {
     console.error('Reverse geocoding failed:', err);
   }
 }
-
-}
+ }
