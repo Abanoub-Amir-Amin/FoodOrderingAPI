@@ -1,6 +1,7 @@
 ﻿using FoodOrderingAPI.DTO;
 using FoodOrderingAPI.Interfaces;
 using FoodOrderingAPI.Models;
+using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodOrderingAPI.Repository
@@ -63,10 +64,10 @@ namespace FoodOrderingAPI.Repository
             var foundaddress = await dbContext.Addresses
                 .Where(a => a.CustomerID == UserId 
                 && Math.Round(a.Latitude,4) ==Math.Round(addressdto.Latitude,4) 
-                &&Math.Round(a.Longitude) == Math.Round(addressdto.Longitude))
+                &&Math.Round(a.Longitude,4) == Math.Round(addressdto.Longitude,4))
                 .ToListAsync();
             if (foundaddress.Count > 0)
-                throw new ArgumentException("this address added before");
+                throw new ArgumentException("This address already exists!");
             Customer customer = await dbContext.Customers.Include(c => c.Addresses).FirstOrDefaultAsync(c => c.CustomerID == UserId);
             bool isDefault = false;
             if(customer.Addresses==null || customer.Addresses?.Count==0)
@@ -85,10 +86,36 @@ namespace FoodOrderingAPI.Repository
             return address;
             //dbContext.SaveChanges();
         }
+        public async Task<Address> AddToOrder(Address addressdto)
+        {
+            Address address = new Address()
+            {
+                Label = addressdto.Label,
+                Street = addressdto.Street,
+                City = addressdto.City,
+                Longitude = addressdto.Longitude,
+                Latitude = addressdto.Latitude,
+                IsDefault = true,
+                CustomerID = null
+            };
+            dbContext.Addresses.Add(address);
+            return address;
+        }
+
         public async Task<bool> Update(Guid AddressId, AddressDTO addressdto)
         {
+
             Address address = await GetAddress(AddressId);
             if (address == null) { return false; }
+            var foundaddress = await dbContext.Addresses
+             .Where(a => a.CustomerID == address.CustomerID
+             && Math.Round(a.Latitude, 4) == Math.Round(addressdto.Latitude, 4)
+             && Math.Round(a.Longitude,4) == Math.Round(addressdto.Longitude,4)
+             && a.AddressID != AddressId)
+             .ToListAsync();
+            if (foundaddress.Count > 0)
+                throw new ArgumentException("This address already exists!");
+
             address.Street = addressdto.Street;
             address.City = addressdto.City;
             address.Longitude = addressdto.Longitude;
@@ -102,7 +129,8 @@ namespace FoodOrderingAPI.Repository
             Address address = await GetAddress(AddressId);
             if (address == null) { return false; }
             string customerId = address.CustomerID;
-            address.CustomerID = null;
+            //address.CustomerID = null;
+            dbContext.Remove(address);
             if (address.IsDefault)
             {
                 var newDefaultAddress = await dbContext.Addresses.Where(a => a.CustomerID==customerId).FirstOrDefaultAsync();

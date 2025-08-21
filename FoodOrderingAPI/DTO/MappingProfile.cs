@@ -284,10 +284,10 @@ public class MappingProfile : Profile
 
 
         CreateMap<Order, OrderDetailDTO>()
-        .ForMember(dest => dest.Address, opt => opt.MapFrom(src => $"{src.Address.Label} - {src.Address.Street}, {src.Address.City}"))
+        .ForMember(dest => dest.CustomerAddress, opt => opt.MapFrom(src => $"{src.Address.Label} - {src.Address.Street}, {src.Address.City}"))
         .ForMember(dest => dest.DelivaryName, opt => opt.MapFrom(src => src.DeliveryMan.User.UserName))
+        .ForMember(dest => dest.DelivaryPhone, opt => opt.MapFrom(src => src.DeliveryMan.User.PhoneNumber))
         .ForMember(dest => dest.DelivaryPrice, opt => opt.MapFrom(src => src.DelivaryPrice))
-        .ForMember(dest => dest.DiscountAmount, opt => opt.MapFrom(src => src.DiscountAmount))
         .ForMember(dest => dest.items, opt => opt.MapFrom(src => src.OrderItems))
         .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
         .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber))
