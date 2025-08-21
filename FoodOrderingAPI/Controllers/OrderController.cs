@@ -242,7 +242,7 @@ namespace FoodOrderingAPI.Controllers
         }
         [Authorize(Roles = "Customer")]
         [HttpGet("OrderForCustomerbystatus")]
-        public async Task<IActionResult> GetOrderForCustomerByStatus(StatusEnum[] status)
+        public async Task<IActionResult> GetOrderForCustomerByStatus(StatusEnum status)
         {
             var CustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var orders = await _OrderService.GetOrdersByStatusAsyncForCustomer(CustomerId, status);

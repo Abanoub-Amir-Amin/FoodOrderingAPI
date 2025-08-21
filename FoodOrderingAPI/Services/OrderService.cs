@@ -424,7 +424,8 @@ namespace FoodOrderingAPI.Services
 
                 Order order = _mapper.Map<Order>(cart);
 
-                order.AddressID = add.AddressID;
+                Address orderAddress = await _addressRepo.AddToOrder(add);
+                order.AddressID = orderAddress.AddressID;
 
                 order.PhoneNumber = cart.Customer.User.PhoneNumber;
 
@@ -512,12 +513,15 @@ namespace FoodOrderingAPI.Services
 
         }
 
-        public async Task<List<OrderViewDTO>> GetOrdersByStatusAsyncForCustomer(string customerId, StatusEnum[] statuses)
+        public async Task<List<OrderViewDTO>> GetOrdersByStatusAsyncForCustomer(string customerId, StatusEnum statuses)
         {
+            List<Order> filteredOrders;
             var orders = await _repository.getOrders(customerId);
-
-            // Filter by status using case-insensitive comparison
-            var filteredOrders = orders.Where(o => statuses.Contains(o.Status));
+            if (statuses == StatusEnum.All)
+                filteredOrders = orders;
+            else
+                // Filter by status using case-insensitive comparison
+                filteredOrders = orders.Where(o => o.Status == statuses).ToList();
 
             return _mapper.Map<List<OrderViewDTO>>(filteredOrders);
         }
