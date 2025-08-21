@@ -82,6 +82,7 @@ body {
 }
 
 /* Button Styles */
+
 .btn-orange {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
@@ -176,7 +177,9 @@ body {
     gap: 0.5rem;
     flex-wrap: wrap;
 }
-
+.btn{
+    
+}
 .btn-outline-primary,
 .btn-outline-danger,
 .btn-outline-warning {
@@ -189,8 +192,16 @@ body {
     justify-content: center;
     transition: all 0.3s ease;
     border-width: 2px;
+    /* background: unset; */
+    color: var(--bs-btn-color);
+    background-color: var(--bs-btn-bg);
 }
-
+.btn-outline-primary:hover,
+.btn-outline-danger:hover,
+.btn-outline-warning:hover{
+    color: var(--bs-btn-hover-color);
+    background-color: var(--bs-btn-hover-bg);
+}
 .btn-outline-primary:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);

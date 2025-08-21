@@ -172,7 +172,6 @@ closeViewMap(){
 DeleteAddress(AddressId:string){
   this.addressService.deleteAddress(AddressId).subscribe({
     next:(res)=>{
-      this.successMessage="deleted this address successfully"
       this.ErrorMessage=""
       console.log(res)
       this.getAddresses();
@@ -188,6 +187,10 @@ UpdateAddress(){
   this.addressService.updateAddress(this.selectedAddId,this.selectedAddress).subscribe({
     next:(res)=>{
       this.updateSuccessMessage ="update this address successfully"
+      setTimeout(()=>{
+        this.updateSuccessMessage=''
+      },10000)
+
       this.updateErrorMessage=""
       console.log(res)
       this.getAddresses();

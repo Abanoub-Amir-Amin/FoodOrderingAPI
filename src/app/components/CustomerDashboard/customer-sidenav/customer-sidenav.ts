@@ -1,5 +1,5 @@
 import { isPlatformBrowser, NgClass, NgIf } from '@angular/common';
-import { Component, HostListener, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { SidenavService } from '../../../services/DeliveryManDashboardService/sidenav.service';
 import { AuthService } from '../../../services/auth';
@@ -14,6 +14,7 @@ export class CustomerSidenav implements OnInit {
    collapsed = false;
   screenWith = 0;
   navData = customernavbarData;
+  @ViewChild('sidenav', { static: false }) SideNav!: ElementRef;
 
   constructor(
     private sidenavService: SidenavService,
@@ -59,5 +60,12 @@ export class CustomerSidenav implements OnInit {
     event.preventDefault();
     this.loginService.logout();
   }
-
+@HostListener('document:click', ['$event'])
+  handleClickOutside(event: Event) {
+    const clickedInside = this.SideNav.nativeElement.contains(event.target);
+    
+    if (!clickedInside ) {
+     this.closeSidenav()
+    }
+  }
 }

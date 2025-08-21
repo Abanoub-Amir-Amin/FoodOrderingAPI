@@ -136,7 +136,7 @@ body {
 }
 
 /* Button Styles */
-.btn:not(.special-btn) {
+/* .btn:not(.special-btn) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -149,7 +149,7 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   min-height: 48px;
-}
+} */
 
 .btn-primary {
   background: linear-gradient(
@@ -363,8 +363,8 @@ button {
   color: #fff;
   transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease,
     border-color 0.2s ease;
-}
-.btn:hover {
+} 
+/* .btn:hover {
   transform: translateY(-1px);
   background: var(--container-color);
   border: 3px solid var(--first-color);

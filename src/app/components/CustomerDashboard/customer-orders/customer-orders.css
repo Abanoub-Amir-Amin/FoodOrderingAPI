@@ -411,6 +411,11 @@ body.modal-open {
 }
 
 /* Mobile Responsive Styles */
+@media (max-width: 1160px){
+.btn-view{
+    margin-bottom: 0.2rem;
+}
+}
 @media (max-width: 992px) {
     body {
         padding: 15px 5px;

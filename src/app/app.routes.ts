@@ -32,11 +32,11 @@ import { title } from 'process';
 import { ChatBot } from './components/chat-bot/chat-bot';
 import { ShoppingCart } from './components/pages/Shopping-cart/shopping-cart/shopping-cart';
 import { ResturantAllDetails } from './components/pages/resturant-all-details/resturant-all-details';
-import { CustomerContainer } from './components/pages/CustomerDashboard/customer-container/customer-container';
-import { CustomerProfile } from './components/pages/CustomerDashboard/customer-profile/customer-profile';
-import { CustomerAddresses } from './components/pages/CustomerDashboard/customer-addresses/customer-addresses';
-import { CustomerOrders } from './components/pages/CustomerDashboard/customer-orders/customer-orders';
-import { CustomerInbobox } from './components/pages/CustomerDashboard/customer-inbobox/customer-inbobox';
+import { CustomerContainer } from './components/CustomerDashboard/customer-container/customer-container';
+import { CustomerProfile } from './components/CustomerDashboard/customer-profile/customer-profile';
+import { CustomerAddresses } from './components/CustomerDashboard/customer-addresses/customer-addresses';
+import { CustomerOrders } from './components/CustomerDashboard/customer-orders/customer-orders';
+import { CustomerInbobox } from './components/CustomerDashboard/customer-inbobox/customer-inbobox';
 
 // Guard Functions for Angular 20
 export const authGuard = () => {
@@ -183,9 +183,7 @@ export const routes: Routes = [
     title: 'Dashboard',
   },
 
-  // Wildcard route - must be last
-  { path: '**', redirectTo: '/home' },
-
+  
   //Customer Dashboard
   {
     path: 'CustomerDashboard',
@@ -220,12 +218,14 @@ export const routes: Routes = [
     ],
     title: 'Customer Dashboard',
   },
-
   {
     path: 'shoppingcart',
     component: ShoppingCart,
     canActivate: [roleGuard('Customer')],
   },
+  // Wildcard route - must be last
+  { path: '**', redirectTo: '/home' },
+
 ];
 
 

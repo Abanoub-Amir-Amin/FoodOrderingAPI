@@ -30,7 +30,7 @@ export class DashboardAnalytics implements OnInit, OnChanges {
   private cdRef = inject(ChangeDetectorRef);
 
   ngOnInit() {
-    if (this.restaurantID) {
+    if (this.restaurantId) {
       this.loadOrders();
     }
   }

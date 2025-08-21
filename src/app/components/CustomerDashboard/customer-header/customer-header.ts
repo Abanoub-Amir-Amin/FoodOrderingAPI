@@ -1,7 +1,9 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, ElementRef, HostListener, Inject, Input, PLATFORM_ID, signal, ViewChild } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { AuthService } from '../../../services/auth';
+import { Router } from '@angular/router';
+import { F } from '@angular/cdk/keycodes';
 
 // Define proper interfaces for type safety
 interface Notification {
@@ -19,6 +21,12 @@ interface Notification {
   styleUrl: './customer-header.css'
 })
 export class CustomerHeader {
+//menu
+isActive:boolean=false;
+mobileOpen:boolean=false;
+@ViewChild('menu', { static: false }) MenuEl!: ElementRef;
+@ViewChild('toggle', { static: false }) ToggleEl!: ElementRef;
+
   connection!: signalR.HubConnection;
   @Input() collapsed = false;
   @Input() screenWidth = 0;
@@ -26,10 +34,15 @@ export class CustomerHeader {
  
   // Properly typed notifications array
   notifications: Notification[] = [];
-  constructor(private authService: AuthService) {}
+  isBrowser: boolean;
+  username:string=''
+  constructor(private authService: AuthService, private router: Router ,@Inject(PLATFORM_ID) private platformId: Object) {
+       this.isBrowser = isPlatformBrowser(this.platformId);
+
+  }
  
   async ngOnInit() {
-    await fetch(`http://localhost:5000/api/notification/GetNotifications/${this.authService.getUserId()}`, {
+       await fetch(`http://localhost:5000/api/notification/GetNotifications/${this.authService.getUserId()}`, {
       method: "GET",
       credentials: "include"
     })
@@ -68,6 +81,16 @@ export class CustomerHeader {
         });
       })
       .catch(err => console.error('SignalR connection failed:', err));
+      await fetch(`http://localhost:5000/api/Customer/ByID/${this.authService.getUserId()}`, {
+      method: "GET",
+      headers :this.getAuthHeader()
+    })
+    .then(response => response.json())
+    .then(data => {
+      this.username=data.userName
+    })
+    .catch(err => console.error('Error load user data:', err));
+
   }
 
   // Helper method to convert string/any message to proper Notification object
@@ -235,4 +258,53 @@ clearAllNotifications() {
     this.notifications = [];
   }
 }
+
+
+
+//navbar
+ navigate(path:string) {
+    // Implement login logic or redirect to login page
+    this.router.navigate([path]);
+    this.closemenu()
+  }
+
+  toggleMenu(){
+    // debugger;
+    this.isActive=!this.isActive
+    this.mobileOpen=!this.mobileOpen
+    console.log(this.isActive)
+    console.log(this.mobileOpen)
+  }
+
+  @HostListener('document:click', ['$event'])
+  handleClickOutside(event: Event) {
+    const clickedInside = this.MenuEl.nativeElement.contains(event.target);
+    const clickedToggle = this.ToggleEl.nativeElement.contains(event.target);
+    
+    if (!clickedInside && !clickedToggle&& this.mobileOpen) {
+      this.mobileOpen = false;
+      this.isActive=false;
+    }
+  }
+  closemenu(){
+    if(window.innerWidth<=600)
+    {
+      this.isActive=false;
+      this.mobileOpen=false;
+    }
+  }
+  @HostListener('window:resize')
+  onResize() {
+    if (window.innerWidth > 600 && this.mobileOpen) {this.mobileOpen=false;this.isActive=false}
+  }
+   getAuthHeader(): Headers {
+    if (!this.isBrowser) return new Headers();
+
+    const token = sessionStorage.getItem('authToken');
+    // console.log('Token Info', token);
+    return token
+      ? new Headers({ Authorization: `Bearer ${token}` })
+      : new Headers();
+  }
+
 }

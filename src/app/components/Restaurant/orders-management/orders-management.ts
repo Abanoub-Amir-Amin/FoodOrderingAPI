@@ -123,7 +123,7 @@ export class OrdersManagement implements OnInit {
   }
 
   acceptOrder(order: any): void {
-    this.changeOrderStatus(order, 2);
+    this.changeOrderStatus(order, 'Preparing');
   }
 
   finishOrder(order: any): void {
@@ -132,7 +132,7 @@ export class OrdersManagement implements OnInit {
 
   rejectOrder(order: any): void {
     if (confirm('Are you sure you want to reject this order?')) {
-      this.changeOrderStatus(order, 4);
+      this.changeOrderStatus(order, 'Delivered');
     }
   }
 

@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  ChangeDetectorRef,
-  ChangeDetectionStrategy,
-  inject,
-} from '@angular/core';
+
 import {
   Component,
   OnInit,
@@ -28,7 +21,6 @@ import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-restaurant-dashboard',
-  templateUrl: './dashboard.html',
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
   standalone: true,
@@ -86,12 +78,9 @@ export class RestaurantDashboardComponent implements OnInit, AfterViewInit {
   private getAuthHeaders(): HttpHeaders {
     const token = sessionStorage.getItem('authToken');
     console.log("token info:", token);
-    const token = sessionStorage.getItem('authToken');
-    console.log("token info:", token);
     return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
   }
 
-  private loadRestaurant(id: string): void {
   private loadRestaurant(id: string): void {
     this.isLoading = true;
     const headers = this.getAuthHeaders();

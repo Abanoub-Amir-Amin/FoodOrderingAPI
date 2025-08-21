@@ -1,16 +1,63 @@
-<div class="head" [ngClass]="getHeadClass()">
+<div class="head" [ngClass]="getHeadClass()" id="navbar"> 
   <div class="head-content">
     <div class="head-content-left">
-      <div class="search-container">
-        <!-- <div class="welcome">
-          <span class="welcome-format">Welcome,</span> {{ userName }}
+      <!-- <div class="head-menu d-flex ">
+        <div class="head-menu-item">
+          <button
+            type="button"
+            class="head-menu-item-btn left-item-btn"
+            
+            (click)="navigate('/')"
+          >
+          Home
+      </button>
+        </div>
+        <div class="head-menu-item">
+          <button
+            type="button"
+            class="head-menu-item-btn left-item-btn"
+            
+            (click)="navigate('/')"
+          >
+          About
+      </button>
+        </div>
+        <div class="head-menu-item">
+          <button
+            type="button"
+            class="head-menu-item-btn left-item-btn"
+           
+            (click)="navigate('/getAllResturant')"
+          >
+          Restaurants
+      </button>
+        </div>
         </div> -->
+      <div class="search-container">
+         <div class="welcome">
+          <span class="welcome-format">Welcome, </span> {{username}}
+        </div>
       </div>
     </div>
     <div class="head-content-right">
-      <div class="head-menu">
+         <button #toggle class="mobile-menu-toggle" id="mobileToggle" [ngClass]="isActive?'active':''" (click)="toggleMenu()">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+
+      <div #menu class="head-menu" id="headMenu" [ngClass]="mobileOpen?'mobile-open':''">
+         <div class="head-menu-item">
+          <button type="button" 
+                  class="head-menu-item-btn ripple home-btn"
+                  (click)="navigate('/')"
+                 >
+            <i class="far fa-home menu-icon"></i>
+            <span class="menu-text">Home</span>
+          </button>
+        </div>
         <div class="head-menu-item">
-          <!-- Notification button with unread count badge -->
+           <!-- Notification button with unread count badge  -->
           <button
             type="button"
             class="head-menu-item-btn ripple notification-btn"
@@ -18,6 +65,7 @@
             (click)="openModal()"
           >
             <i class="far fa-bell menu-icon"></i>
+            <span class="menu-text">Notification</span>
             <!-- Unread count badge -->
             <span class="notification-badge" *ngIf="getUnreadCount() > 0">
               {{ getUnreadCount() }}
@@ -29,19 +77,31 @@
             type="button"
             class="head-menu-item-btn ripple"
             aria-label="Comments"
+            (click)="navigate('/CustomerDashboard/customer-inbox')"
           >
             <i class="far fa-comment-alt menu-icon"></i>
+            <span class="menu-text">Messages</span>
           </button>
         </div>
-      </div>
-      <div class="head-user-avatar-container">
+          <div class="head-user-avatar-container">
         <div class="head-user-avatar">
-          <img src="Assets/DeliverMan.jpeg" alt="" class="user-avatar" />
+          <img src="Assets/DeliverMan.jpeg" alt="" class="user-avatar" (click)="navigate('/CustomerDashboard/customer-profile')" />
         </div>
+      </div>
+       <button type="button menu-text" [style.display]="mobileOpen?'inline':'none'" 
+                  class="head-menu-item-btn "
+                  (click)="navigate('/CustomerDashboard/customer-profile')"
+                 >
+            <i class="far fa-user menu-icon"></i>
+            <span class=>Profile</span>
+          </button>
+      <!-- <span class="menu-text">Profile</span> -->
+
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- Enhanced Modal -->
 <div

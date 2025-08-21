@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { DashboardSummaryDto } from '../../../models/DTO.model';
 
 @Component({
   selector: 'app-dashboard-summary',
@@ -10,6 +11,7 @@ import { MatCardModule } from '@angular/material/card';
   styleUrls: ['./dashboard-summary.css'],
 })
 export class DashboardSummaryComponent {
-  @Input() restaurantSummary: DashboardSummaryComponent | null = null;
+  @Input()
+  restaurantSummary!: DashboardSummaryDto | null;
 restaurant: any;
 }

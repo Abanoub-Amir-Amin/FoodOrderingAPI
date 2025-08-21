@@ -25,9 +25,8 @@ export class MostOrdered implements OnInit, OnChanges {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
   private baseUrl = 'http://localhost:5000/api';
-
   ngOnInit() {
-    if (this.restaurantID) {
+    if (this.restaurantId) {
       this.loadMostOrdered();
     } else {
       this.mostOrdered = [];
@@ -36,7 +35,7 @@ export class MostOrdered implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['restaurantID'] && !changes['restaurantID'].isFirstChange()) {
-      if (this.restaurantID) {
+      if (this.restaurantId) {
         this.loadMostOrdered();
       } else {
         this.mostOrdered = [];
@@ -50,7 +49,7 @@ export class MostOrdered implements OnInit, OnChanges {
   }
 
   private loadMostOrdered(): void {
-    if (!this.restaurantID) {
+    if (!this.restaurantId) {
       this.mostOrdered = [];
       return;
     }
