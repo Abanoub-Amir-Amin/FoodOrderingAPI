@@ -17,11 +17,12 @@ import { PLATFORM_ID } from '@angular/core';
 import { DeliverymanService } from '../../../../services/deliveryman.service';
 import { CustomValidators } from '../../../../services/validators.service';
 import { DeliveryManRegistration } from '../../../../services/deliveryman.model';
+import { PasswordModule } from 'primeng/password';
 
 @Component({
   standalone: true,
   selector: 'app-delivery-man-register',
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule, PasswordModule],
   templateUrl: './delivery-man-register.html',
   styleUrls: ['./delivery-man-register.css'],
 })

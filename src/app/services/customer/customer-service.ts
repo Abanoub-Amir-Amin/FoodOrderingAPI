@@ -38,8 +38,10 @@ getorderdetails(orderId: string): Observable<OrderDetailDTO> {
   return this.http.get<OrderDetailDTO>(`${this.basicUrl}Order/OrderDetailaForCustomer?orderId=${orderId}`, {
     headers: this.headers})
   }
-  getorderforcustomerbystatus(status: StatusEnum[]): Observable<OrderViewDTO[]> {
-    return this.http.request<OrderViewDTO[]>('GET',`${this.basicUrl}Order/OrderForCustomerbystatus`, {body:{status}, headers: this.headers });
+  getorderforcustomerbystatus(status: StatusEnum): Observable<{$id:string,$values:OrderViewDTO[]}> 
+  {
+    let params=new HttpParams()
+    return this.http.request<{$id:string,$values:OrderViewDTO[]}>('GET',`${this.basicUrl}Order/OrderForCustomerbystatus?status=${encodeURIComponent(status)}`,{ headers: this.headers });
   }
 
  

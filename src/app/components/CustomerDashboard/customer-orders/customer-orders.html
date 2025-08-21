@@ -17,35 +17,35 @@
             <div class="timeline-container">
                 <div class="timeline-line"></div>
 
-                <div class="timeline-step active" data-status="0">
+                <div class="timeline-step "[ngClass]="SelectStatus==0?'active':''" data-status="0" (click)="FilterOrders(StatusEnum.All)">
                     <div class="step-circle">
                         <i class="fas fa-list"></i>
                     </div>
                     <div class="step-label">All Orders</div>
                 </div>
 
-                <div class="timeline-step" data-status="1">
+                <div class="timeline-step" [ngClass]="SelectStatus==1?'active':''" data-status="1" (click)="FilterOrders(StatusEnum.WaitingToConfirm)" >
                     <div class="step-circle">
                         <i class="fas fa-clock"></i>
                     </div>
                     <div class="step-label">Waiting to Confirm</div>
                 </div>
 
-                <div class="timeline-step" data-status="2">
+                <div class="timeline-step"[ngClass]="SelectStatus==2?'active':''" data-status="2" (click)="FilterOrders(StatusEnum.Preparing)">
                     <div class="step-circle">
                         <i class="fas fa-utensils"></i>
                     </div>
                     <div class="step-label">Preparing</div>
                 </div>
 
-                <div class="timeline-step" data-status="3">
+                <div class="timeline-step"[ngClass]="SelectStatus==3?'active':''" data-status="3" (click)="FilterOrders(StatusEnum.Out_for_Delivery)">
                     <div class="step-circle">
                         <i class="fas fa-motorcycle"></i>
                     </div>
                     <div class="step-label">Out for Delivery</div>
                 </div>
 
-                <div class="timeline-step" data-status="4">
+                <div class="timeline-step" [ngClass]="SelectStatus==4?'active':''" data-status="4" (click)="FilterOrders(StatusEnum.Delivered)">
                     <div class="step-circle">
                         <i class="fas fa-check"></i>
                     </div>
@@ -110,54 +110,81 @@
     </div>
 </div>
 
-<!-- Review Modal
-<div class="modal" id="reviewModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="fas fa-star me-2"></i>
-                    Leave a Review
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="reviewForm">
-                    <div class="mb-3">
-                        <label class="form-label">
-                            <i class="fas fa-star me-2" style="color: var(--primary-color);"></i>Rating
-                        </label>
-                        <div class="star-rating" id="starRating">
-                            <span class="star" data-rating="1"><i class="fas fa-star"></i></span>
-                            <span class="star" data-rating="2"><i class="fas fa-star"></i></span>
-                            <span class="star" data-rating="3"><i class="fas fa-star"></i></span>
-                            <span class="star" data-rating="4"><i class="fas fa-star"></i></span>
-                            <span class="star" data-rating="5"><i class="fas fa-star"></i></span>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="reviewComment" class="form-label">
-                            <i class="fas fa-comment me-2" style="color: var(--primary-color);"></i>Comment
-                        </label>
-                        <textarea class="form-control" id="reviewComment" rows="4"
-                            placeholder="Share your experience..."></textarea>
-                    </div>
-
-                    <div class="text-end">
-                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Submit Review</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div> -->
-<ng-template #DetailsModal>
+<!-- Review Modal -->
+<ng-template #ReviewModal>
   <div class="modal fade show d-block">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        
+        <!-- Header -->
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="fas fa-star me-2"></i>
+            Leave a Review
+          </h5>
+          <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body">
+          <form (ngSubmit)="submitReview()" #reviewForm="ngForm">
+            
+            <!-- Rating -->
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="fas fa-star me-2" style="color: var(--primary-color);"></i>Rating
+              </label>
+              <div class="star-rating">
+                <span class="star" *ngFor="let r of [1,2,3,4,5]" 
+                      [class.selected]="reviewRating >= r"
+                      (click)="reviewRating = r">
+                  <i class="fas fa-star"></i>
+                </span>
+              
+              </div>
+            </div>
+
+            <!-- Comment -->
+            <div class="mb-3">
+              <label for="reviewComment" class="form-label">
+                <i class="fas fa-comment me-2" style="color: var(--primary-color);"></i>Comment
+              </label>
+              <textarea class="form-control"
+                        id="reviewComment"
+                        rows="4"
+                        [(ngModel)]="reviewComment"
+                        name="comment"
+                        placeholder="Share your experience..."></textarea>
+            </div>
+
+            <!-- Actions -->
+            <div class="text-end">
+              <button type="button" class="btn btn-secondary me-2" (click)="closeModal()">Cancel</button>
+              <button type="submit" class="btn btn-primary">Submit Review</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-orange" (click)="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Backdrop -->
+  <div class="modal-backdrop fade show"></div>
+</ng-template>
+
+
+
+
+<ng-template #DetailsModal>
+  <div class="modal fade show d-block" >
     <div class="modal-dialog_details">
-   <div class="modal-content_details">
-                <div class="modal-header_details">
+   <div #printSection class="modal-content_details"   id="print-section" >
+                <div class="modal-header_details" >
                     <h5 class="modal-title_details" id="orderDetailsLabel">
                         <i class="fas fa-receipt"></i>
                         Order Details
@@ -165,7 +192,7 @@
                     <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
                 </div>
 
-                <div class="modal-body_details">
+                <div class="modal-body_details"  >
                     <!-- Loading State (show/hide with JavaScript) -->
                     <div class="loading-container d-none" id="loadingState">
                         <div class="loading-spinner"></div>
@@ -186,7 +213,7 @@
                                     <div class="info-value">{{ selectedOrderDetails.restaurantName }}</div>
                                 </div>
                                 <div class="info-item">
-                                    <div class="info-label">Location</div>
+                                    <div class="info-label">Restaurant Location</div>
                                     <div class="info-value">{{ selectedOrderDetails.restaurantLocation }}</div>
                                 </div>
                                 <div class="info-item">
@@ -198,19 +225,51 @@
                                     <div class="info-value">
                                         <span class="status-badge" [ngClass]="selectedOrderDetails.status==1?'status-waiting':selectedOrderDetails.status==2?'status-preparing':selectedOrderDetails.status==3?'status-delivery':'status-delivered'">
                                             <i class="fas" [ngClass]="getStatusIcon(selectedOrderDetails.status)"></i>
-                                            {{ selectedOrderDetails.status }}
+                                            {{ selectedOrderDetails.status| statustitle:ViewStatusEnum}}
                                         </span>
                                     </div>
                                 </div>
                                 <div class="info-item">
-                                    <div class="info-label">Est. Time</div>
-                                    <div class="info-value">{{ selectedOrderDetails.orderTimeToComplete }}</div>
+                                    <div class="info-label">Order Time</div>
+                                    <div class="info-value">{{formatTime(selectedOrderDetails.orderTimeToComplete)}}</div>
                                 </div>
                             </div>
                         </div>
 
+                                            <!-- Delivery Section -->
+                    <div class="items-section">
+                        <h6 class="section-title">
+                            <i class="fas fa-motorcycle"></i>
+                            Delivery
+                        </h6>
+                        
+                        <div class="delivery-card">
+                            <div class="delivery-icon">
+                                <i class="fas fa-truck fa-2x" style="color: var(--primary-color);"></i>
+                            </div>
+                            <div class="delivery-details">
+                                <div class="delivery-address">
+                                    <div class="delivery-label">Order Delivered To</div>
+                                    <div class="delivery-value">{{selectedOrderDetails.customerAddress}}</div>
+                                </div>
+                                <div class="delivery-info" *ngIf="selectedOrderDetails.status!=1">
+                                    <div class="delivery-person">
+                                        <span class="delivery-name">{{selectedOrderDetails.delivaryName}}</span> • 
+                                        <span class="delivery-phone">+2{{selectedOrderDetails.delivaryPhone}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="delivery-status">
+                                <div class="status-indicator">
+                                    <i class="fas fa-motorcycle" style="color: var(--primary-color);"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                         <!-- Order Items -->
-                        <div class="items-section">
+                        <div class="items-section page-break">
                             <h6 class="section-title">
                                 <i class="fas fa-hamburger"></i>
                                 Order Items
@@ -219,9 +278,9 @@
                             <div class="items-container">
                                 <div class="order-item" *ngFor="let item of selectedOrderDetails.items.$values">
                                     <div class="item-image">
-                                        <img [src]="item.imageUrl" 
+                                        <img [src]="'http://localhost:5000'+item.imageFile" 
                                              [alt]="item.itemName" 
-                                             *ngIf="item.imageUrl; else defaultIcon"
+                                             *ngIf="item.imageFile; else defaultIcon"
                                              style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
                                         <ng-template #defaultIcon>
                                             <i class="fas fa-utensils fa-2x" style="color: var(--primary-color);"></i>
@@ -242,7 +301,7 @@
                         </div>
 
                         <!-- Order Summary -->
-                        <div class="order-summary">
+                        <div class="order-summary page-break">
                             <div class="summary-row">
                                 <span class="summary-label">Subtotal:</span>
                                 <span class="summary-value">${{ selectedOrderDetails.subTotal.toFixed(2) }}</span>
@@ -251,10 +310,10 @@
                                 <span class="summary-label">Delivery Fee:</span>
                                 <span class="summary-value">${{ selectedOrderDetails.delivaryPrice.toFixed(2) }}</span>
                             </div>
-                            <div class="summary-row" *ngIf="selectedOrderDetails.discountAmount > 0">
+                            <!-- <div class="summary-row" *ngIf="selectedOrderDetails.discountAmount > 0">
                                 <span class="summary-label">Discount:</span>
                                 <span class="summary-value" style="color: #28a745;">-${{ selectedOrderDetails.discountAmount.toFixed(2) }}</span>
-                            </div>
+                            </div> -->
                             <div class="summary-row">
                                 <span class="summary-label">Total:</span>
                                 <span class="summary-value" style="color: var(--primary-color);">${{ selectedOrderDetails.totalPrice.toFixed(2) }}</span>
@@ -268,18 +327,29 @@
                         <i class="fas fa-times"></i>
                         Close
                     </button>
-                    <button type="button" class="btn btn-primary-custom">
+                    <!-- <button type="button" class="btn btn-primary-custom"  printSectionId="print-section" ngxPrint
+                    styleSheetFile="Assets/css/printstyle.css"
+                    [openNewTab]="true"
+                    
+                    printTitle="Order Receipt">
+
+                    
+                        <i class="fas fa-print"></i>
+                        Print Receipt
+                    </button> -->
+                      <button type="button" class="btn btn-primary-custom" (click)="printOrder()"  >
                         <i class="fas fa-print"></i>
                         Print Receipt
                     </button>
-                    <button type="button" class="btn btn-primary-custom" *ngIf="selectedOrderDetails.restaurantPhone">
+                  
+                    <!-- <button type="button" class="btn btn-primary-custom" *ngIf="selectedOrderDetails.restaurantPhone">
                         <i class="fas fa-phone"></i>
                         Call {{ selectedOrderDetails.restaurantPhone }}
                     </button>
                     <button type="button" class="btn btn-primary-custom" *ngIf="selectedOrderDetails.delivaryName">
                         <i class="fas fa-motorcycle"></i>
                         Track with {{ selectedOrderDetails.delivaryName }}
-                    </button>
+                    </button> -->
                 </div>
             </div>
         </div>

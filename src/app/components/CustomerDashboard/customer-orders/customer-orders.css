@@ -1,3 +1,19 @@
+
+.star-rating {
+  cursor: pointer;
+}
+
+.star {
+  color: #ccc; /* لون رمادي افتراضي */
+  font-size: 24px;
+  margin-right: 5px;
+  transition: color 0.3s ease;
+}
+
+.star.selected {
+  color: gold; /* لما تكون مختارة تبقى ذهبية */
+}
+
 .outer-container {
     max-width: 1150px;
     margin: 0 auto;
@@ -167,8 +183,14 @@
     margin: 0;
     width: 100%;
 }
+.table-responsive{
+    max-height: 800px;
+    overflow-y: scroll;
+}
 
 .orders-table thead th {
+    position: sticky;
+    top: 0;
     background: #fff8f4;
     border: none;
     color: var(--text-primary);
@@ -409,8 +431,110 @@ body.modal-open {
     border-color: #545b62;
     transform: translateY(-1px);
 }
+/* Delivery Card */
+        .delivery-card {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            background: #fafafa;
+            transition: all 0.2s ease;
+        }
+
+        .delivery-card:hover {
+            background: white;
+            border-color: var(--primary-color);
+            transform: translateX(4px);
+        }
+
+        .delivery-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--light-orange), #fff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            border: 2px solid #f0f0f0;
+        }
+
+        .delivery-details {
+            flex: 1;
+        }
+
+        .delivery-address {
+            margin-bottom: 8px;
+        }
+
+        .delivery-label {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .delivery-value {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+
+        .delivery-info {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .delivery-name {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .delivery-phone {
+            color: var(--text-gray);
+        }
+
+        .delivery-status {
+            text-align: right;
+            margin-left: 16px;
+        }
 
 /* Mobile Responsive Styles */
+ @media print {
+     #print-section .modal-footer{
+        display: none;
+     }
+
+ body * {
+    visibility: hidden;
+  }
+  #print-section, #print-section * {
+    visibility: visible;
+  }
+   #print-section {
+    width: 60% !important;   
+    margin: 0 auto !important; 
+    border: 1px solid #000;   
+    font-size: 11px;     
+    padding: 5px !important;
+    line-height: 1;
+    max-height: 90vh;
+    overflow: hidden;    
+  }
+  #print-section {
+    page-break-inside: auto;
+  }
+  #print-section div {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+  .page-break {
+    page-break-before: always;  
+  }
+}
 @media (max-width: 1160px){
 .btn-view{
     margin-bottom: 0.2rem;
@@ -438,7 +562,7 @@ body.modal-open {
         height: 40px;
         font-size: 0.9rem;
     }
-}
+} 
 
 @media (max-width: 768px) {
     body {
@@ -484,6 +608,7 @@ body.modal-open {
     /* Convert table to cards on mobile */
     .table-responsive {
         border: none;
+        
     }
 
     .orders-table,
@@ -494,7 +619,7 @@ body.modal-open {
     .orders-table tr {
         display: block;
     }
-
+    
     .orders-table thead tr {
         position: absolute;
         top: -9999px;

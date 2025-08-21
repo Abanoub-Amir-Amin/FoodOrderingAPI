@@ -19,14 +19,15 @@ import { AuthService } from '../../../services/auth';
   imports: [CommonModule, MatCardModule],
 })
 export class MostOrdered implements OnInit, OnChanges {
-  @Input() restaurantId!: string;
+  @Input() restaurantID!: string;
   mostOrdered: any[] = [];
 
   private http = inject(HttpClient);
   private authService = inject(AuthService);
   private baseUrl = 'http://localhost:5000/api';
+
   ngOnInit() {
-    if (this.restaurantId) {
+    if (this.restaurantID) {
       this.loadMostOrdered();
     } else {
       this.mostOrdered = [];
@@ -35,7 +36,7 @@ export class MostOrdered implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['restaurantID'] && !changes['restaurantID'].isFirstChange()) {
-      if (this.restaurantId) {
+      if (this.restaurantID) {
         this.loadMostOrdered();
       } else {
         this.mostOrdered = [];
@@ -49,22 +50,22 @@ export class MostOrdered implements OnInit, OnChanges {
   }
 
   private loadMostOrdered(): void {
-    if (!this.restaurantId) {
+    if (!this.restaurantID) {
       this.mostOrdered = [];
       return;
     }
-    console.log("Restaurant ID", this.restaurantId);
+    console.log("Restaurant ID", this.restaurantID);
     const headers = this.getAuthHeaders();
 
-    this.http.get<any[]>(`${this.baseUrl}/item/${this.restaurantId}/items/most-ordered`, { headers }).subscribe({
-      next: (data) => {
-        console.log("data:", data);
-        this.mostOrdered = Array.isArray(data) ? data : [];
-      },
-      error: () => {
-        this.mostOrdered = [];
-      },
-    });
+    this.http.get<any>(`${this.baseUrl}/item/${this.restaurantID}/items/most-ordered`, { headers }).subscribe({
+  next: (data) => {
+    console.log("data:", data);
+    this.mostOrdered = Array.isArray(data.$values) ? data.$values : [];
+  },
+  error: () => {
+    this.mostOrdered = [];
+  },
+});
   }
 
   public getImageUrl(imageFile?: string): string {

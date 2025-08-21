@@ -1,26 +1,5 @@
 <!-- delivery-widget.component.html -->
 <div class="delivery-widget">
-  <!-- Header with notifications -->
-  <div class="widget-header">
-    <h2 class="widget-title">Delivery Dashboard</h2>
-    <div class="header-actions">
-      <button
-        class="notification-btn"
-        (click)="toggleNotifications()"
-        [class.has-notifications]="notifications.length > 0"
-      >
-        <i class="notification-icon">🔔</i>
-        <span class="notification-badge" *ngIf="notifications.length > 0">{{
-          notifications.length
-        }}</span>
-      </button>
-
-      <!-- Test notification button (remove in production) -->
-      <button class="test-btn" (click)="testNotification()">
-        Test Notification
-      </button>
-    </div>
-  </div>
 
   <!-- Notifications Dropdown -->
   <div class="notifications-dropdown" *ngIf="showNotifications" [@slideDown]>

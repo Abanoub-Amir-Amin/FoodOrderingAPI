@@ -422,3 +422,288 @@ button {
     padding: 64px 0;
   }
 }
+
+/* reset password styling */
+
+/* Forgot Password Component Styling - Presto Theme */
+
+.confirmation-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f4f0 0%, #f0e6dc 50%, #e8d5c4 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.confirmation-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 8px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 450px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.confirmation-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ff6b35, #f7931e, #ff6b35);
+  border-radius: 20px 20px 0 0;
+}
+
+.confirmation-card h2 {
+  color: #2c3e50;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+  position: relative;
+}
+
+.confirmation-card h2::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #ff6b35, #f7931e);
+  border-radius: 2px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #34495e;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid #e8e8e8;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: #ffffff;
+  color: #2c3e50;
+  box-sizing: border-box;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #ff6b35;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-control::placeholder {
+  color: #95a5a6;
+  font-size: 14px;
+}
+
+.text-danger {
+  color: #e74c3c !important;
+  font-size: 12px;
+  margin-top: 6px;
+  display: block;
+  font-weight: 500;
+}
+
+.text-success {
+  color: #27ae60 !important;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  padding: 12px;
+  background: rgba(39, 174, 96, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid #27ae60;
+}
+
+.btn-confirm {
+  width: 100%;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.btn-confirm::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-confirm:hover::before {
+  left: 100%;
+}
+
+.btn-confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+  background: linear-gradient(135deg, #e55a2b 0%, #e8851a 100%);
+}
+
+.btn-confirm:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.2);
+}
+
+.btn-confirm:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-confirm:disabled::before {
+  display: none;
+}
+
+.btn-confirm:disabled:hover {
+  transform: none;
+  box-shadow: none;
+  background: #bdc3c7;
+}
+
+/* Home button specific styling */
+.btn-confirm.mt-4 {
+  background: transparent;
+  color: #ff6b35;
+  border: 2px solid #ff6b35;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0.5px;
+}
+
+.btn-confirm.mt-4:hover {
+  background: #ff6b35;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.25);
+}
+
+/* Responsive design */
+@media (max-width: 576px) {
+  .confirmation-container {
+    padding: 15px;
+  }
+  
+  .confirmation-card {
+    padding: 30px 25px;
+    border-radius: 16px;
+  }
+  
+  .confirmation-card h2 {
+    font-size: 24px;
+  }
+  
+  .form-control {
+    padding: 14px 16px;
+    font-size: 15px;
+  }
+  
+  .btn-confirm {
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+}
+
+/* Additional utility classes to match Bootstrap behavior */
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.mt-4 {
+  margin-top: 1.5rem;
+}
+
+.text-start {
+  text-align: left;
+}
+
+.d-inline-block {
+  display: inline-block;
+}
+
+.text-decoration-none {
+  text-decoration: none;
+}
+
+/* reset password styling end */
+
+
+/* Make PrimeNG password input same width as Bootstrap inputs */
+.styled-password {
+  display: block;
+  width: 100% !important;  /* ensures container stretches */
+}
+
+.styled-password .p-password-input,
+.styled-password .p-inputtext {
+  width: 100% !important;   /* make actual input fill container */
+  max-width: 100%;          /* prevent shrinking */
+  background-color: #fff !important;
+  color: #000 !important;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+}
+
+.styled-password .p-inputtext:focus {
+  border-color: #ff7849;  /* same orange border */
+  border-width: 2px;
+  box-shadow: 0 0 0 0.2rem rgba(249, 135, 96, 0.25); /* orange glow */
+  outline: none;
+}
+.styled-password .p-inputtext.ng-valid.ng-dirty:focus,
+.styled-password .p-inputtext.ng-invalid.ng-touched:focus,
+.styled-password .p-inputtext:focus {
+  border-color: #ff7849 !important;
+  box-shadow: 0 0 0 0.2rem rgba(249, 135, 96, 0.25) !important;
+  outline: none;
+}

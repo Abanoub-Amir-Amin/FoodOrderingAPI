@@ -72,7 +72,7 @@ export enum StatusEnum {
   Preparing = 2,
   Out_for_Delivery = 3,
   Delivered = 4,
-  // Cancelled = 5
+  Cancelled = 5
 }
 export interface RegisterCustomerDTO {
   firstName: string;
@@ -196,15 +196,16 @@ export interface ItemDto {
 }
 
 export interface ItemUpdateDto {
-  itemID?: string;
+  // itemID?: string;
   name: string;
   description?: string;
   price: number;
+  discountedPrice:number;
   isAvailable: boolean;
   category: string;
   imageFile?: File; // corresponds to IFormFile in backend
   imageUrl?: string;
-  restaurantID?: string;
+  // restaurantID?: string;
 }
 
 export interface DiscountDto {
@@ -258,7 +259,7 @@ export interface OrderItemDto {
   itemName: string;
   quantity: number;
   preferences: string;
-  imageUrl: string;
+  imageFile: string;
   totalPrice: number;
 }
 
@@ -337,6 +338,7 @@ export interface OrderDetailDTO {
     orderNumber: number;
     orderDate: string; // ISO Date string
     status: StatusEnum;
+    orderTimeToComplete: string; // TimeSpan -> ISO string or duration format
 
     items: {$id:string,$values:OrderItemDto[]};
 
@@ -345,12 +347,12 @@ export interface OrderDetailDTO {
     restaurantPhone: string;
 
     delivaryName: string;
-    orderTimeToComplete: string; // TimeSpan -> ISO string or duration format
-    address: string;
-
+    customerAddress: string;
+    delivaryPhone : string;
+  
     subTotal: number;
     delivaryPrice: number;
-    discountAmount: number;
+    // discountAmount: number;
     totalPrice: number;
 }
 

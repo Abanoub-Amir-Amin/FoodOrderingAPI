@@ -26,17 +26,17 @@ import { Container } from './components/deliveryManDashboard/container/container
 import { Profile } from './components/deliveryManDashboard/profile/profile';
 import { AvailbilityStatus } from './components/deliveryManDashboard/availbility-status/availbility-status';
 import { Orders } from './components/deliveryManDashboard/orders/orders';
-import { RestaurantItems } from './components/pages/restaurant-items/restaurant-items';
+// import { RestaurantItems } from './components/pages/restaurant-items/restaurant-items';
+import { ShoppingCart } from './components/Shopping-cart/shopping-cart/shopping-cart';
 import { PlaceOrder } from './components/place-order/place-order';
 import { title } from 'process';
 import { ChatBot } from './components/chat-bot/chat-bot';
-import { ShoppingCart } from './components/pages/Shopping-cart/shopping-cart/shopping-cart';
-import { ResturantAllDetails } from './components/pages/resturant-all-details/resturant-all-details';
 import { CustomerContainer } from './components/CustomerDashboard/customer-container/customer-container';
 import { CustomerProfile } from './components/CustomerDashboard/customer-profile/customer-profile';
 import { CustomerAddresses } from './components/CustomerDashboard/customer-addresses/customer-addresses';
 import { CustomerOrders } from './components/CustomerDashboard/customer-orders/customer-orders';
 import { CustomerInbobox } from './components/CustomerDashboard/customer-inbobox/customer-inbobox';
+import { ResturantAllDetails } from './components/pages/resturant-all-details/resturant-all-details';
 
 // Guard Functions for Angular 20
 export const authGuard = () => {
@@ -94,7 +94,6 @@ export const routes: Routes = [
 
   // Restaurant and general pages
   { path: 'getAllResturant', component: Getallresturant },
-  { path: 'restaurant/:name/items', component: RestaurantItems },
   { path: 'billing', component: BillingPageComponent },
   { path: 'order', component: OrderHistoryComponent },
   { path: 'shoppingCart', component: ShoppingCart },
@@ -154,10 +153,61 @@ export const routes: Routes = [
       },
     ],
   },
-
+  // {
+  //   path:'shoppingcart',
+  //   loadComponent: () =>
+  //     import('./components/Shopping-cart/shopping-cart/shopping-cart').then(
+  //       (m) => m.ShoppingCart
+  //     ),
+  // },
+  {
+    path: 'confirm-email',
+    loadComponent: () =>
+      import('./components/confirm-email/confirm-email').then(
+        (m) => m.ConfirmEmail
+      ),
+  },
+  { path: 'reset-password', component: ResetPassword },
+  {
+    path: 'new-password',
+    loadComponent: () =>
+      import('./components/newpassword/newpassword').then((m) => m.NewPassword),
+  },
+  { path: 'getAllResturant', component: Getallresturant },
   { path: 'restaurant/:name/items', component: ResturantAllDetails },
 
-  // Delivery Man Dashboard routes (protected)
+  {
+    path: 'home',
+    loadComponent: () =>
+      import('./components/pages/home/home.component').then(
+        (m) => m.HomeComponent
+      ),
+  },
+  { path: 'home', component: HomeComponent },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'getAllResturant', component: Getallresturant },
+  { path: 'billing', component: BillingPageComponent },
+  { path: 'order', component: OrderHistoryComponent },
+
+  // { path: 'restaurant/:name/items', component: RestaurantItems },
+
+  {
+    path: 'user',
+    component: MainuserComponent,
+    children: [
+      { path: 'payment', component: PaymentComponent },
+      { path: 'ddress', component: AddressComponent },
+    ],
+  },
+
+  { path: 'login', component: LoginComponent },
+  { path: 'customerRegister', component: RegisterComponent },
+
+  { path: 'restaurant-apply', component: RestaurantApply },
+  { path: 'action-pending', component: ActionPendingComponent },
+
+  { path: 'DeliveryManRegister', component: DeliveryManRegister },
+  //my config
   {
     path: 'DeliveryManDashboard',
     component: Container,
@@ -221,6 +271,11 @@ export const routes: Routes = [
   {
     path: 'shoppingcart',
     component: ShoppingCart,
+    canActivate: [roleGuard('Customer')],
+  },
+  {
+    path: 'placeorder',
+    component: PlaceOrder,
     canActivate: [roleGuard('Customer')],
   },
   // Wildcard route - must be last

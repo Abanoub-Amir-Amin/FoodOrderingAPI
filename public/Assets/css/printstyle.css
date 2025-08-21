@@ -1,0 +1,381 @@
+/* Print Styles for Order Details */
+@media print {
+  /* Hide elements that shouldn't print */
+  .modal-footer_details,
+  .btn-close,
+  .modal-backdrop,
+  .loading-container {
+    display: none !important;
+  }
+
+  /* Reset page margins and setup */
+  @page {
+    size: A4;
+    margin: 0.5in;
+    padding: 0;
+  }
+
+  /* Reset body and container styles for print */
+  body {
+    font-family: 'Arial', sans-serif !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    color: #000 !important;
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Make print section visible and properly sized */
+  #print-section {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    transform: none !important;
+  }
+
+  /* Modal content adjustments */
+  .modal-content_details {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Header styling for print */
+  .modal-header_details {
+    background: #f8f9fa !important;
+    color: #000 !important;
+    padding: 15px 0 !important;
+    border-bottom: 2px solid #000 !important;
+    margin-bottom: 15px !important;
+    page-break-after: avoid;
+  }
+
+  .modal-header_details::before {
+    display: none !important;
+  }
+
+  .modal-title_details {
+    font-size: 18px !important;
+    font-weight: bold !important;
+    color: #000 !important;
+    text-align: center !important;
+    width: 100% !important;
+  }
+
+  .modal-title_details i {
+    margin-right: 8px;
+  }
+
+  /* Body content */
+  .modal-body_details {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+  }
+
+  /* Order header section */
+  .order-header {
+    background: white !important;
+    padding: 10px 0 !important;
+    border-bottom: 1px solid #ccc !important;
+    margin-bottom: 15px !important;
+    page-break-after: avoid;
+  }
+
+  .order-info {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .info-item {
+    background: white !important;
+    padding: 8px !important;
+    border: 1px solid #ccc !important;
+    border-radius: 0 !important;
+    margin-bottom: 5px !important;
+    page-break-inside: avoid;
+  }
+
+  .info-item:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  .info-label {
+    font-size: 10px !important;
+    font-weight: bold !important;
+    color: #333 !important;
+    margin-bottom: 2px !important;
+    text-transform: uppercase;
+  }
+
+  .info-value {
+    font-size: 11px !important;
+    font-weight: normal !important;
+    color: #000 !important;
+  }
+
+  /* Status badge */
+  .status-badge {
+    padding: 3px 8px !important;
+    border: 1px solid #000 !important;
+    border-radius: 3px !important;
+    font-size: 10px !important;
+    font-weight: bold !important;
+    background: white !important;
+    color: #000 !important;
+  }
+
+  /* Sections */
+  .items-section {
+    padding: 10px 0 !important;
+    margin-bottom: 15px !important;
+    page-break-inside: avoid;
+  }
+
+  .section-title {
+    font-size: 14px !important;
+    font-weight: bold !important;
+    color: #000 !important;
+    margin-bottom: 10px !important;
+    padding-bottom: 5px !important;
+    border-bottom: 1px solid #000 !important;
+  }
+
+  .section-title i {
+    margin-right: 5px;
+  }
+
+  /* Delivery card */
+  .delivery-card {
+    display: flex !important;
+    align-items: center !important;
+    padding: 10px !important;
+    border: 1px solid #ccc !important;
+    border-radius: 0 !important;
+    margin-bottom: 10px !important;
+    background: white !important;
+    page-break-inside: avoid;
+  }
+
+  .delivery-card:hover {
+    transform: none !important;
+    border-color: #ccc !important;
+  }
+
+  .delivery-icon {
+    width: 40px !important;
+    height: 40px !important;
+    border: 1px solid #ccc !important;
+    border-radius: 0 !important;
+    background: white !important;
+    margin-right: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .delivery-icon i {
+    font-size: 16px !important;
+    color: #000 !important;
+  }
+
+  .delivery-label {
+    font-size: 10px !important;
+    font-weight: bold !important;
+    color: #333 !important;
+  }
+
+  .delivery-value,
+  .delivery-name,
+  .delivery-phone {
+    font-size: 11px !important;
+    color: #000 !important;
+  }
+
+  /* Items container */
+  .items-container {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Order items */
+  .order-item {
+    display: flex !important;
+    align-items: center !important;
+    padding: 8px !important;
+    border: 1px solid #ccc !important;
+    border-radius: 0 !important;
+    margin-bottom: 8px !important;
+    background: white !important;
+    page-break-inside: avoid;
+  }
+
+  .order-item:hover {
+    transform: none !important;
+    border-color: #ccc !important;
+  }
+
+  .item-image {
+    width: 35px !important;
+    height: 35px !important;
+    border: 1px solid #ccc !important;
+    border-radius: 0 !important;
+    background: white !important;
+    margin-right: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .item-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 0 !important;
+  }
+
+  .item-image i {
+    font-size: 14px !important;
+    color: #000 !important;
+  }
+
+  .item-name {
+    font-size: 11px !important;
+    font-weight: bold !important;
+    color: #000 !important;
+    margin-bottom: 2px !important;
+  }
+
+  .item-description {
+    font-size: 9px !important;
+    color: #333 !important;
+    line-height: 1.2 !important;
+  }
+
+  .item-quantity {
+    font-size: 10px !important;
+    color: #333 !important;
+    margin-bottom: 2px !important;
+  }
+
+  .item-total {
+    font-size: 11px !important;
+    font-weight: bold !important;
+    color: #000 !important;
+  }
+
+  /* Order summary */
+  .order-summary {
+    background: white !important;
+    padding: 10px 0 !important;
+    border: 2px solid #000 !important;
+    border-radius: 0 !important;
+    margin-top: 15px !important;
+    page-break-inside: avoid;
+  }
+
+  .summary-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 5px 10px !important;
+    border-bottom: 1px solid #ccc !important;
+  }
+
+  .summary-row:last-child {
+    border-bottom: none !important;
+    padding-top: 8px !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    color: #000 !important;
+    border-top: 2px solid #000 !important;
+  }
+
+  .summary-label {
+    font-size: 10px !important;
+    color: #333 !important;
+    font-weight: bold !important;
+  }
+
+  .summary-value {
+    font-size: 10px !important;
+    font-weight: bold !important;
+    color: #000 !important;
+  }
+
+  /* Page breaks */
+  .page-break {
+    page-break-before: avoid !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Ensure no color backgrounds */
+  * {
+    background: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Remove any shadows or effects */
+  *,
+  *::before,
+  *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Ensure all text is black */
+  h1, h2, h3, h4, h5, h6, p, div, span, strong, em {
+    color: #000 !important;
+  }
+
+  /* Print-specific layout adjustments */
+  .modal-dialog_details {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* Hide scrollbars */
+  ::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Compact layout for better space usage */
+  .info-item,
+  .order-item,
+  .delivery-card {
+    margin-bottom: 5px !important;
+  }
+
+  .items-section {
+    margin-bottom: 10px !important;
+  }
+
+  /* Footer text (optional - add restaurant/business info) */
+  .order-summary::after {
+    content: "\A \A Thank you for your order! \A For any inquiries, please contact us.";
+    white-space: pre;
+    display: block;
+    text-align: center;
+    font-size: 9px;
+    color: #666;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #ccc;
+  }
+}

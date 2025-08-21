@@ -19,16 +19,16 @@ import { AuthService } from '../../../services/auth';
 
 const navbarData = [
   {
-    RouterLink: '/dashboard',
+    RouterLink: 'dashboard',
   },
   {
-    RouterLink: '/orders-management',
+    RouterLink: 'orders-management',
   },
   {
-    RouterLink: '/menu-management',
+    RouterLink: 'menu-management',
   },
   {
-    RouterLink: '/restaurant-profile',
+    RouterLink: 'restaurant-profile',
   },
   
 ];

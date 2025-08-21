@@ -22,6 +22,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   styleUrls: ['./login.css'],
 })
 export class LoginComponent implements OnInit {
+
   value!: string;
   isLoading = false;
   errorMsg = '';
@@ -105,7 +106,11 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/DeliveryManDashboard']);
         break;
       case 'admin':
-        window.location.href = 'http://localhost:5000/admin/dashboard';
+        const token = sessionStorage.getItem("authToken");
+        if (token) {
+          window.location.href =
+            `http://localhost:5000/admin/Dashboard?token=${encodeURIComponent(token)}`;
+        }
         break;
       case 'customer':
         this.router.navigate(['/CustomerDashboard']);
@@ -136,7 +141,7 @@ export class LoginComponent implements OnInit {
               console.log('restaurant', restaurant);
               if (restaurant.isActive) {
                 this.router
-                  .navigate(['/dashboard'])
+                  .navigate(['/restaurant-dashboard'])
                   .catch((err) => console.error(err));
               } else {
                 this.router.navigate(['/action-pending']);
@@ -184,4 +189,7 @@ export class LoginComponent implements OnInit {
   signup() {
     this.router.navigate(['/customerRegister']);
   }
+  forgotPassword() {
+    this.router.navigate(['/reset-password']);
+}
 }

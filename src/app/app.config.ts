@@ -9,7 +9,7 @@ import { AuthService } from './services/auth';
 import { ProfileService } from './services/DeliveryManDashboardService/profile-service';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
-import Aura from '@primeng/themes/aura';
+import Aura from '@primeuix/themes/aura';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MessageService } from 'primeng/api';
 export const appConfig: ApplicationConfig = {

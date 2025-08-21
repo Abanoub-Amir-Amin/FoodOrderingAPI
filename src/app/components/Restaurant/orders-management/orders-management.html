@@ -19,17 +19,18 @@
   <div *ngFor="let order of filteredOrders" class="order-card">
     <mat-card>
       <mat-card-header>
-        <mat-card-title>Order #{{ order.OrderNumber || order.OrderID }}</mat-card-title>
-        <mat-card-subtitle>Status: {{ order.Status }}</mat-card-subtitle>
+        <mat-card-title>Order #{{ order.orderNumber }}</mat-card-title>
+        <mat-card-subtitle>Status: {{ getStatusString(order.status) }}</mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
         <div class="order-details">
           <div class="order-info">
-            <strong>Placed At:</strong> {{ order.OrderDate | date: 'medium' }}<br />
-            <strong>Customer:</strong> {{ order.Customer?.FirstName }} {{ order.Customer?.LastName }}<br />
-            <strong>Email:</strong> {{ order.Customer?.Email }}<br />
-            <strong>Phone:</strong> {{ order.Customer?.Phone }}
+            <strong>Placed At:</strong> {{ order.orderDate | date: 'medium' }}<br />
+            <strong>Customer:</strong>
+            {{ order.customer?.firstName || 'N/A' }} {{ order.customer?.lastName || '' }}<br />
+            <strong>Email:</strong> {{ order.customer?.email || 'N/A' }}<br />
+            <strong>Phone:</strong> {{ order.customer?.phoneNumber || 'N/A' }}
           </div>
 
           <div class="order-items">
@@ -38,8 +39,8 @@
             <ul *ngIf="order.orderItems?.$values?.length; else noItems">
               <li *ngFor="let item of order.orderItems.$values">
                 <img
-                  [src]="getImageUrl(item.imageUrl) || 'assets/food-placeholder.jpg'"
-                  alt="{{ item.ItemName }}"
+                  [src]="getImageUrl(item.imageFile) || 'assets/food-placeholder.jpg'"
+                  alt="{{ item.itemName }}"
                   width="60"
                   height="40"
                 />
@@ -57,17 +58,32 @@
 
       <mat-card-actions>
         <!-- Show Accept only if WaitingToConfirm -->
-        <button mat-button color="primary" *ngIf="order.Status === 'WaitingToConfirm'" (click)="acceptOrder(order)">
+        <button
+          mat-button
+          color="primary"
+          *ngIf="getStatusString(order.status) === 'WaitingToConfirm'"
+          (click)="acceptOrder(order)"
+        >
           Accept
         </button>
 
         <!-- Show Submit Finished only if Preparing -->
-        <button mat-button color="accent" *ngIf="order.Status === 'Preparing'" (click)="finishOrder(order)">
+        <!-- <button
+          mat-button
+          color="accent"
+          *ngIf="getStatusString(order.status) === 'Preparing'"
+          (click)="finishOrder(order)"
+        >
           Submit Finished
-        </button>
+        </button> -->
 
         <!-- Show Reject only if WaitingToConfirm -->
-        <button mat-button color="warn" *ngIf="order.Status === 'WaitingToConfirm'" (click)="rejectOrder(order)">
+        <button
+          mat-button
+          color="warn"
+          *ngIf="getStatusString(order.status) === 'WaitingToConfirm'"
+          (click)="rejectOrder(order)"
+        >
           Reject
         </button>
       </mat-card-actions>

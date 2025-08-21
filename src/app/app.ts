@@ -10,7 +10,7 @@ import { ToastModule } from "primeng/toast";
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ToastModule],
+  imports: [RouterOutlet, ToastModule],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
   // providers: [

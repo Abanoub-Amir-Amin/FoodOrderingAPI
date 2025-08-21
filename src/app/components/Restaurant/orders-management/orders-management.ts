@@ -58,8 +58,6 @@ export class OrdersManagement implements OnInit {
 
   ngOnInit(): void {
     this.restaurantId = this.auth.getUserId() || '';
-    console.log('Restaurant ID:', this.restaurantId);
-
     if (!this.restaurantId) {
       this.error = 'No restaurant ID found. Please log in again.';
       return;
@@ -69,7 +67,6 @@ export class OrdersManagement implements OnInit {
 
   private getAuthHeaders(): HttpHeaders {
     const token = sessionStorage.getItem('authToken');
-    console.log('Token:', token);
     return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
   }
 
@@ -83,16 +80,14 @@ export class OrdersManagement implements OnInit {
     this.isLoading = true;
     this.error = '';
     let url = '';
-
     if (this.selectedStatusFilter === 'All') {
       url = `${this.baseUrl}/order/${this.restaurantId}/orders`;
     } else {
       url = `${this.baseUrl}/order/${this.restaurantId}/orders/status?status=${encodeURIComponent(this.selectedStatusFilter)}`;
     }
-
-    this.http.get<any[]>(url, { headers: this.getAuthHeaders() }).subscribe({
-      next: (orders) => {
-        this.orders = Array.isArray(orders) ? orders : [];
+    this.http.get<any>(url, { headers: this.getAuthHeaders() }).subscribe({
+      next: (response) => {
+        this.orders = response && response.$values ? response.$values : Array.isArray(response) ? response : [];
         this.applyFilter();
         this.isLoading = false;
       },
@@ -112,7 +107,7 @@ export class OrdersManagement implements OnInit {
       this.filteredOrders = this.orders;
     } else {
       this.filteredOrders = this.orders.filter(
-        (order) => order.Status === this.selectedStatusFilter
+        (order) => this.getStatusString(order.status) === this.selectedStatusFilter
       );
     }
   }
@@ -123,16 +118,16 @@ export class OrdersManagement implements OnInit {
   }
 
   acceptOrder(order: any): void {
-    this.changeOrderStatus(order, 'Preparing');
+    this.changeOrderStatus(order, 2);
   }
 
-  finishOrder(order: any): void {
-    this.changeOrderStatus(order, 'Out_for_Delivery');
-  }
+  // finishOrder(order: any): void {
+  //   this.changeOrderStatus(order, 3);
+  // }
 
   rejectOrder(order: any): void {
     if (confirm('Are you sure you want to reject this order?')) {
-      this.changeOrderStatus(order, 'Delivered');
+      this.changeOrderStatus(order, 5);
     }
   }
 
@@ -143,25 +138,27 @@ export class OrdersManagement implements OnInit {
     return 'Unknown error';
   }
 
-  private changeOrderStatus(order: any, newStatus: string): void {
-    if (!this.restaurantId || !order.OrderID) {
+  private changeOrderStatus(order: any, newStatusCode: number): void {
+    if (!this.restaurantId || !order.orderID) {
       this.snackBar.open('Invalid order or restaurant ID', 'Close', { duration: 4000 });
       return;
     }
-
-    const url = `${this.baseUrl}/order/${this.restaurantId}/orders/${order.OrderID}/status`;
-    const body = { status: newStatus };
-
+    console.log("this.restaurantId:",this.restaurantId);
+    const url = `${this.baseUrl}/order/${this.restaurantId}/orders/${order.orderID}/status`;
+    const body = { status: newStatusCode };
+    console.log("status", newStatusCode);
     this.http.put(url, body, { headers: this.getAuthHeaders() }).subscribe({
-      next: (updatedOrder) => {
-        this.snackBar.open(`Order #${order.OrderNumber || order.OrderID} status updated to ${newStatus}`, 'Close', {
-          duration: 4000,
-        });
+      next: () => {
+        this.snackBar.open(
+          `Order #${order.orderNumber || order.orderID} status updated to ${this.getStatusString(newStatusCode)}`,
+          'Close',
+          { duration: 4000 }
+        );
         this.loadOrders();
       },
       error: (err) => {
         if (err.status === 403) {
-          this.snackBar.open('You do not have permission to update this order.', 'Close', { duration: 5000 });
+          this.snackBar.open('There is no Delivery Man available.', 'Close', { duration: 5000 });
         } else {
           const errMsg = this.extractErrorMessage(err);
           this.snackBar.open(`Failed to update order status: ${errMsg}`, 'Close', { duration: 5000 });
@@ -171,7 +168,6 @@ export class OrdersManagement implements OnInit {
   }
 
   public getImageUrl(imageFile?: string): string {
-    const url = this.authService.getImageUrl(imageFile);
-    return url;
+    return this.authService.getImageUrl(imageFile);
   }
 }

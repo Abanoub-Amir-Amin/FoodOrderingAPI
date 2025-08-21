@@ -34,6 +34,6 @@ export class Getallresturant implements OnInit {
     });
   }
   goToRestaurantItems(name: string) {
-    this.router.navigate(['/restaurant/:name/items', name, 'items']);
+    this.router.navigate(['/restaurant', name, 'items']);
   }
 }

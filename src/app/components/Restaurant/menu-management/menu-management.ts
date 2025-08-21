@@ -82,6 +82,7 @@ export class MenuManagement implements OnInit {
       name: ['', Validators.required],
       description: [''],
       price: [0, [Validators.required, Validators.min(0)]],
+      discountedPrice: [''],
       category: ['', Validators.required],
       isAvailable: [true],
       imageFile: [null],
@@ -290,6 +291,7 @@ export class MenuManagement implements OnInit {
     formData.append('Name', formValue.name);
     formData.append('Description', formValue.description || '');
     formData.append('Price', formValue.price.toString());
+    formData.append('DiscountedPrice', formValue.discountedPrice.toString());
     formData.append('Category', formValue.category);
     formData.append('IsAvailable', formValue.isAvailable ? 'true' : 'false');
     formData.append('RestaurantID', this.restaurantId);
@@ -356,6 +358,7 @@ editItem(item: ItemUpdateDto): void {
     name: item.name,
     description: item.description,
     price: item.price,
+    discountedPrice: item.discountedPrice,
     category: item.category,
     isAvailable: item.isAvailable,
     imageFile: null, // Do not patch the file input directly

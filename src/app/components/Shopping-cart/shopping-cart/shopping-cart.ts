@@ -15,7 +15,7 @@ import { ToastService } from '../../../services/toast-service';
 
 @Component({
   selector: 'app-shopping-cart',
-  imports: [MatRadioButton,MatButtonModule,MatIconModule,CommonModule,MainLayoutComponent,ResturanrtLogo],
+  imports: [MatButtonModule,MatIconModule,CommonModule,MainLayoutComponent],
   providers: [],
   templateUrl: './shopping-cart.html',
   styleUrl: './shopping-cart.css'

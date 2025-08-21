@@ -433,9 +433,7 @@
   padding: 20px 24px 16px 24px;
   border-bottom: 1px solid #e9ecef;
   background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  position: sticky;
-  top: 0;
-  z-index:1 ;
+  flex-shrink: 0;
 }
 
 .modal-title {
@@ -465,8 +463,8 @@
   padding: 20px 24px;
   color: #495057;
   line-height: 1.6;
-  max-height: 50vh;
   overflow-y: auto;
+  min-height: 0;
 }
 
 .modal-body::-webkit-scrollbar {
@@ -494,8 +492,7 @@
   padding: 16px 24px 20px 24px;
   background: #f8f9fa;
   border-top: 1px solid #e9ecef;
-  position: sticky;
-  bottom: 0;
+  flex-shrink: 0;
 }
 
 .footer-left,
@@ -541,14 +538,14 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px;
+  flex-shrink: 0;
 }
 
-/* Notifications Container */
+/* Notifications Container - FIXED */
 .notifications-container {
-  max-height: 350px;
-  overflow-y: auto;
-  margin: -8px;
-  padding: 8px;
+  flex: 1;
+  min-height: 0;
+  /* Removed max-height and overflow-y to prevent double scrolling */
 }
 
 /* Enhanced Notification Items */
