@@ -51,10 +51,14 @@ namespace FoodOrderingAPI.Repository
         {
             if (userId == string.Empty)
                 throw new ArgumentException("UserId cannot be empty", nameof(userId));
-
-            return await _context.Restaurants
+            var restaurant = await _context.Restaurants
                    .Include(r => r.User)
                    .FirstOrDefaultAsync(r => r.UserId == userId);
+            var ranking = await _context.Reviews
+                .Where(r => r.RestaurantID == restaurant.RestaurantID)
+                .AverageAsync(r => (float?)r.Rating) ?? 0;
+            restaurant.Rating = (float)Math.Round(ranking, 1);
+            return restaurant;
         }
         public async Task<Restaurant> UpdateRestaurantAsync(Restaurant restaurant)
         {
@@ -67,9 +71,17 @@ namespace FoodOrderingAPI.Repository
 
         public async Task<IEnumerable<Restaurant>> GetAllRestaurantsAsync()
         {
-            return await _context.Restaurants.Where(r => r.IsActive)
+            var restaurants = await _context.Restaurants.Where(r => r.IsActive)
                 .Include(r => r.User)
                 .ToListAsync();
+            foreach (var restaurant in restaurants)
+            {
+                var ranking = await _context.Reviews
+                    .Where(r => r.RestaurantID == restaurant.RestaurantID)
+                    .AverageAsync(r => (float?)r.Rating) ?? 0;
+                restaurant.Rating = (float)Math.Round(ranking, 1);
+            }
+            return restaurants;
         }
 
 
