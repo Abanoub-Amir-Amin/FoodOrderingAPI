@@ -77,7 +77,27 @@ public class AuthController : ControllerBase
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
         var resetLink = $"{_configuration["AppSettings:FrontendUrl"]}/new-password?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(model.Email)}";
         // Send email with reset link (implementation not shown)
-        await _emailSender.SendEmailAsync(model.Email, "Reset Password", $"Click here to reset your password: {resetLink}");
+        await _emailSender.SendEmailAsync(model.Email, "Reset Password", $@"
+                <div style=""font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.6;color:#333;"">
+                    <p>Hi {user.UserName},</p>
+                    <p>Thank you for using <strong>Presto App</strong>.
+                    To reset your password, please click the button below:</p>
+                    <p>
+                        <a href=""{resetLink}"" 
+                           style=""background-color:#007bff;color:#fff;padding:10px 20px;text-decoration:none;
+                                  font-weight:bold;border-radius:5px;display:inline-block;"">
+                            Reset Password
+                        </a>
+                    </p>
+                    <p>If the button doesn’t work for you, copy and paste the following URL into your browser:
+                        <br />
+                        <a href=""{resetLink}"" style=""color:#007bff;text-decoration:none;"">{resetLink}</a>
+                    </p>
+                    <p>If you did request this, please ignore this email.</p>
+                    <p>Thanks,<br />
+                    Presto App Team</p>
+                </div>
+            ", true);
         return Ok("Password reset link sent to your email");
     }
 

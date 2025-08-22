@@ -50,7 +50,7 @@
           if (!content.trim()) return alert("Content is empty!");
 
           const response = await fetch(
-            "https://localhost:44338/api/Ingest/store",
+            "http://localhost:5000/api/Ingest/store",
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },

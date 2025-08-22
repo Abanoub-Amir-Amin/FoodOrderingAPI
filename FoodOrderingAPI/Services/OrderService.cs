@@ -357,7 +357,7 @@ namespace FoodOrderingAPI.Services
 
                 checkout.Address = _mapper.Map<AddressViewDto>(addressdto);
 
-                checkout.PaymentLink = stripeService.CreatePaymentLink(shoppingCart.ShoppingCartItems.ToList());
+                checkout.PaymentLink = stripeService.CreatePaymentLink(shoppingCart.ShoppingCartItems.ToList(), shoppingCart.Restaurant);
 
                 return checkout;
 
