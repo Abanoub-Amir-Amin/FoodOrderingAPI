@@ -86,7 +86,7 @@ namespace FoodOrderingAPI.Repository
         //========operation of order by restaurant==========
         public async Task CancelOrder(Order order)
         {
-                //order.Status = StatusEnum.Cancelled;
+                order.Status = StatusEnum.Cancelled;
                 await _context.SaveChangesAsync();
         }
         public async Task ConfirmOrder(Order order)
@@ -146,7 +146,7 @@ namespace FoodOrderingAPI.Repository
                 .ToListAsync();
 
         }
-        public async Task<List<Order>> getOrdersDelivaryMan(string DelivaryId)
+        public async Task<List<Order>> getOrdersDelivaryMan(string DelivaryId,StatusEnum status)
         {
             return await _context.Orders
                 .Include(o => o.Address)
@@ -158,7 +158,7 @@ namespace FoodOrderingAPI.Repository
                 .Include(c => c.OrderItems)
                 .ThenInclude(OI => OI.Item)
                 //.Include(o => o.PaymentTransactions)
-                .Where(o => o.DeliveryManID == DelivaryId && o.Status== StatusEnum.Preparing)
+                .Where(o => o.DeliveryManID == DelivaryId && o.Status== status)
                 .ToListAsync();
 
         }
@@ -167,6 +167,14 @@ namespace FoodOrderingAPI.Repository
             var order = await _context.Orders
                 .Include(o => o.Customer)
                 .ThenInclude(c => c.User)
+                .Include(o => o.Restaurant)
+                .ThenInclude(R => R.User)
+                .Include(o => o.OrderItems)
+                .ThenInclude(OI => OI.Item)
+                //.Include(o => o.PaymentTransactions)
+                .Include(o => o.Address)
+                .Include(o => o.DeliveryMan)
+                .ThenInclude(D => D.User)
                 .FirstOrDefaultAsync(o => o.OrderID == orderId);
 
             return order;

@@ -154,27 +154,24 @@ namespace FoodOrderingAPI.Services
 
             var oldStatus = order.Status;
 
+            bool assigned = await assignDelivaryManToOrder(order);
+
+            if (!assigned)
+                throw new InvalidOperationException("No delivery man available to assign to this order.");
+
+
             if (oldStatus == StatusEnum.WaitingToConfirm && newStatus == StatusEnum.Preparing)
             {
                 var confirmResult = await ConfirmOrder(order);
                 if (!confirmResult.Success)
                     throw new InvalidOperationException("Order confirmation failed.");
 
-                order.Status = StatusEnum.Preparing;
-                bool assigned = await assignDelivaryManToOrder(order);
-
-                _notificationRepo.CreateNotificationTo(order.DeliveryManID,
-                    $"Order number {order.OrderNumber} is confirmed and being prepared by restaurant.");
-
-                if (!assigned)
-                    throw new InvalidOperationException("No delivery man available to assign to this order.");
+            
                 await _repository.saveChangesAsync();
             }
             else if (oldStatus == StatusEnum.WaitingToConfirm && newStatus == StatusEnum.Cancelled)
             {
                 bool cancelled = await CancelOrder(order, "Cancelled by restaurant");
-                _notificationRepo.CreateNotificationTo(order.CustomerID,
-                    $"Order number {order.OrderNumber} was cancelled by restaurant.");
                 if (!cancelled)
                     throw new InvalidOperationException("Order cancellation failed.");
                 order.Status = StatusEnum.Cancelled; // make sure to set the status here if changed in CancelOrder
@@ -188,7 +185,7 @@ namespace FoodOrderingAPI.Services
             if (newStatus == StatusEnum.Out_for_Delivery)
             {
                 _notificationRepo.CreateNotificationTo(order.CustomerID,
-                    $"Order number {order.OrderNumber} is out for Out for Delivery.");
+                    $"Order number {order.OrderNumber} is out for delivery");
             }
 
             return order;
@@ -228,8 +225,7 @@ namespace FoodOrderingAPI.Services
             */
 
             _notificationRepo.CreateNotificationTo(order.CustomerID,
-
-                $"Order number {order.OrderNumber} cancelled,\n Reason: {reason}");
+                    $"Order number {order.OrderNumber} was cancelled by restaurant.");
 
             return true;
 
@@ -255,7 +251,7 @@ namespace FoodOrderingAPI.Services
 
                $"Order number {order.OrderNumber} has been confirmed.");
 
-            return (true, $"Order number {order.OrderNumber} confirmed successfully.");
+            return (true, $"Order number {order.OrderNumber} is confirmed and being prepared by restaurant.");
 
         }
 
@@ -428,7 +424,8 @@ namespace FoodOrderingAPI.Services
 
                 Order order = _mapper.Map<Order>(cart);
 
-                order.AddressID = add.AddressID;
+                Address orderAddress = await _addressRepo.AddToOrder(add);
+                order.AddressID = orderAddress.AddressID;
 
                 order.PhoneNumber = cart.Customer.User.PhoneNumber;
 
@@ -516,18 +513,23 @@ namespace FoodOrderingAPI.Services
 
         }
 
-        public async Task<List<OrderViewDTO>> GetOrdersByStatusAsyncForCustomer(string customerId, StatusEnum[] statuses)
-
+        public async Task<List<OrderViewDTO>> GetOrdersByStatusAsyncForCustomer(string customerId, StatusEnum statuses)
         {
-
+            List<Order> filteredOrders;
             var orders = await _repository.getOrders(customerId);
-
-            var filteredOrders = orders.Where(o => statuses.Contains(o.Status));
+            if (statuses == StatusEnum.All)
+                filteredOrders = orders;
+            else
+                // Filter by status using case-insensitive comparison
+                filteredOrders = orders.Where(o => o.Status == statuses).ToList();
 
             return _mapper.Map<List<OrderViewDTO>>(filteredOrders);
-
         }
-
+        public async Task<OrderDetailDTO?> getOrderDetails(Guid orderId)
+        {
+            Order order = await _repository.GetOrderDetails(orderId);
+            return _mapper.Map<OrderDetailDTO>(order);
+        }
 
         public async Task<Order?> getOrder(Guid orderId)
 
@@ -537,18 +539,28 @@ namespace FoodOrderingAPI.Services
 
         }
 
-        public async Task<List<DelivaryOrderDTO>> getOrdersForDelivarMan(string DelivaryId)
+        public async Task<List<DelivaryOrderDTO>> getPreparingOrdersForDelivarMan(string DelivaryId)
 
         {
 
-            List<Order> orders = await _repository.getOrdersDelivaryMan(DelivaryId);
+            List<Order> orders = await _repository.getOrdersDelivaryMan(DelivaryId,StatusEnum.Preparing);
 
             List<DelivaryOrderDTO> orderResult = _mapper.Map<List<DelivaryOrderDTO>>(orders);
 
             return orderResult;
 
         }
+        public async Task<List<DeliveryManUpdateOrderStatusDTO>> getDelivaredOrdersForDelivarMan(string DelivaryId)
 
+        {
+
+            List<Order> orders = await _repository.getOrdersDelivaryMan(DelivaryId,StatusEnum.Delivered);
+
+            List<DeliveryManUpdateOrderStatusDTO> orderResult = _mapper.Map<List<DeliveryManUpdateOrderStatusDTO>>(orders);
+
+            return orderResult;
+
+        }
     }
 
 }

@@ -28,7 +28,7 @@ namespace FoodOrderingAPI.Repository
 
 
         Task<List<Order>> getOrders(string customerId);
-        Task<List<Order>> getOrdersDelivaryMan(string DelivaryId);
+        Task<List<Order>> getOrdersDelivaryMan(string DelivaryId, StatusEnum status);
 
         Task<Order?> GetOrderDetails(Guid orderId);
 

@@ -79,7 +79,6 @@ namespace FoodOrderingAPI.Controllers
         [HttpPut("{restaurantId}/orders/{orderId}/status")]
         public async Task<IActionResult> UpdateOrderStatus(string restaurantId, Guid orderId, [FromBody] OrderStatusUpdateDto dto)
         {
-
             if (dto == null)
             {
                 return BadRequest("Request body is missing.");
@@ -95,7 +94,10 @@ namespace FoodOrderingAPI.Controllers
                 var order = await _OrderService.UpdateOrderStatusAsync(orderId, dto.Status, restaurantId);
                 if (order == null)
                     return NotFound($"Order with ID '{orderId}' not found.");
-                return Ok(order);
+
+                // Corrected the mapping issue by ensuring the mapped object is used properly
+                var restaurantOrderDto = _mapper.Map<RestaurantOrderDto>(order);
+                return Ok(restaurantOrderDto);
             }
             catch (InvalidOperationException ex)
             {
@@ -234,13 +236,13 @@ namespace FoodOrderingAPI.Controllers
             if (order.CustomerID != CustomerId)
                 return Unauthorized($"this user with userId{CustomerId} not autherized to view this orderId");
 
-            var orderDetails = await _OrderService.getOrder(orderId);
+            var orderDetails = await _OrderService.getOrderDetails(orderId);
             if (orderDetails == null) return NotFound();
             return Ok(orderDetails);
         }
         [Authorize(Roles = "Customer")]
         [HttpGet("OrderForCustomerbystatus")]
-        public async Task<IActionResult> GetOrderForCustomerByStatus(StatusEnum[] status)
+        public async Task<IActionResult> GetOrderForCustomerByStatus(StatusEnum status)
         {
             var CustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var orders = await _OrderService.GetOrdersByStatusAsyncForCustomer(CustomerId, status);
@@ -254,7 +256,15 @@ namespace FoodOrderingAPI.Controllers
         public async Task<IActionResult> GetOrdersForDelivary()
         {
             var DelivaryId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var orders = await _OrderService.getOrdersForDelivarMan(DelivaryId);
+            var orders = await _OrderService.getPreparingOrdersForDelivarMan(DelivaryId);
+            return Ok(orders);
+        }
+        [Authorize(Roles = "DeliveryMan")]
+        [HttpGet("DelivaredOrdersForDelivary")]
+        public async Task<IActionResult> GetDelivaredOrdersForDelivary()
+        {
+            var DelivaryId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var orders = await _OrderService.getDelivaredOrdersForDelivarMan(DelivaryId);
             return Ok(orders);
         }
     }

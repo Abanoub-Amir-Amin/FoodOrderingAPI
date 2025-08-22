@@ -12,6 +12,14 @@ public class MappingProfile : Profile
         // Map Discount → DiscountDto
         CreateMap<Discount, DiscountDto>();
 
+        // Map Order → RestaurantOrderDto
+        CreateMap<Order, RestaurantOrderDto>()
+            .ForMember(dest => dest.items, opt => opt.MapFrom(src => src.OrderItems))
+            .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FirstName + src.Customer.LastName))
+            .ForMember(dest => dest.CustomerEmail, opt => opt.MapFrom(src => src.Customer.User.Email))
+            .ForMember(dest => dest.CustomerPhone, opt => opt.MapFrom(src => src.Customer.User.PhoneNumber));
+
+
         // Reverse mapping DiscountDto → Discount
         CreateMap<DiscountDto, Discount>();
 
@@ -276,10 +284,10 @@ public class MappingProfile : Profile
 
 
         CreateMap<Order, OrderDetailDTO>()
-        .ForMember(dest => dest.Address, opt => opt.MapFrom(src => $"{src.Address.Label} - {src.Address.Street}, {src.Address.City}"))
+        .ForMember(dest => dest.CustomerAddress, opt => opt.MapFrom(src => $"{src.Address.Label} - {src.Address.Street}, {src.Address.City}"))
         .ForMember(dest => dest.DelivaryName, opt => opt.MapFrom(src => src.DeliveryMan.User.UserName))
+        .ForMember(dest => dest.DelivaryPhone, opt => opt.MapFrom(src => src.DeliveryMan.User.PhoneNumber))
         .ForMember(dest => dest.DelivaryPrice, opt => opt.MapFrom(src => src.DelivaryPrice))
-        .ForMember(dest => dest.DiscountAmount, opt => opt.MapFrom(src => src.DiscountAmount))
         .ForMember(dest => dest.items, opt => opt.MapFrom(src => src.OrderItems))
         .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
         .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.OrderNumber))
@@ -316,6 +324,13 @@ public class MappingProfile : Profile
         .ForMember(dest => dest.RestaurantAddress, opt => opt.MapFrom(src => src.Restaurant.Location))
         .ForMember(dest => dest.RestaurantPhone, opt => opt.MapFrom(src => src.Restaurant.User.PhoneNumber))
         .ForMember(dest => dest.TotalPrice, opt => opt.MapFrom(src => src.TotalPrice));
+
+        CreateMap<Order, DeliveryManUpdateOrderStatusDTO>()
+            .ForMember(dest => dest.Address, op => op.MapFrom(src => $"{src.Address.Label} - {src.Address.Street}, {src.Address.City}"))
+            .ForMember(dest => dest.OrderNumber, op => op.MapFrom(src => src.OrderNumber))
+            .ForMember(dest => dest.UserName, op => op.MapFrom(src => src.Customer.User))
+            .ForMember(dest => dest.TotalPrice, op => op.MapFrom(src => src.TotalPrice))
+            .ForMember(dest => dest.DeliveredAt, op => op.MapFrom(src => src.DeliveredAt));
 
 
 

@@ -7,10 +7,11 @@ namespace FoodOrderingAPI.Services
     public class ReviewService : IReviewService
     {
         private readonly IReviewRepo reviewRepo;
-
-        public ReviewService(IReviewRepo reviewRepo)
+        private readonly IOrderRepo orderRepo;
+        public ReviewService(IReviewRepo reviewRepo, IOrderRepo orderRepo)
         {
             this.reviewRepo = reviewRepo;
+            this.orderRepo = orderRepo;
         }
 
         public async Task CreateReviewAsync(ReviewDto review)
@@ -19,11 +20,14 @@ namespace FoodOrderingAPI.Services
             {
                 throw new ArgumentNullException(nameof(review), "Review cannot be null.");
             }
+            var order = await orderRepo.GetOrderDetails(review.OrderID);
+            if (order == null)
+                throw new ArgumentException("there is no order with this id");
             var reviewEntity = new Review
             {
                 ReviewID = Guid.NewGuid(),
                 CustomerID = review.CustomerID,
-                RestaurantID = review.RestaurantID,
+                RestaurantID = order.RestaurantID,
                 OrderID = review.OrderID,
                 Rating = review.Rating,
                 Comment = review.Comment,

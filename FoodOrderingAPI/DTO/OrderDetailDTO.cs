@@ -16,7 +16,7 @@ namespace FoodOrderingAPI.DTO
         public int OrderNumber { get; set; }
         public DateTime OrderDate { get; set; }
         public StatusEnum Status { get; set; }
-        
+        public TimeSpan OrderTimeToComplete { get; set; }
 
         //order Details
         public List<OrderItemDto> items { get; set; }
@@ -28,16 +28,15 @@ namespace FoodOrderingAPI.DTO
 
         //deliver details
         public string DelivaryName { get; set; }
-        public TimeSpan OrderTimeToComplete { get; set; }
-        public string Address { get; set; }
-
+        public string CustomerAddress { get; set; }
+        public string DelivaryPhone { get; set; }
         //payment
         //payment Details
         public decimal SubTotal { get; set; }
 
         public decimal DelivaryPrice { get; set; }
 
-        public decimal DiscountAmount { get; set; }
+        //public decimal DiscountAmount { get; set; }
         public decimal TotalPrice { get; set; }
 
 

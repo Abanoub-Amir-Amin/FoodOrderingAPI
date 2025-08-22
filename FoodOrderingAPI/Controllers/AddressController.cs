@@ -71,14 +71,22 @@ namespace FoodOrderingAPI.Controllers
             }
             if (ModelState.IsValid)
             {
-                var add=await addressRepo.Add(userId, address);
-                await addressRepo.Save();
-                var addDto = mapper.Map<AddressViewDto>(add);
-                return Ok(new
+                try
                 {
-                    Message = "Address added successfully",
-                    Data = addDto
-                });
+                    var add = await addressRepo.Add(userId, address);
+                    await addressRepo.Save();
+                    var addDto = mapper.Map<AddressViewDto>(add);
+                    return Ok(new
+                    {
+                        Message = "Address added successfully",
+                        Data = addDto
+                    });
+                }
+                catch(Exception ex)
+                {
+                    ModelState.AddModelError("addingErrors", ex.Message);
+                    return BadRequest(ModelState);
+                }
             }
             else
             {
