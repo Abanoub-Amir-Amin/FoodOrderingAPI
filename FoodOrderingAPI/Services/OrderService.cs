@@ -154,14 +154,15 @@ namespace FoodOrderingAPI.Services
 
             var oldStatus = order.Status;
 
-            bool assigned = await assignDelivaryManToOrder(order);
-
-            if (!assigned)
-                throw new InvalidOperationException("No delivery man available to assign to this order.");
-
 
             if (oldStatus == StatusEnum.WaitingToConfirm && newStatus == StatusEnum.Preparing)
             {
+                bool assigned = await assignDelivaryManToOrder(order);
+
+                if (!assigned)
+                    throw new InvalidOperationException("No delivery man available to assign to this order.");
+
+
                 var confirmResult = await ConfirmOrder(order);
                 if (!confirmResult.Success)
                     throw new InvalidOperationException("Order confirmation failed.");

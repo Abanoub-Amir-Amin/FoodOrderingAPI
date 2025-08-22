@@ -107,7 +107,7 @@ namespace FoodOrderingAPI.Services
 
                 var totalOrders = orders.Count();
                 var deliveredOrders = orders.Count(o => o.Status == StatusEnum.Delivered);
-                //var cancelledOrders = orders.Count(o => o.Status == StatusEnum.Cancelled);
+                var cancelledOrders = orders.Count(o => o.Status == StatusEnum.Cancelled);
                 var inProcessOrders = _mapper.Map<List<OrderDto>>(orders.Where(o => o.Status == StatusEnum.Preparing || o.Status == StatusEnum.Out_for_Delivery).ToList());
                 var customerDto = _mapper.Map<CustomerDTO>(customer);
                 customerDto.TotalOrders = totalOrders;
