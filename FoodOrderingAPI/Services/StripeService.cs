@@ -25,6 +25,16 @@ namespace FoodOrderingAPI.Services
             var product = await productService.CreateAsync(productOptions);
             return product.Id;
         }
+        public async Task<string> CreateDeliveryFeeStripeAsync(Restaurant restaurant)
+        {
+            var productOptions = new ProductCreateOptions
+            {
+                Name = restaurant.RestaurantName + " Delivery fee."
+            };
+            var productService = new ProductService();
+            var product = await productService.CreateAsync(productOptions);
+            return product.Id;
+        }
 
         public async Task UpdateProductStripeAsync(Item item)
         {
@@ -57,6 +67,18 @@ namespace FoodOrderingAPI.Services
             var price = await priceService.CreateAsync(priceOptions);
             return price.Id;
         }
+        public async Task<string> CreateDeliveryFeePriceStripeAsync(Restaurant restaurant, string productId)
+        {
+            var priceOptions = new PriceCreateOptions
+            {
+                UnitAmount = (long)(restaurant.DelivaryPrice * 100), // Convert to cents
+                Currency = "egp",
+                Product = productId
+            };
+            var priceService = new PriceService();
+            var price = await priceService.CreateAsync(priceOptions);
+            return price.Id;
+        }
 
         public async Task DeletePriceStripeAsync(Item item)
         {
@@ -65,7 +87,14 @@ namespace FoodOrderingAPI.Services
             var priceService = new PriceService();
             Price price = await priceService.UpdateAsync(item.StripePriceId, priceOptions);
         }
-        public string CreatePaymentLink(List<ShoppingCartItem> items)
+        public async Task DeleteDeliveryFeePriceStripeAsync(Restaurant restaurant)
+        {
+            // Deactivate the old price
+            var priceOptions = new PriceUpdateOptions { Active = false };
+            var priceService = new PriceService();
+            Price price = await priceService.UpdateAsync(restaurant.StripePriceId, priceOptions);
+        }
+        public string CreatePaymentLink(List<ShoppingCartItem> items, Restaurant restaurant)
         {
             var options = new SessionCreateOptions
             {
@@ -83,6 +112,12 @@ namespace FoodOrderingAPI.Services
                     Quantity = item.Quantity
                 });
             }
+            // Add delivery fee as a separate line item
+            options.LineItems.Add(new SessionLineItemOptions
+            {
+                Price = restaurant.StripePriceId,
+                Quantity = 1
+            });
             var service = new SessionService();
             Session session = service.Create(options);
             Console.WriteLine(session.Url);

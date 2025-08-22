@@ -24,7 +24,8 @@ namespace FoodOrderingAPI.Models
 
         [MaxLength(100)]
         public string OpenHours { get; set; }
-
+        public string StripePriceId { get; set; }
+        public string StripeProductId { get; set; }
         public bool IsActive { get; set; } = false;
 
         // Indicates if the restaurant is currently accepting orders or bussy
