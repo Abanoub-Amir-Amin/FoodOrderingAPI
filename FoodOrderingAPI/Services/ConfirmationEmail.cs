@@ -28,7 +28,7 @@ namespace FoodOrderingAPI.Services
             var messageBody = $@"
                 <div style=""font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.6;color:#333;"">
                     <p>Hi {user.UserName},</p>
-                    <p>Thank you for creating an account at <strong>Food Ordering App</strong>.
+                    <p>Thank you for creating an account at <strong>Presto App</strong>.
                     To start enjoying all of our features, please confirm your email address by clicking the button below:</p>
                     <p>
                         <a href=""{confirmationLink}"" 
@@ -43,7 +43,7 @@ namespace FoodOrderingAPI.Services
                     </p>
                     <p>If you did not sign up for this account, please ignore this email.</p>
                     <p>Thanks,<br />
-                    Food Ordering App Team</p>
+                    Presto App Team</p>
                 </div>
             ";
             //Send the Confirmation Email to the User Email Id
