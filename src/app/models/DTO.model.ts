@@ -188,6 +188,7 @@ export interface ItemDto {
   name: string;
   description?: string;
   price: number;
+  discountedPrice:number
   isAvailable: boolean;
   category: string;
   imageFile?: string;

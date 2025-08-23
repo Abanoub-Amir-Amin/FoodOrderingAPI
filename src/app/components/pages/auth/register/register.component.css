@@ -237,6 +237,41 @@
   box-shadow: #191200 0 0, rgba(25, 13, 0, 0.2) 0 9px 21px,
     rgba(73, 35, 2, 0.2) 0 0 inset;
 }
+.submit-message {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  text-align: center;
+  font-weight: 500;
+}
+
+.submit-message.success {
+  background-color: rgba(134, 142, 150, 0.1);
+  color: var(--success-color);
+  border: 1px solid var(--success-color);
+}
+
+.submit-message.error {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: var(--error-color);
+  border: 1px solid var(--error-color);
+}
+password-requirements {
+  margin-top: var(--spacing-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.requirement {
+  font-size: 0.8rem;
+  color: var(--error-color);
+  transition: color 0.3s ease;
+}
+
+.requirement.met {
+  color: var(--success-color);
+}
 
 @media (max-width: 768px) {
   .title {

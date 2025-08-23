@@ -58,8 +58,8 @@ export class ShoppingCart {
     // console.log(this.headers,"userid",this.userid)
     return this.http.get<any>(`${this.apiUrl}Order/Checkout`,{headers: this.headers});
   }
-  placeOrder():Observable<string>{
-    return this.http.post<string>(`${this.apiUrl}Order/PlaceOrder`,{
+  placeOrder(SessionId:string):Observable<string>{
+    return this.http.post<string>(`${this.apiUrl}Order/PlaceOrder?SessionId=${SessionId}`,{
     }, { headers: this.headers , responseType: 'text' as 'json'  }
   );
   }

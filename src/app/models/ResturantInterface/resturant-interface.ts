@@ -3,6 +3,7 @@ export interface ResturantInterface {
   restaurantName: string;
   location: string;
   openHours: string;
+  delivaryPrice:string;
   rating: number | null;
   imageFile: string;
 }
@@ -13,7 +14,7 @@ export interface RestaurantItem {
   description: string;
   price: number;
   category: string;
-    discountedPrice: number;
+  discountedPrice: number;
 }
 export interface ItemDto {
   itemID: string;             // Guid => string في Angular

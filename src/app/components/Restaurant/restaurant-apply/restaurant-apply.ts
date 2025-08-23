@@ -38,7 +38,7 @@ export class RestaurantApply implements OnInit {
       restaurantName: ['', Validators.required],
       openHours: [''],
       location: [''],
-      orderTime: ['', Validators.required],  // string for HH:mm format
+      orderTime: ['', Validators.required,Validators.pattern(/^([01]\d|2[0-3]):([0-5]\d)$/)],  // string for HH:mm format
       delivaryPrice: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]], // decimal validation
       isAvailable: [true],
       user: this.fb.group({
@@ -46,6 +46,7 @@ export class RestaurantApply implements OnInit {
         email: ['', [Validators.required, Validators.email]],
         phone: [''],
         password: ['', [Validators.required, Validators.minLength(6)]],
+
       }),
     });
   }

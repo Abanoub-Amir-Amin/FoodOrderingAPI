@@ -1,6 +1,7 @@
 import { CommonModule, NgClass } from '@angular/common';
 import { Component } from '@angular/core';
 import { ShoppingCart } from '../../services/shoppingCart/shopping-cart';
+import { ActivatedRoute } from '@angular/router';
 // import { NgModel } from '@angular/forms';
 
 @Component({
@@ -11,14 +12,19 @@ import { ShoppingCart } from '../../services/shoppingCart/shopping-cart';
 })
 export class PlaceOrder {
   isLoading=true;
+  private sessionId=''
   constructor(
-  private cartservices:ShoppingCart
+  private cartservices:ShoppingCart,
+  private route: ActivatedRoute
   ){}
   isOrderSuccess:boolean=false;
   async ngOnInit(): Promise<void> {
   // debugger;
     try{
-      this.isOrderSuccess= await this.PlaceOrder();
+     this.route.queryParams.subscribe(params => {
+     this.sessionId= params['session_id'];
+     });
+    console.log("Stripe Session ID:", this.sessionId); this.isOrderSuccess= await this.PlaceOrder(this.sessionId);
       console.log(this.isOrderSuccess);
       this.isLoading=false
     }
@@ -30,7 +36,12 @@ export class PlaceOrder {
 async TryAgain(){
   this.isLoading=true
   try{
-      this.isOrderSuccess= await this.PlaceOrder();
+     this.route.queryParams.subscribe(params => {
+     this.sessionId= params['session_id'];
+     });
+    console.log("Stripe Session ID:", this.sessionId);
+
+      this.isOrderSuccess= await this.PlaceOrder(this.sessionId);
       console.log(this.isOrderSuccess);
 
     }
@@ -38,9 +49,9 @@ async TryAgain(){
       console.log("error in place order"+err);
     }
 }
- PlaceOrder():Promise<boolean>{
+ PlaceOrder(sessionId:string):Promise<boolean>{
   return new Promise((resolve,reject) =>{
-    this.cartservices.placeOrder().subscribe({
+    this.cartservices.placeOrder(sessionId).subscribe({
       next:(res) =>{
         console.log(res);
         this.isLoading=false

@@ -60,7 +60,7 @@ export class RestaurantProfileComponent implements OnInit {
       latitude: [null],       
       longitude: [null],
       delivaryPrice: [null],
-      orderTime: [null],
+      orderTime: ['', Validators.required,Validators.pattern(/^([01]\d|2[0-3]):([0-5]\d)$/)],  // string for HH:mm format
       imageUrl: [''],
     });
 

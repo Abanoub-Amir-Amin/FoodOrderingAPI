@@ -79,8 +79,8 @@
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="['name', 'category', 'price', 'isAvailable', 'imageFile', 'actions']"></tr>
-    <tr mat-row *matRowDef="let row; columns: ['name', 'category', 'price', 'isAvailable', 'imageFile', 'actions']"></tr>
+    <tr mat-header-row *matHeaderRowDef="['name', 'category', 'price','discountedPrice', 'isAvailable', 'imageFile', 'actions']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['name', 'category', 'price','discountedPrice', 'isAvailable', 'imageFile', 'actions']"></tr>
   </table>
 
   <!-- Add New Item Form -->

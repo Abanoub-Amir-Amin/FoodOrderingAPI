@@ -9,15 +9,15 @@
         <div class="restaurant-header card shadow-sm mb-4 border-0 overflow-hidden">
           <div class="row g-0 align-items-center">
             <div class="col-md-8 p-4 d-flex flex-column justify-content-center">
-              <p class="text-muted mb-1">
+              <!-- <p class="text-muted mb-1">
                 Desi Flavours with a blend of Italian aesthetics!
-              </p>
+              </p> -->
               <h2 class="fw-bold">{{ restaurant?.restaurantName }}</h2>
-
+              <p class="text-secondary">in {{restaurant?.location}}</p>
               <div class="d-flex gap-3 mt-3">
                 <div class="info-pill">
                   <i class="bi bi-bicycle"></i>
-                  Delivery in 20–25 Minutes
+                  Delivary Fees : {{restaurant.delivaryPrice}} EGP
                 </div>
               </div>
             </div>
@@ -31,16 +31,23 @@
               <!-- صندوق التقييم -->
               <div class="rating-box shadow-sm position-absolute bottom-0 start-0 p-2 bg-dark bg-opacity-75 rounded text-center">
                 <div class="text-white fw-bold">
-                  {{ restaurant?.rating || 4.5 }}
+                  {{ restaurant?.rating || 0 }}
                 </div>
-                <div class="text-warning">★★★★☆</div>
-                <small class="text-muted">{{ reviews.length }} reviews</small>
+                <div class="text-warning">{{drawstar(restaurant?.rating||0)}}</div>
+                 <!-- <div class="text-warning fs-6">
+                  <i style="font-size: 10px;" class="fa-solid fa-star"></i>
+                  <i class="fas fa-star-half-alt"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star-half-stroke"></i>
+                  <i class="fa-regular fa-star"></i>
+                 </div> -->
+                <small class="text-white" >{{ reviews.length }} reviews</small>
               </div>
             </div>
           </div>
 
           <div class=" px-3 py-2 ">
-            Open until 3:00 AM
+            Open from {{restaurant.openHours.split('-')[0]}} untill {{restaurant.openHours.split('-')[1]}}
           </div>
         </div>
 

@@ -51,6 +51,13 @@
                     </div>
                     <div class="step-label">Delivered</div>
                 </div>
+                 <div class="timeline-step"[ngClass]="SelectStatus==5?'active':''" data-status="5" (click)="FilterOrders(StatusEnum.Cancelled)">
+                    <div class="step-circle">
+                        <i class="fas fa-ban"></i>
+                    </div>
+                    <div class="step-label">Cancelled</div>
+                </div>
+
             </div>
         </div>
 
@@ -84,8 +91,8 @@
                             <td data-label="Date">{{item.orderDate|date}}</td>
                             <td data-label="Status">
                                 <span class="order-status"
-                                    [ngClass]="item.status==1?'status-waiting':item.status==2?'status-preparing':item.status==3?'status-delivery':'status-delivered'">
-                                    {{item.status==1?'Waiting':item.status==2?'Preparing':item.status==3?'Out-for-delivery':'Delivered'}}
+                                    [ngClass]="item.status==1?'status-waiting':item.status==2?'status-preparing':item.status==3?'status-delivery':item.status==4?'status-delivered':'status-cancelled'">
+                                    {{item.status==1?'Waiting':item.status==2?'Preparing':item.status==3?'Out-for-delivery':item.status==4?'Delivered':'Cancelled'}}
                                 </span>
                             </td>
                             <td data-label="Total">{{item.totalPrice}}</td>
@@ -223,7 +230,7 @@
                                 <div class="info-item">
                                     <div class="info-label">Status</div>
                                     <div class="info-value">
-                                        <span class="status-badge" [ngClass]="selectedOrderDetails.status==1?'status-waiting':selectedOrderDetails.status==2?'status-preparing':selectedOrderDetails.status==3?'status-delivery':'status-delivered'">
+                                        <span class="status-badge" [ngClass]="selectedOrderDetails.status==1?'status-waiting':selectedOrderDetails.status==2?'status-preparing':selectedOrderDetails.status==3?'status-delivery':selectedOrderDetails.status==4?'status-delivered':'status-cancelled'">
                                             <i class="fas" [ngClass]="getStatusIcon(selectedOrderDetails.status)"></i>
                                             {{ selectedOrderDetails.status| statustitle:ViewStatusEnum}}
                                         </span>
@@ -252,7 +259,7 @@
                                     <div class="delivery-label">Order Delivered To</div>
                                     <div class="delivery-value">{{selectedOrderDetails.customerAddress}}</div>
                                 </div>
-                                <div class="delivery-info" *ngIf="selectedOrderDetails.status!=1">
+                                <div class="delivery-info" *ngIf="selectedOrderDetails.status!=1 && selectedOrderDetails.status!=5">
                                     <div class="delivery-person">
                                         <span class="delivery-name">{{selectedOrderDetails.delivaryName}}</span> • 
                                         <span class="delivery-phone">+2{{selectedOrderDetails.delivaryPhone}}</span>

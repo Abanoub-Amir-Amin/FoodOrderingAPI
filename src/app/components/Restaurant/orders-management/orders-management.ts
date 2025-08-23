@@ -157,6 +157,7 @@ export class OrdersManagement implements OnInit {
         this.loadOrders();
       },
       error: (err) => {
+        console.log(err)
         if (err.status === 403) {
           this.snackBar.open('There is no Delivery Man available.', 'Close', { duration: 5000 });
         } else {

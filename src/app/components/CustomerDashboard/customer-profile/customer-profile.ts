@@ -136,8 +136,14 @@ export class CustomerProfile {
       if(!value)
       {
         this.isValidFname = false;
-        this.fnameError = 'First Name number is required';
+        this.fnameError = 'First Name is required';
       }
+      else if(value.length<2)
+      {
+        this.isValidFname = false;
+        this.fnameError = 'First Name must be at least 2 characters';
+      }
+      
       else{
           this.isValidFname = true;
           this.fnameError = '';
@@ -149,6 +155,12 @@ export class CustomerProfile {
       {
         this.isValidLname = false;
         this.lnameError = 'Last Name number is required';
+      }
+      
+      else if(value.length<2)
+      {
+        this.isValidFname = false;
+        this.fnameError = 'Last Name must be at least 2 characters';
       }
       else{
           this.isValidLname = true;

@@ -141,8 +141,7 @@
           <div id="map" class="map-container"></div>
           <div class="location-display" *ngIf="selectedLocation">
             <p><strong>Selected Location:</strong></p>
-            <p>Latitude: {{ selectedLocation.lat | number : "1.4-4" }}</p>
-            <p>Longitude: {{ selectedLocation.lng | number : "1.4-4" }}</p>
+            
           </div>
           <span
             *ngIf="!selectedLocation && formSubmitted"

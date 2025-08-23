@@ -203,9 +203,7 @@ FilterOrders(status:StatusEnum){
  printOrder() {
     const printContents = this.printSection.nativeElement.innerHTML;
     // const printHeader = this.printHeader.nativeElement.innerHTML;
-
-    const iframe = document.createElement('iframe');
-
+   const iframe = document.createElement('iframe');
   iframe.style.position = 'absolute';
   iframe.style.width = '0';
   iframe.style.height = '0';
@@ -218,22 +216,30 @@ FilterOrders(status:StatusEnum){
     doc.write(`
       <html>
         <head>
+          <!-- Bootstrap -->
           <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-          <link rel="stylesheet" href="http://localhost:4200/src/app/components/CustomerDashboard/customer-orders/customer-orders.css">
+          
+          <!-- Your custom styles -->
+          <link rel="stylesheet" href="${window.location.origin}/Assets/css/printstyle.css">
         </head>
         <body>${printContents}</body>
       </html>
     `);
     doc.close();
 
-    iframe.contentWindow?.focus();
-    iframe.contentWindow?.print();
+  setTimeout(() => {
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+      
+      // Clean up after printing
+      setTimeout(() => {
+        document.body.removeChild(iframe);
+      }, 1000);
+    }, 2000);
+  }
   }
 
-  // remove iframe after printing
-  setTimeout(() => document.body.removeChild(iframe), 1000);  // printWindow.print();
-  }
-
+  
 submitReview() {
   const customerId = sessionStorage.getItem('userId');   // ✅ Get from session
   console.log('Rating:', this.reviewRating);

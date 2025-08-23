@@ -29,6 +29,10 @@
   animation: spin 1s linear infinite;
   margin: 0 auto 20px;
 }
+.text-success{
+  border:0;
+  background: transparent;
+}
 
 @keyframes spin {
   0% {

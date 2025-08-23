@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -9,7 +9,7 @@ import { CustomValidators } from '../../services/validators.service';
 import { AuthService as LoginService } from '../../services/auth';
 import { Router } from '@angular/router';
 import { loginResponse } from '../../models/ilogin';
-import { NgIf } from '@angular/common';
+import { isPlatformBrowser, NgIf } from '@angular/common';
 import { PasswordModule } from 'primeng/password';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -28,13 +28,15 @@ export class LoginComponent implements OnInit {
   errorMsg = '';
   error = '';
   baseUrl = 'http://localhost:5000'; // Add your backend base URL
-  platformId: any; // Assign your platformId properly (if used)
+  // platformId: any; // Assign your platformId properly (if used)
 
   // Use constructor DI for all dependencies
   constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
     private loginAuth: LoginService,
     private router: Router,
     private http: HttpClient // Add http to constructor
+    
   ) {}
 
   loginForm = new FormGroup({
@@ -53,12 +55,14 @@ export class LoginComponent implements OnInit {
   }
 
   checkExistingSession(): void {
+    if(isPlatformBrowser(this.platformId)){
     const token = sessionStorage.getItem('authToken');
     const role = sessionStorage.getItem('userRole');
     if (token && role === 'DeliveryMan') {
       console.log('User already logged in, redirecting...');
       this.router.navigate(['/DeliveryManDashboard']);
     }
+  }
   }
 
   submitForm(): void {

@@ -13,11 +13,12 @@ import { RelativeTimePipe } from '../../pipes/pipes/relative-time-pipe';
 import { Rating } from '../rating/rating';
 import { ReviewService } from '../../../services/review/review-service';
 import { CustomCurrencyPipe } from "../../pipes/custom-currency-pipe";
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-resturant-all-details',
   standalone: true,
-  imports: [MainLayoutComponent, Footer, RelativeTimePipe, Rating, CustomCurrencyPipe],
+  imports: [MainLayoutComponent, Footer, RelativeTimePipe, Rating, CustomCurrencyPipe,JsonPipe],
   templateUrl: './resturant-all-details.html',
   styleUrl: './resturant-all-details.css'
 })
@@ -147,6 +148,16 @@ export class ResturantAllDetails implements OnInit {
           console.error('Error deleting review', err);
         }
       });
+    }
+    drawstar(rate:number):string{
+      let stars=''
+      for (const i of [1,2,3,4,5]) {
+        if(i < rate)
+          stars+='✮'
+        else
+          stars+='☆'
+      }
+      return stars
     }
   
 }

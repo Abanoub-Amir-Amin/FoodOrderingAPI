@@ -20,7 +20,18 @@
           formControlName="firstName"
           class="form-control"
           placeholder="First Name"
+          [class.error]="isFieldInvalid('firstName')"
+          [class.success]="isFieldValid('firstName')"
         />
+            <span *ngIf="isFieldInvalid('firstName')" class="error-message">
+            <span *ngIf="registerForm.get('firstName')?.errors?.['required']"
+              >First Name is required</span
+            >
+            <span
+              *ngIf="registerForm.get('firstName')?.errors?.['minlength']"
+              >First Name must be at least 2 characters</span
+            >
+          </span>
       </div>
 
       <div class="form-group mb-3">
@@ -30,7 +41,18 @@
           formControlName="lastName"
           class="form-control"
           placeholder="Last Name"
+          [class.error]="isFieldInvalid('lastName')"
+          [class.success]="isFieldValid('lastName')"
         />
+        <span *ngIf="isFieldInvalid('lastName')" class="error-message">
+            <span *ngIf="registerForm.get('lastName')?.errors?.['required']"
+              >Last Name is required</span
+            >
+            <span
+              *ngIf="registerForm.get('lastName')?.errors?.['minlength']"
+              >Last Name must be at least 2 characters</span
+            >
+          </span>
       </div>
 
       <div class="form-group mb-3">
@@ -40,7 +62,18 @@
           formControlName="userName"
           class="form-control"
           placeholder="User Name"
+          [class.error]="isFieldInvalid('userName')"
+          [class.success]="isFieldValid('userName')"
         />
+        <span *ngIf="isFieldInvalid('userName')" class="error-message">
+            <span *ngIf="registerForm.get('userName')?.errors?.['required']"
+              >UserName is required</span
+            >
+            <span
+              *ngIf="registerForm.get('userName')?.errors?.['minlength']"
+              >UserName must be at least 3 characters</span
+            >
+          </span>
       </div>
 
       <div class="form-group mb-3">
@@ -50,7 +83,18 @@
           formControlName="email"
           class="form-control"
           placeholder="your@email.com"
+          [class.error]="isFieldInvalid('email')"
+          [class.success]="isFieldValid('email')"
         />
+        <span *ngIf="isFieldInvalid('email')" class="error-message">
+            <span *ngIf="registerForm.get('email')?.errors?.['required']"
+              >Email is required</span
+            >
+            <span
+              *ngIf="registerForm.get('email')?.errors?.['emailValidator']"
+              >please enter a valid email address </span
+            >
+          </span>
       </div>
 
       <div class="form-group mb-3">
@@ -60,7 +104,18 @@
           formControlName="phoneNumber"
           class="form-control"
           placeholder="01xxxxxxxxx"
+          [class.error]="isFieldInvalid('phoneNumber')"
+          [class.success]="isFieldValid('phoneNumber')"
         />
+        <span *ngIf="isFieldInvalid('phoneNumber')" class="error-message">
+            <span *ngIf="registerForm.get('phoneNumber')?.errors?.['required']"
+              >Phone Number is required</span
+            >
+            <span
+              *ngIf="registerForm.get('phoneNumber')?.errors?.['phoneValidator']"
+              >Enter Valid Phone Number should be like 01xxxxxxxxx</span
+            >
+          </span>
       </div>
 
       <div class="form-group mb-3">
@@ -72,7 +127,24 @@
           [toggleMask]="true"
           [feedback]="false"
           placeholder="Enter your password"
+          [class.error]="isFieldInvalid('password')"
+          [class.success]="isFieldValid('password')"
           ></p-password>
+          <div class="password-requirements" *ngIf="!registerForm.get('password')?.errors?.['required']">
+            <small *ngIf="!hasUpperCase" class="requirement" [class.met]="hasUpperCase"
+              >✓ At least one uppercase letter</small
+            >
+            <small *ngIf="!hasSpecialChar" class="requirement" [class.met]="hasSpecialChar"
+              >✓ At least one special character</small
+            >
+            <small *ngIf="!hasMinLength" class="requirement" [class.met]="hasMinLength"
+              >✓ At least 8 characters</small
+            >
+          </div>
+          <span *ngIf="isFieldInvalid('password')" class="error-message">
+            <span *ngIf="registerForm.get('password')?.errors?.['required']">
+              Password is required</span>
+          </span>
           <!-- <small *ngIf="form.controls['newPassword'].invalid && form.controls['newPassword'].touched" class="text-danger">
           Password must be 8+ characters, include uppercase, lowercase, number, and special character.
           </small> -->
@@ -97,7 +169,17 @@
           [toggleMask]="true"
           [feedback]="false"
           placeholder="Confirm password"
+          [class.error]="isFieldInvalid('password')|| registerForm.errors?.['passwordMismatch']"
+          [class.success]="isFieldValid('password') && registerForm.errors?.['passwordMismatch']==null"
         ></p-password>
+        <span *ngIf="isFieldInvalid('confirmPassword') || registerForm.errors?.['passwordMismatch']" class="error-message">
+            <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']"
+              >this field is required</span>
+            <span
+              *ngIf="registerForm.errors?.['passwordMismatch'] && !registerForm.get('confirmPassword')?.errors?.['required']"
+              >Confirm Password doesn’t match Password</span
+            >
+          </span>
         <!-- <small *ngIf="form.errors?.['mismatch'] && form.controls['confirmPassword'].touched" class="text-danger">
           Passwords do not match.
         </small> -->
@@ -115,6 +197,14 @@
           <a routerLink="/login" class="link fw-semibold">Log In</a>
         </small>
       </div>
+      <div
+          *ngIf="submitMessage"
+          class="submit-message"
+          [class.success]="submitSucess"
+          [class.error]="!submitSucess"
+        >
+          {{ submitMessage }}
+        </div>
     </form>
   </div>
 </div>

@@ -291,7 +291,7 @@ export class MenuManagement implements OnInit {
     formData.append('Name', formValue.name);
     formData.append('Description', formValue.description || '');
     formData.append('Price', formValue.price.toString());
-    formData.append('DiscountedPrice', formValue.discountedPrice.toString());
+    formData.append('DiscountedPrice', formValue.price.toString());
     formData.append('Category', formValue.category);
     formData.append('IsAvailable', formValue.isAvailable ? 'true' : 'false');
     formData.append('RestaurantID', this.restaurantId);
@@ -321,7 +321,8 @@ export class MenuManagement implements OnInit {
             this.editItemId = null; // Reset edit mode
             this.loadItems();
           },
-          error: () => {
+          error: (err) => {
+            console.log(err)
             this.snackBar.open('Failed to update item.', undefined, {
               duration: 3000,
             });
@@ -341,7 +342,8 @@ export class MenuManagement implements OnInit {
             this.addItemForm.reset({ isAvailable: true, price: 0 });
             this.loadItems();
           },
-          error: () => {
+          error: (err) => {
+            console.log(err)
             this.snackBar.open('Failed to add new item.', undefined, {
               duration: 3000,
             });
