@@ -10,6 +10,7 @@ interface Notification {
   time: string;
   read: boolean;
 }
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-header',
   imports: [NgClass, CommonModule],
@@ -17,62 +18,76 @@ interface Notification {
   styleUrl: './header.css',
 })
 export class Header implements OnInit {
-  
   connection!: signalR.HubConnection;
   @Input() collapsed = false;
   @Input() screenWidth = 0;
   isModalOpen = false;
- 
+
   // Properly typed notifications array
   notifications: Notification[] = [];
 
-  constructor(private availabilityService: AvailabilityService, private authService: AuthService) {}
+  constructor(
+    private availabilityService: AvailabilityService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
   isAvailable: boolean = false;
+  //menu
+  isActive: boolean = false;
+  mobileOpen: boolean = false;
 
   async ngOnInit(): Promise<void> {
     this.showAvailabilityStatus();
     this.availabilityService.availability$.subscribe(
       (status) => (this.isAvailable = status)
     );
-    await fetch(`http://localhost:5000/api/notification/GetNotifications/${this.authService.getUserId()}`, {
-          method: "GET",
-          credentials: "include"
-        })
-        .then(response => response.json())
-        .then(data => {
-          const messages = data.$values;
-          console.log(messages);
-          for (let i = 0; i < messages.length; i++) {
-            const notification: Notification = {
-              id: messages[i].notificationId,
-              message: messages[i].message,
-              type: 'success', // Default type, can be customized
-              time: new Date(messages[i].createdAt).toLocaleTimeString(),
-              read: messages[i].isRead || false
-            };
+    await fetch(
+      `http://localhost:5000/api/notification/GetNotifications/${this.authService.getUserId()}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const messages = data.$values;
+        console.log(messages);
+        for (let i = 0; i < messages.length; i++) {
+          const notification: Notification = {
+            id: messages[i].notificationId,
+            message: messages[i].message,
+            type: 'success', // Default type, can be customized
+            time: new Date(messages[i].createdAt).toLocaleTimeString(),
+            read: messages[i].isRead || false,
+          };
+          this.notifications.push(notification);
+          console.log('Processed notification:', notification);
+        }
+      })
+      .catch((err) => console.error('Error fetching notifications:', err));
+    this.connection = new signalR.HubConnectionBuilder()
+      .withUrl('http://localhost:5000/notificationhub', {
+        accessTokenFactory: () => this.authService.getAuthToken() ?? '',
+      })
+      .build();
+    this.connection
+      .start()
+      .then(() => {
+        console.log('SignalR connected.');
+        this.connection.on(
+          'ReceiveNotification',
+          (message: any, messageId: string) => {
+            console.log('Raw message received:', message, typeof message);
+
+            // Convert string message to proper notification object
+            const notification: Notification =
+              this.createNotificationObject(message);
             this.notifications.push(notification);
             console.log('Processed notification:', notification);
           }
-        })
-        .catch(err => console.error('Error fetching notifications:', err));
-        this.connection = new signalR.HubConnectionBuilder()
-          .withUrl('http://localhost:5000/notificationhub', {
-            accessTokenFactory: () => this.authService.getAuthToken() ?? ''
-          })
-          .build();
-        this.connection.start()
-          .then(() => {
-            console.log('SignalR connected.');
-            this.connection.on('ReceiveNotification', (message: any, messageId: string) => {
-              console.log('Raw message received:', message, typeof message);
-              
-              // Convert string message to proper notification object
-              const notification: Notification = this.createNotificationObject(message);
-              this.notifications.push(notification);
-              console.log('Processed notification:', notification);
-            });
-          })
-          .catch(err => console.error('SignalR connection failed:', err));
+        );
+      })
+      .catch((err) => console.error('SignalR connection failed:', err));
   }
 
   showAvailabilityStatus(): void {
@@ -97,7 +112,10 @@ export class Header implements OnInit {
     return styleClass;
   }
   // Helper method to convert string/any message to proper Notification object
-  private createNotificationObject(message: any, messageId?: string): Notification {
+  private createNotificationObject(
+    message: any,
+    messageId?: string
+  ): Notification {
     // If message is already an object with proper structure
     if (typeof message === 'object' && message.title && message.message) {
       return {
@@ -105,10 +123,10 @@ export class Header implements OnInit {
         message: message.message,
         type: message.type || 'success',
         time: message.time || this.getCurrentTime(),
-        read: message.read || false
+        read: message.read || false,
       };
     }
-    
+
     // If message is a string, create a structured notification
     if (typeof message === 'string') {
       return {
@@ -116,7 +134,7 @@ export class Header implements OnInit {
         message: message,
         type: this.getNotificationType(message),
         time: this.getCurrentTime(),
-        read: false
+        read: false,
       };
     }
 
@@ -126,7 +144,7 @@ export class Header implements OnInit {
       message: String(message),
       type: 'success',
       time: this.getCurrentTime(),
-      read: false
+      read: false,
     };
   }
 
@@ -148,52 +166,61 @@ export class Header implements OnInit {
 
   private getNotificationType(message: string): 'info' | 'warning' | 'success' {
     // Determine type based on message content
-    if (message.toLowerCase().includes('success') || message.toLowerCase().includes('completed')) {
+    if (
+      message.toLowerCase().includes('success') ||
+      message.toLowerCase().includes('completed')
+    ) {
       return 'success';
-    } else if (message.toLowerCase().includes('warning') || message.toLowerCase().includes('failed')) {
+    } else if (
+      message.toLowerCase().includes('warning') ||
+      message.toLowerCase().includes('failed')
+    ) {
       return 'warning';
     }
     return 'info';
   }
- 
+
   openModal() {
     console.log('Opening modal...'); // Debug log
     this.isModalOpen = true;
     document.body.style.overflow = 'hidden';
   }
- 
+
   closeModal() {
     console.log('Closing modal...'); // Debug log
     this.isModalOpen = false;
     document.body.style.overflow = 'auto';
   }
- 
+
   onBackdropClick(event: Event) {
     if (event.target === event.currentTarget) {
       this.closeModal();
     }
   }
- 
+
   hasNotifications(): boolean {
     return this.notifications && this.notifications.length > 0;
   }
- 
+
   markAllAsRead() {
     // Now this will work because notifications are proper objects
-    this.notifications.forEach(async notification => {
+    this.notifications.forEach(async (notification) => {
       notification.read = true;
-      await fetch(`http://localhost:5000/api/notification/MarkAsRead/${notification.id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.authService.getAuthToken()}`
+      await fetch(
+        `http://localhost:5000/api/notification/MarkAsRead/${notification.id}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.authService.getAuthToken()}`,
+          },
         }
-      });
+      );
     });
-    
+
     // Option 1: Keep notifications but mark them as read
     console.log('All notifications marked as read');
-    
+
     // Option 2: Clear all notifications (uncomment if you want this behavior)
     // this.notifications = [];
     // console.log('All notifications cleared');
@@ -214,41 +241,62 @@ export class Header implements OnInit {
 
   // Optional: Method to remove individual notifications
   removeNotification(notificationId: string) {
-    this.notifications = this.notifications.filter(n => n.id !== notificationId);
+    this.notifications = this.notifications.filter(
+      (n) => n.id !== notificationId
+    );
   }
 
   // Optional: Get unread count for badge display
   getUnreadCount(): number {
-    return this.notifications.filter(n => !n.read).length;
+    return this.notifications.filter((n) => !n.read).length;
   }
   showOnlyUnread = false;
 
-toggleUnreadFilter() {
-  this.showOnlyUnread = !this.showOnlyUnread;
-}
-
-getFilteredNotifications(): Notification[] {
-  if (this.showOnlyUnread) {
-    return this.notifications.filter(n => !n.read);
+  toggleUnreadFilter() {
+    this.showOnlyUnread = !this.showOnlyUnread;
   }
-  return this.notifications;
-}
 
-toggleNotificationRead(notification: Notification) {
-  notification.read = !notification.read;
-  fetch(`http://localhost:5000/api/notification/MarkAsRead/${notification.id}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.authService.getAuthToken()}`
+  getFilteredNotifications(): Notification[] {
+    if (this.showOnlyUnread) {
+      return this.notifications.filter((n) => !n.read);
     }
-  });
-  console.log(`Notification ${notification.id} marked as ${notification.read ? 'read' : 'unread'}`);
-}
-
-clearAllNotifications() {
-  if (confirm('Are you sure you want to clear all notifications?')) {
-    this.notifications = [];
+    return this.notifications;
   }
-}
+
+  toggleNotificationRead(notification: Notification) {
+    notification.read = !notification.read;
+    fetch(
+      `http://localhost:5000/api/notification/MarkAsRead/${notification.id}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.authService.getAuthToken()}`,
+        },
+      }
+    );
+    console.log(
+      `Notification ${notification.id} marked as ${
+        notification.read ? 'read' : 'unread'
+      }`
+    );
+  }
+
+  clearAllNotifications() {
+    if (confirm('Are you sure you want to clear all notifications?')) {
+      this.notifications = [];
+    }
+  }
+  closemenu() {
+    if (window.innerWidth <= 600) {
+      this.isActive = false;
+      this.mobileOpen = false;
+    }
+  }
+  //navbar
+  navigate(path: string) {
+    // Implement login logic or redirect to login page
+    this.router.navigate([path]);
+    this.closemenu();
+  }
 }

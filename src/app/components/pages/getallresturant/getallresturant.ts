@@ -7,11 +7,14 @@ import { ResturantInterface } from '../../../models/ResturantInterface/resturant
 import { ListOfResturant } from '../../../services/ListOfResturant/list-of-resturant';
 import { ResturanrtLogo } from '../resturanrt-logo/resturanrt-logo';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NavbarComponent } from '../../layout/main-layout/navbar/navbar.component';
+import { Footer } from '../../layout/footer/footer';
+import { AuthService } from '../../../services/auth';
 
 @Component({
   selector: 'app-getallresturant',
   standalone: true,
-  imports: [CommonModule, ResturanrtLogo],
+  imports: [CommonModule, ResturanrtLogo, NavbarComponent, Footer],
   templateUrl: './getallresturant.html',
   styleUrls: ['./getallresturant.css'],
 })
@@ -21,7 +24,8 @@ export class Getallresturant implements OnInit {
   constructor(
     private restaurantService: ListOfResturant,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -35,6 +39,10 @@ export class Getallresturant implements OnInit {
   }
   goToRestaurantItems(name: string) {
     this.router.navigate(['/restaurant', name, 'items']);
+  }
+
+  Image(imageFile: string | undefined | null): void {
+    this.authService.getImageUrl(imageFile);
   }
 }
     

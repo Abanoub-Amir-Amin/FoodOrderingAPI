@@ -57,7 +57,9 @@ export class ShoppingCart implements OnInit {
       next: (res) => {
         console.log(res);
         this.toastservice.showSuccess('Checkout Successfully', 'Checkout');
-        window.open(res.paymentLink, '_self');
+        if (typeof window !== 'undefined') {
+          window.open(res.paymentLink, '_self');
+        }
       },
       error: (err) => {
         console.log(err);

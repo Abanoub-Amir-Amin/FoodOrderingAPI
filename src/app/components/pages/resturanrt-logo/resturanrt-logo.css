@@ -1,44 +1,43 @@
+.hero-banner {
+  background-color: #2b211d;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  height: 200px;
+}
 
-  .hero-banner {
-    background-color: #2b211d;
-    border-radius: 20px;
-    position: relative;
-    overflow: hidden;
-    height: 220px;
-  }
+.leaf {
+  position: absolute;
+  font-size: 1.5rem;
+  opacity: 0.7;
+}
 
-  .leaf {
-    position: absolute;
-    font-size: 1.5rem;
-    opacity: 0.7;
-  }
+.top-left {
+  top: 15px;
+  left: 15px;
+}
 
-  .top-left {
-    top: 15px;
-    left: 15px;
-  }
+.top-right {
+  top: 15px;
+  right: 20px;
+}
 
-  .top-right {
-    top: 15px;
-    right: 20px;
-  }
+.bottom-left {
+  bottom: 15px;
+  left: 20px;
+}
 
-  .bottom-left {
-    bottom: 15px;
-    left: 20px;
-  }
+.bottom-right {
+  bottom: 15px;
+  right: 20px;
+}
 
-  .bottom-right {
-    bottom: 15px;
-    right: 20px;
-  }
+.hero-banner h1 {
+  color: #f2e7e4;
+}
 
-  .hero-banner h1 {
-    color: #f2e7e4;
-  }
-
-  .hero-banner p {
-    color: #b8b2ae;
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
+.hero-banner p {
+  color: #b8b2ae;
+  font-size: 0.9rem;
+  font-weight: 500;
+}

@@ -1,12 +1,184 @@
-h2 {
-  font-weight: bold;
-  font-size: 2rem;
+.contact_container {
+  position: relative;
+  background-color: var(--title-color);
+  padding-top: 3.5rem;
+  border-radius: 3rem;
+  overflow: hidden;
+  row-gap: 3rem;
 }
 
-p {
-  font-size: 1.1rem;
+.contact_container .section_title,
+.contact_title,
+.contact_address {
+  color: var(--body-color);
 }
-.body{
-  background-color: #D56E3F;
-;
+
+.contact_info {
+  text-align: center;
+  row-gap: 2rem;
+}
+
+.section_title {
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 2rem;
+  font-family: var(--title-font);
+}
+
+.contact_title {
+  margin-bottom: 1rem;
+}
+
+.contact_social {
+  display: flex;
+  justify-content: center;
+  column-gap: 1rem;
+}
+
+.contact_social-link {
+  font-size: 1.8rem;
+  color: transparent;
+  background: var(--third-color);
+  background-clip: text;
+  transition: transform 0.4s;
+}
+
+.contact_social-link:hover {
+  transform: translateY(-0.25rem);
+}
+
+.contact_address {
+  font-style: normal;
+}
+
+.contact_map {
+  display: inline-flex;
+  align-items: center;
+  column-gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  color: transparent;
+  background: var(--third-color);
+  background-clip: text;
+}
+
+.contact_map span {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.contact_image {
+  justify-self: center;
+}
+
+.contact_img {
+  width: 300px;
+}
+
+.contact_sticker-1,
+.contact_sticker-2,
+.contact_sticker-3 {
+  width: 40px;
+  position: absolute;
+  opacity: 0.7;
+}
+
+.contact_sticker-1 {
+  top: 8rem;
+  left: 1.5rem;
+}
+
+.contact_sticker-2 {
+  right: 1.5rem;
+  bottom: 23rem;
+}
+
+.contact_sticker-3 {
+  left: 2rem;
+  bottom: 6rem;
+}
+
+@media screen and (max-width: 320px) {
+  .container {
+    margin-inline: 1rem;
+  }
+}
+
+@media screen and (min-width: 576px) {
+  .contact_container {
+    width: 450px;
+    margin-inline: auto;
+  }
+}
+
+@media screen and (min-width: 1150px) {
+  .container {
+    margin-inline: auto;
+  }
+
+  .section {
+    padding-block: 7rem 2rem;
+  }
+
+  .section_title {
+    margin-bottom: 4rem;
+  }
+
+  .contact_container {
+    width: initial;
+    grid-template-columns: 370px 350px;
+    justify-content: center;
+    column-gap: 6rem;
+    border-radius: 4rem;
+  }
+
+  .contact_img {
+    width: 350px;
+  }
+
+  .contact_image {
+    order: -1;
+  }
+
+  .contact_info,
+  .contact_data .section_title {
+    text-align: center;
+  }
+
+  .contact_data {
+    margin-top: 2rem;
+  }
+
+  .contact_info {
+    grid-template-columns: repeat(2, max-content);
+  }
+
+  .contact_title {
+    font-size: 1.7rem;
+  }
+
+  .contact_social {
+    justify-content: initial;
+  }
+
+  .contact_sticker-1,
+  .contact_sticker-2,
+  .contact_sticker-3 {
+    width: 60px;
+  }
+
+  .contact_sticker-1 {
+    left: 4rem;
+  }
+
+  .contact_sticker-2 {
+    right: 4rem;
+    top: 8rem;
+    bottom: 0;
+  }
+
+  .contact_sticker-3 {
+    left: 10rem;
+    bottom: 4rem;
+  }
 }

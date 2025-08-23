@@ -1,13 +1,23 @@
+import {
+  Component,
+  AfterViewInit,
+  Inject,
+  PLATFORM_ID,
+  signal,
+} from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { NgFor } from '@angular/common';
-import { Component, signal } from '@angular/core';
+
+import ScrollReveal from 'scrollreveal';
 
 @Component({
   selector: 'app-about',
-  imports: [NgFor],
+  imports: [NgFor, CommonModule],
+  standalone: true,
   templateUrl: './about.component.html',
   styleUrl: './about.component.css',
 })
-export class AboutComponent {
+export class AboutComponent implements AfterViewInit {
   features = [
     {
       tag: 'Zero Fees',
@@ -31,4 +41,19 @@ export class AboutComponent {
     },
   ];
   tab = signal<'why' | 'benefits' | 'support' | 'faq'>('why');
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
+  ngAfterViewInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const sr = ScrollReveal({
+        origin: 'top',
+        distance: '60px',
+        duration: 2500,
+        delay: 300,
+        reset: false,
+      });
+      sr.reveal('.card-m', { delay: 400, interval: 100 });
+    }
+  }
 }

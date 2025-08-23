@@ -1,22 +1,21 @@
-/*=============== GOOGLE FONTS ===============*/
 @import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Lora:wght@500;600&family=Poppins:wght@400;500&display=swap");
 :root {
   --first-color: hsl(19, 64%, 54%);
-  --first-color-alt: hsl(32, 98%, 51%);
-  --title-color: hsl(20, 16%, 15%);
+  --first-color-alt: hsl(23, 92%, 59%);
+  --title-color: hsl(19, 16%, 15%);
   --text-color: hsl(19, 16%, 35%);
   --text-color-light: hsl(19, 8%, 55%);
   --body-color: hsl(18, 100%, 96%);
   --container-color: hsl(26, 67%, 84%);
   --second-color: hsl(134, 29%, 63%);
-    --dark-second-color: hsl(134 22% 56% / 1);
-
+  --dark-second-color: hsl(134 22% 56% / 1);
+  --linear-gradient: linear-gradient(161.15deg, #f38c25 12.73%, #fb6848 72.95%);
 
   --third-color: rgb(255, 204, 128);
   --light-yellow-color: #fcf3e0;
+  --footer-color: rgb(254, 225, 182);
 
-
-    --primary-color: var(--warning-color);
+  --primary-color: var(--warning-color);
   --secondary-color: #2eb086;
   --text-dark: #333;
 
@@ -56,8 +55,7 @@
   --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
   --shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.16);
-    --shadow-hover: 0 4px 20px rgba(255, 204, 128,0.12)
-
+  --shadow-hover: 0 4px 20px rgba(255, 204, 128, 0.12);
 }
 
 * {
@@ -66,12 +64,12 @@
   box-sizing: border-box;
 }
 @font-face {
-  font-family: 'GravitasOne';
-  src: url('../public/Assets/GravitasOne-Regular.ttf');
+  font-family: "GravitasOne";
+  src: url("../public/Assets/GravitasOne-Regular.ttf");
 }
 @font-face {
-  font-family: 'LobsterTwo';
-  src: url('../public/Assets/LobsterTwo-Bold.ttf');
+  font-family: "LobsterTwo";
+  src: url("../public/Assets/LobsterTwo-Bold.ttf");
 }
 
 body {
@@ -297,14 +295,6 @@ html,
 body {
   height: 100%;
 }
-/* Reset */
-* {
-  box-sizing: border-box;
-}
-html,
-body {
-  height: 100%;
-}
 body {
   margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell,
@@ -363,7 +353,7 @@ button {
   color: #fff;
   transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease,
     border-color 0.2s ease;
-} 
+}
 /* .btn:hover {
   transform: translateY(-1px);
   background: var(--container-color);
@@ -434,7 +424,8 @@ button {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
 }
 
 .confirmation-card {
@@ -442,9 +433,7 @@ button {
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 40px;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    0 8px 16px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.2);
   max-width: 450px;
   width: 100%;
@@ -453,7 +442,7 @@ button {
 }
 
 .confirmation-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -473,7 +462,7 @@ button {
 }
 
 .confirmation-card h2::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -8px;
   left: 50%;
@@ -563,13 +552,18 @@ button {
 }
 
 .btn-confirm::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transition: left 0.5s ease;
 }
 
@@ -627,21 +621,21 @@ button {
   .confirmation-container {
     padding: 15px;
   }
-  
+
   .confirmation-card {
     padding: 30px 25px;
     border-radius: 16px;
   }
-  
+
   .confirmation-card h2 {
     font-size: 24px;
   }
-  
+
   .form-control {
     padding: 14px 16px;
     font-size: 15px;
   }
-  
+
   .btn-confirm {
     padding: 14px 20px;
     font-size: 15px;
@@ -675,17 +669,16 @@ button {
 
 /* reset password styling end */
 
-
 /* Make PrimeNG password input same width as Bootstrap inputs */
 .styled-password {
   display: block;
-  width: 100% !important;  /* ensures container stretches */
+  width: 100% !important; /* ensures container stretches */
 }
 
 .styled-password .p-password-input,
 .styled-password .p-inputtext {
-  width: 100% !important;   /* make actual input fill container */
-  max-width: 100%;          /* prevent shrinking */
+  width: 100% !important; /* make actual input fill container */
+  max-width: 100%; /* prevent shrinking */
   background-color: #fff !important;
   color: #000 !important;
   border: 1px solid #ced4da;
@@ -695,7 +688,7 @@ button {
 }
 
 .styled-password .p-inputtext:focus {
-  border-color: #ff7849;  /* same orange border */
+  border-color: #ff7849; /* same orange border */
   border-width: 2px;
   box-shadow: 0 0 0 0.2rem rgba(249, 135, 96, 0.25); /* orange glow */
   outline: none;
@@ -706,4 +699,124 @@ button {
   border-color: #ff7849 !important;
   box-shadow: 0 0 0 0.2rem rgba(249, 135, 96, 0.25) !important;
   outline: none;
+}
+
+li {
+  list-style: none;
+}
+/* ==========================REUSABLE CSS============== */
+/* Container & Grid utilities */
+/* .container {
+  max-width: 1120px;
+  margin-inline: 1.5rem;
+} */
+
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.section {
+  padding-block: 5rem 1rem;
+}
+
+/* CSS  REUSEABLE BTN*/
+.button-8 {
+  touch-action: manipulation;
+  appearance: button;
+  background-color: transparent;
+  border-style: initial;
+  border-width: 0;
+  cursor: pointer;
+  margin: 0;
+  text-transform: none;
+  vertical-align: baseline;
+}
+
+.button-8:focus {
+  outline: 0;
+}
+
+.button-8 {
+  touch-action: manipulation;
+  background-image: var(--linear-gradient);
+  border-radius: 8px;
+  color: white;
+  font-family: var(--title-font);
+  font-feature-settings: "ss01", "cv10", "calt" 0, "liga" 0;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 24px;
+  padding: 10px 20px;
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.6, 0.6, 0, 1),
+    margin-top 0.2s cubic-bezier(0.6, 0.6, 0, 1);
+  transition-behavior: normal, normal;
+}
+
+.button-8::before {
+  -webkit-mask-clip: content-box, initial;
+  -webkit-mask-composite: xor;
+  -webkit-mask-image: linear-gradient(#fff 0, #fff 0),
+    linear-gradient(#fff 0, #fff 0);
+  -webkit-mask-origin: content-box, initial;
+  -webkit-mask-position-x: initial, initial;
+  -webkit-mask-position-y: initial, initial;
+  -webkit-mask-repeat-x: initial, initial;
+  -webkit-mask-repeat-y: initial, initial;
+  -webkit-mask-size: initial, initial;
+  padding: 1px;
+}
+
+.button-8::before {
+  background-color: initial;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.32), transparent);
+  bottom: 0;
+  pointer-events: none;
+  right: 0;
+}
+
+.button-8::after,
+.button-8::before {
+  border-radius: inherit;
+  content: "";
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+.button-8::after {
+  box-shadow: #000019 0 0, rgba(0, 0, 25, 0.3) 0 9px 21px,
+    rgba(73, 2, 57, 0.2) 0 -3px inset;
+  height: 100%;
+  transition: box-shadow 0.2s cubic-bezier(0.6, 0.6, 0, 1),
+    background-color 0.2s cubic-bezier(0.6, 0.6, 0, 1);
+  transition-behavior: normal, normal;
+  width: 100%;
+  z-index: 1;
+}
+
+.button-8:active {
+  transform: translateY(1.5px);
+}
+
+.button-8:hover::after {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.button-8:active::after {
+  box-shadow: #191200 0 0, rgba(25, 13, 0, 0.2) 0 9px 21px,
+    rgba(73, 35, 2, 0.2) 0 0 inset;
+}
+
+/* ========================SCROLL BAR================ */
+::-webkit-scrollbar {
+  width: 0.6rem;
+  background-color: hsl(34, 16%, 75%);
+}
+::-webkit-scrollbar-thumb {
+  background-color: hsl(34, 16%, 65%);
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(34, 16%, 55%);
 }

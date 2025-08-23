@@ -1,4 +1,4 @@
-<div class="head" [ngClass]="getHeadClass()" id="navbar"> 
+<div class="head" [ngClass]="getHeadClass()" id="navbar">
   <div class="head-content">
     <div class="head-content-left">
       <!-- <div class="head-menu d-flex ">
@@ -6,7 +6,7 @@
           <button
             type="button"
             class="head-menu-item-btn left-item-btn"
-            
+
             (click)="navigate('/')"
           >
           Home
@@ -16,7 +16,7 @@
           <button
             type="button"
             class="head-menu-item-btn left-item-btn"
-            
+
             (click)="navigate('/')"
           >
           About
@@ -26,7 +26,7 @@
           <button
             type="button"
             class="head-menu-item-btn left-item-btn"
-           
+
             (click)="navigate('/getAllResturant')"
           >
           Restaurants
@@ -48,7 +48,7 @@
 
       <div #menu class="head-menu" id="headMenu" [ngClass]="mobileOpen?'mobile-open':''">
          <div class="head-menu-item">
-          <button type="button" 
+          <button type="button"
                   class="head-menu-item-btn ripple home-btn"
                   (click)="navigate('/')"
                  >
@@ -88,7 +88,7 @@
           <img src="Assets/DeliverMan.jpeg" alt="" class="user-avatar" (click)="navigate('/CustomerDashboard/customer-profile')" />
         </div>
       </div>
-       <button type="button menu-text" [style.display]="mobileOpen?'inline':'none'" 
+       <button type="button menu-text" [style.display]="mobileOpen?'inline':'none'"
                   class="head-menu-item-btn "
                   (click)="navigate('/CustomerDashboard/customer-profile')"
                  >
@@ -123,13 +123,13 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-     
+
       <div class="modal-body">
         <!-- Show notifications if any exist -->
         <div *ngIf="hasNotifications(); else noNotifications">
           <!-- Filter options (optional) -->
           <div class="notification-filters mb-3">
-            <button 
+            <button
               class="btn btn-sm btn-outline-primary me-2"
               [class.active]="showOnlyUnread"
               (click)="toggleUnreadFilter()"
@@ -144,8 +144,8 @@
 
           <!-- Notifications list -->
           <div class="notifications-container">
-            <div 
-              class="notification-item" 
+            <div
+              class="notification-item"
               *ngFor="let notification of getFilteredNotifications(); let i = index"
               [class.notification-read]="notification.read"
               [class.notification-unread]="!notification.read"
@@ -168,16 +168,16 @@
                 <div class="notification-header">
                   <div class="notification-actions">
                     <!-- Individual read/unread toggle -->
-                    <button 
-                      class="btn-icon" 
+                    <button
+                      class="btn-icon"
                       [title]="notification.read ? 'Mark as unread' : 'Mark as read'"
                       (click)="toggleNotificationRead(notification)"
                     >
                       <i class="fas" [ngClass]="notification.read ? 'fa-envelope-open' : 'fa-envelope'"></i>
                     </button>
                     <!-- Remove individual notification -->
-                    <button 
-                      class="btn-icon btn-remove" 
+                    <button
+                      class="btn-icon btn-remove"
                       title="Remove notification"
                       (click)="removeNotification(notification.id)"
                     >
@@ -197,7 +197,7 @@
             </div>
           </div>
         </div>
-       
+
         <!-- Empty state template -->
         <ng-template #noNotifications>
           <div class="modal-empty-state">
@@ -207,13 +207,13 @@
           </div>
         </ng-template>
       </div>
-     
+
       <div class="modal-footer">
         <div class="footer-left">
           <!-- Clear all notifications button -->
-          <button 
-            type="button" 
-            class="btn btn-outline-danger btn-sm" 
+          <button
+            type="button"
+            class="btn btn-outline-danger btn-sm"
             *ngIf="hasNotifications()"
             (click)="clearAllNotifications()"
           >
@@ -225,10 +225,10 @@
           <button type="button" class="btn btn-secondary me-2" (click)="closeModal()">
             Close
           </button>
-          <button 
-            type="button" 
-            class="btn btn-primary" 
-            *ngIf="getUnreadCount() > 0" 
+          <button
+            type="button"
+            class="btn btn-primary"
+            *ngIf="getUnreadCount() > 0"
             (click)="markAllAsRead()"
           >
             <i class="fas fa-check me-1"></i>

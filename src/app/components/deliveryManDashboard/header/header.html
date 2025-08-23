@@ -11,6 +11,13 @@
     <div class="head-content-right">
       <div class="head-menu">
         <div class="head-menu-item">
+          <button
+            type="button"
+            class="head-menu-item-btn ripple home-btn"
+            (click)="navigate('/')"
+          >
+            <i class="far fa-home menu-icon"></i>
+          </button>
           <!-- Notification button with unread count badge -->
           <button
             type="button"
@@ -25,15 +32,6 @@
             </span>
           </button>
         </div>
-        <!-- <div class="head-menu-item">
-          <button
-            type="button"
-            class="head-menu-item-btn ripple"
-            aria-label="Comments"
-          >
-            <i class="far fa-comment-alt menu-icon"></i>
-          </button>
-        </div> -->
       </div>
 
       <div class="head-user-avatar-container">
@@ -51,6 +49,7 @@
   </div>
 </div>
 
+<!-- Enhanced Modal -->
 <div
   class="modal-backdrop"
   *ngIf="isModalOpen"
@@ -60,40 +59,49 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">
-          <i class="far fa-bell me-2" style="color: #667eea;"></i>
+          <i class="far fa-bell me-2" style="color: #667eea"></i>
           Notifications
           <span class="notification-count" *ngIf="hasNotifications()">
             ({{ notifications.length }})
           </span>
         </h5>
-        <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+        <button
+          type="button"
+          class="close"
+          (click)="closeModal()"
+          aria-label="Close"
+        >
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-     
+
       <div class="modal-body">
         <!-- Show notifications if any exist -->
         <div *ngIf="hasNotifications(); else noNotifications">
           <!-- Filter options (optional) -->
           <div class="notification-filters mb-3">
-            <button 
+            <button
               class="btn btn-sm btn-outline-primary me-2"
               [class.active]="showOnlyUnread"
               (click)="toggleUnreadFilter()"
             >
               <i class="fas fa-filter me-1"></i>
-              {{ !showOnlyUnread ? 'Show All' : 'Unread Only' }}
+              {{ !showOnlyUnread ? "Show All" : "Unread Only" }}
             </button>
             <span class="text-muted small">
-              {{ getFilteredNotifications().length }} of {{ notifications.length }} notifications
+              {{ getFilteredNotifications().length }} of
+              {{ notifications.length }} notifications
             </span>
           </div>
 
           <!-- Notifications list -->
           <div class="notifications-container">
-            <div 
-              class="notification-item" 
-              *ngFor="let notification of getFilteredNotifications(); let i = index"
+            <div
+              class="notification-item"
+              *ngFor="
+                let notification of getFilteredNotifications();
+                let i = index
+              "
               [class.notification-read]="notification.read"
               [class.notification-unread]="!notification.read"
             >
@@ -115,16 +123,23 @@
                 <div class="notification-header">
                   <div class="notification-actions">
                     <!-- Individual read/unread toggle -->
-                    <button 
-                      class="btn-icon" 
-                      [title]="notification.read ? 'Mark as unread' : 'Mark as read'"
+                    <button
+                      class="btn-icon"
+                      [title]="
+                        notification.read ? 'Mark as unread' : 'Mark as read'
+                      "
                       (click)="toggleNotificationRead(notification)"
                     >
-                      <i class="fas" [ngClass]="notification.read ? 'fa-envelope-open' : 'fa-envelope'"></i>
+                      <i
+                        class="fas"
+                        [ngClass]="
+                          notification.read ? 'fa-envelope-open' : 'fa-envelope'
+                        "
+                      ></i>
                     </button>
                     <!-- Remove individual notification -->
-                    <button 
-                      class="btn-icon btn-remove" 
+                    <button
+                      class="btn-icon btn-remove"
                       title="Remove notification"
                       (click)="removeNotification(notification.id)"
                     >
@@ -144,7 +159,7 @@
             </div>
           </div>
         </div>
-       
+
         <!-- Empty state template -->
         <ng-template #noNotifications>
           <div class="modal-empty-state">
@@ -154,13 +169,13 @@
           </div>
         </ng-template>
       </div>
-     
+
       <div class="modal-footer">
         <div class="footer-left">
           <!-- Clear all notifications button -->
-          <button 
-            type="button" 
-            class="btn btn-outline-danger btn-sm" 
+          <button
+            type="button"
+            class="btn btn-outline-danger btn-sm"
             *ngIf="hasNotifications()"
             (click)="clearAllNotifications()"
           >
@@ -169,13 +184,17 @@
           </button>
         </div>
         <div class="footer-right">
-          <button type="button" class="btn btn-secondary me-2" (click)="closeModal()">
+          <button
+            type="button"
+            class="btn btn-secondary me-2"
+            (click)="closeModal()"
+          >
             Close
           </button>
-          <button 
-            type="button" 
-            class="btn btn-primary" 
-            *ngIf="getUnreadCount() > 0" 
+          <button
+            type="button"
+            class="btn btn-primary"
+            *ngIf="getUnreadCount() > 0"
             (click)="markAllAsRead()"
           >
             <i class="fas fa-check me-1"></i>

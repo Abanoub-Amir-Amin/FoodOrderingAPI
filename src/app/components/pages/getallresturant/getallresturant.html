@@ -1,41 +1,39 @@
-<div class="container py-4">
-  <div class="row">
-    <div class="col-12 mb-4">
-      <!-- <h2 class="text-center">
-        <i class="bi bi-clipboard2-check-fill me-2"></i> All Resturant
-      </h2> -->
-    </div>
-    <div class="container my-4">
-      <div class="row justify-content-center gx-4 gy-4">
-        @for (restaurant of restaurants; track restaurant.restaurantName) {
-        <div
-          class="col-6 col-sm-4 col-md-3"
-          (click)="goToRestaurantItems(restaurant.restaurantName)"
-        >
-          <div
-            class="restaurant-card text-center shadow-sm rounded-4 overflow-hidden"
-          >
-            <img
-              class="img-fluid p-3"
-              [src]="
-                'http://localhost:5000/' +
-                (restaurant.imageFile?.startsWith('wwwroot')
-                  ? restaurant.imageFile.slice(8)
-                  : restaurant.imageFile)
-              "
-              alt="صورة المطعم"
-            />
+<app-navbar></app-navbar>
 
-            <h6
-              class="title-bar text-white fw-bold py-2"
-              style="background-color: #2b211d"
-            >
-              {{ restaurant.restaurantName }}
-            </h6>
-          </div>
+<div class="container">
+  <div class="row">
+    <div class="col-12 restaurant_logo">
+      <app-resturanrt-logo class="m-5"></app-resturanrt-logo>
+    </div>
+    <div class="card__container">
+      @for (restaurant of restaurants; track restaurant.restaurantName) {
+      <article class="card__article">
+        <img
+          [src]="
+            'http://localhost:5000/' +
+            (restaurant.imageFile?.startsWith('wwwroot')
+              ? restaurant.imageFile.slice(8)
+              : restaurant.imageFile)
+          "
+          alt="image"
+          class="card__img"
+        />
+
+        <div class="card__data">
+          <span class="card__description">{{ restaurant.location }}</span>
+          <h2 class="card__title">
+            {{ restaurant.restaurantName }}
+          </h2>
+          <button
+            class="card__button"
+            (click)="goToRestaurantItems(restaurant.restaurantName)"
+          >
+            Show Menu
+          </button>
         </div>
-        }
-      </div>
+      </article>
+      }
     </div>
   </div>
 </div>
+<app-footer></app-footer>
