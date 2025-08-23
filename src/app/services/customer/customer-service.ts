@@ -9,7 +9,6 @@ import { ApiResponse } from '../deliveryman.model';
   providedIn: 'root',
 })
 export class CustomerService {
-  userid:string = '';  
   headers !: HttpHeaders;
   private apiUrl = 'http://localhost:5000/api/Customer/Register';
 
@@ -24,31 +23,30 @@ export class CustomerService {
     return this.http.post(this.apiUrl, customer);
   }
   getCustomerById(): Observable<CustomerDto> {
-    return this.http.get<CustomerDto>(`${this.basicUrl}Customer/ByID/${this.userid}`,{headers:this.headers});
+    return this.http.get<CustomerDto>(`${this.basicUrl}Customer/ByID/${this.getuserId()}`,{headers:this.getAuthHeaders()});
   }
   updateCustomer(customer: UpdateCustomerDTO): Observable<any> {
-    return this.http.put(`${this.basicUrl}Customer/UpdateCustomer?CustomerId=${this.userid}`, customer, { headers: this.headers });
+    return this.http.put(`${this.basicUrl}Customer/UpdateCustomer?CustomerId=${this.getuserId()}`, customer, { headers: this.getAuthHeaders() });
   }
 //orders
 
 getallOrders(): Observable<{$id:string,$values:OrderViewDTO[]}> {
-  return this.http.get<{$id:string,$values:OrderViewDTO[]}>(`${this.basicUrl}Order/AllOrdersForCustomer`, { headers: this.headers });
+  return this.http.get<{$id:string,$values:OrderViewDTO[]}>(`${this.basicUrl}Order/AllOrdersForCustomer`, { headers: this.getAuthHeaders() });
 }
 getorderdetails(orderId: string): Observable<OrderDetailDTO> {
   return this.http.get<OrderDetailDTO>(`${this.basicUrl}Order/OrderDetailaForCustomer?orderId=${orderId}`, {
-    headers: this.headers})
+    headers: this.getAuthHeaders()})
   }
   getorderforcustomerbystatus(status: StatusEnum): Observable<{$id:string,$values:OrderViewDTO[]}> 
   {
     let params=new HttpParams()
-    return this.http.request<{$id:string,$values:OrderViewDTO[]}>('GET',`${this.basicUrl}Order/OrderForCustomerbystatus?status=${encodeURIComponent(status)}`,{ headers: this.headers });
+    return this.http.request<{$id:string,$values:OrderViewDTO[]}>('GET',`${this.basicUrl}Order/OrderForCustomerbystatus?status=${encodeURIComponent(status)}`,{ headers: this.getAuthHeaders() });
   }
 
  
  //auth login
   private getAuthHeaders(): HttpHeaders {
     const token = sessionStorage.getItem('authToken');
-    this.userid = sessionStorage.getItem('userId') ?? ''
 
     if (token) {
       return new HttpHeaders({
@@ -56,5 +54,9 @@ getorderdetails(orderId: string): Observable<OrderDetailDTO> {
       });
     }
     return new HttpHeaders(); // empty if no token
+  }
+  private getuserId():string{
+    return sessionStorage.getItem('userId') ?? '';
+    
   }
 }

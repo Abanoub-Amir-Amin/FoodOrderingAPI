@@ -14,7 +14,6 @@ import { ApiResponse } from '../deliveryman.model';
 export class ShoppingCart {
   private apiUrl = 'http://localhost:5000/api/';
   headers!: HttpHeaders;
-  userid!: string;
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) id: object) {
     console.log('called...')
     if (isPlatformBrowser(id)) {
@@ -22,10 +21,10 @@ export class ShoppingCart {
     }
   }
   GetCart(): Observable<ShoppingCartDto> {
-    console.log(this.headers, 'userid', this.userid);
+    console.log(this.headers, 'userid', this.getuserId());
     return this.http.get<ShoppingCartDto>(
-      `${this.apiUrl}ShoppingCart/ShoppingCart?customerid=${this.userid}`,
-      { headers: this.headers }
+      `${this.apiUrl}ShoppingCart/ShoppingCart?customerid=${this.getuserId()}`,
+      { headers: this.getAuthHeaders() }
     );
     //  .pipe(
     //   map(cart => ({
@@ -43,7 +42,7 @@ export class ShoppingCart {
         itemID: cartitem.itemID,
         preferences: cartitem.preferences,
       },
-      { headers: this.headers }
+      { headers: this.getAuthHeaders() }
     );
   }
   UpdateItemQuantity(cartitemId: string, addition: number): Observable<string> {
@@ -51,13 +50,13 @@ export class ShoppingCart {
     return this.http.put<string>(
       `${this.apiUrl}ShoppingCart/UpdateItem?cartIemId=${cartitemId}&addition=${addition}`,
       null,
-      { headers: this.headers, responseType: 'text' as 'json' }
+      { headers: this.getAuthHeaders(), responseType: 'text' as 'json' }
     );
   }
   DeleteItem(cartitemId: string): Observable<string> {
     return this.http.delete<string>(
       `${this.apiUrl}ShoppingCart/RemoveItem?cartIemId=${cartitemId}`,
-      { headers: this.headers, responseType: 'text' as 'json' }
+      { headers: this.getAuthHeaders(), responseType: 'text' as 'json' }
     );
   }
   Clear(cartId: string): Observable<string> {
@@ -66,23 +65,22 @@ export class ShoppingCart {
       {
         cartid: cartId,
       },
-      { headers: this.headers, responseType: 'text' as 'json' }
+      { headers: this.getAuthHeaders(), responseType: 'text' as 'json' }
     );
   }
   Checkout(): Observable<any> {
     // console.log(this.headers,"userid",this.userid)
     return this.http.get<any>(`${this.apiUrl}Order/Checkout`, {
-      headers: this.headers,
+      headers: this.getAuthHeaders(),
     });
   }
   placeOrder(SessionId:string):Observable<string>{
     return this.http.post<string>(`${this.apiUrl}Order/PlaceOrder?SessionId=${SessionId}`,{
-    }, { headers: this.headers , responseType: 'text' as 'json'  }
+    }, { headers: this.getAuthHeaders() , responseType: 'text' as 'json'  }
   );
   }
   private getAuthHeaders(): HttpHeaders {
     const token = sessionStorage.getItem('authToken');
-    this.userid = sessionStorage.getItem('userId') ?? '';
     console
 
     if (token) {
@@ -91,5 +89,9 @@ export class ShoppingCart {
       });
     }
     return new HttpHeaders(); // empty if no token
+  }
+  private getuserId():string{
+    return sessionStorage.getItem('userId') ?? '';
+    
   }
 }
