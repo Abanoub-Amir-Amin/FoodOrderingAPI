@@ -44,8 +44,9 @@ public class MappingProfile : Profile
         CreateMap<Restaurant, AllRestaurantsDTO>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.RestaurantID))
             .ForMember(dest => dest.ImageFile, opt => opt.MapFrom(src => src.ImageFile))
-            .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating));
-
+            .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating))
+            .ForMember(dest => dest.DelivaryPrice, opt => opt.MapFrom(src => src.DelivaryPrice))
+            .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location));
 
         // Map Order → OrderDto
         CreateMap<Order, OrderDto>()
