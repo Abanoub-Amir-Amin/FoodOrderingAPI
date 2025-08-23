@@ -44,6 +44,7 @@ namespace FoodOrderingAPI.Models
         [ForeignKey(nameof(PromoCode))]
         public Guid? PromoCodeID { get; set; }
 
+        public string sessionId { get; set; }
         public Customer Customer { get; set; }
         public Address Address { get; set; }
         public Restaurant Restaurant { get; set; }

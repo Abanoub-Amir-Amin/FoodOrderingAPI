@@ -101,7 +101,7 @@ namespace FoodOrderingAPI.Services
                 PaymentMethodTypes = new List<string> { "card" },
                 LineItems = new List<SessionLineItemOptions>(),
                 Mode = "payment",
-                SuccessUrl = "http://localhost:4200/placeorder",
+                SuccessUrl = "http://localhost:4200/placeorder?session_id={CHECKOUT_SESSION_ID}",
                 CancelUrl = "https://example.com/cancel"
             };
             foreach (var item in items)
@@ -120,7 +120,7 @@ namespace FoodOrderingAPI.Services
             });
             var service = new SessionService();
             Session session = service.Create(options);
-            Console.WriteLine(session.Url);
+            
             return session.Url;
         }
     }

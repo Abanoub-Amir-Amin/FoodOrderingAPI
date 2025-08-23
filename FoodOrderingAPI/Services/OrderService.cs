@@ -13,7 +13,7 @@ using FoodOrderingAPI.Repository;
 using Microsoft.AspNetCore.Hosting;
 
 using Microsoft.AspNetCore.Identity;
-
+using Stripe.Checkout;
 using System;
 
 using System.Collections.Generic;
@@ -391,9 +391,21 @@ namespace FoodOrderingAPI.Services
 
         }
 
-        public async Task PlaceOrder(ShoppingCart cart)
+        public async Task PlaceOrder(ShoppingCart cart,string session_id)
 
         {
+            if (string.IsNullOrEmpty(session_id))
+                throw new ArgumentException("payment error");
+
+            var service = new SessionService();
+            var session = await service.GetAsync(session_id);
+
+            if (session.PaymentStatus != "paid")
+                throw new ArgumentException("payment error");
+
+            // Optional: Prevent reuse of session_id
+            if (_context.Orders.Any(o => o.sessionId==session_id))
+                throw new ArgumentException("Already Used");
 
             if (cart.ShoppingCartItems == null || cart.ShoppingCartItems.Count <= 0)
 
@@ -429,7 +441,7 @@ namespace FoodOrderingAPI.Services
                 order.AddressID = orderAddress.AddressID;
 
                 order.PhoneNumber = cart.Customer.User.PhoneNumber;
-
+                order.sessionId = session_id;
                 TimeSpan delivaryDuration = await _openRouteService.GetTravelDurationAsync(
 
                     cart.Restaurant.Latitude,

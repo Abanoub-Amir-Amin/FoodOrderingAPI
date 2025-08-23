@@ -24,7 +24,7 @@ namespace FoodOrderingAPI.Services
 
         // Customer operations
         Task<CheckoutViewDTO> Checkout(ShoppingCart shoppingCart);
-        Task PlaceOrder(ShoppingCart cart);
+        Task PlaceOrder(ShoppingCart cart, string session_id);
         Task<List<OrderViewDTO>> getOrders(string customerId);
         Task<List<OrderViewDTO>> GetOrdersByStatusAsyncForCustomer(string customerId, StatusEnum statuses);
         Task<Order?> getOrder(Guid orderId);
