@@ -5,12 +5,15 @@ import {
   ViewChild,
   ElementRef,
   AfterViewChecked,
+  Inject,
+  PLATFORM_ID,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ChatService } from '../../services/chatBot/chat-service';
 import { ChatMessage, ChatSession } from '../../models/chatBot/chat.model';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-chat-bot',
@@ -35,7 +38,10 @@ export class ChatBot implements OnInit, OnDestroy, AfterViewChecked {
 
   private subscriptions: Subscription[] = [];
 
-  constructor(private chatService: ChatService) {}
+  constructor(
+    private chatService: ChatService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   ngOnInit() {
     // Subscribe to messages
@@ -67,10 +73,12 @@ export class ChatBot implements OnInit, OnDestroy, AfterViewChecked {
     this.currentConversationId = this.chatService.getCurrentConversationId();
     ////////////////////////////////////
     // Set sidebar visible by default on desktop
-    if (window.innerWidth > 768) {
-      this.sidebarVisible = true;
-    } else {
-      this.sidebarVisible = false;
+    if (isPlatformBrowser(this.platformId)) {
+      if (window.innerWidth > 768) {
+        this.sidebarVisible = true;
+      } else {
+        this.sidebarVisible = false;
+      }
     }
 
     // Add welcome message
@@ -129,12 +137,8 @@ export class ChatBot implements OnInit, OnDestroy, AfterViewChecked {
       ? (event.target as HTMLTextAreaElement)
       : this.messageInput?.nativeElement;
     if (textarea) {
-        textarea.style.height = 'auto';
-    if (textarea.scrollHeight > 300) {
-textarea.style.height = textarea.scrollHeight + 'px';  
-    } else {
-    textarea.style.height = 'auto';
-    }
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
     }
   }
 

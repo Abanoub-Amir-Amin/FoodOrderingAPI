@@ -90,7 +90,7 @@ export class AuthService {
     sessionStorage.removeItem('loginTime');
     sessionStorage.removeItem('userInfo');
     this.currentUserSubject.next(null);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/home']);
   }
 
   isLoggedIn(): boolean {
@@ -163,7 +163,7 @@ export class AuthService {
   getImageUrl(imageFile: string | undefined | null): string {
     if (!imageFile) return 'assets/restaurantLogo.jpg';
     if (imageFile.startsWith('http')) return imageFile; // full URL
-    return `http://localhost:5000/${imageFile}`; // prefix backend server URL
+    return `http://localhost:5000${imageFile}`; // prefix backend server URL
   }
 
   // Check if token is expired (you'll need to decode JWT for this)

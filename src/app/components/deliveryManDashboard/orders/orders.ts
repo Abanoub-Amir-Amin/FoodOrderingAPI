@@ -9,18 +9,13 @@ import { takeUntil } from 'rxjs/operators';
 import { NgClass } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { DeliveryService } from '../../../services/DeliveryManDashboardService/delivery.service';
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
+import { trigger, style, transition, animate } from '@angular/animations';
 import { AuthService } from '../../../services/auth.js';
+
 @Component({
   selector: 'app-orders',
   imports: [CommonModule, HttpClientModule],
-  providers: [DeliveryService],
+  providers: [DeliveryService], // ⚠️ ممكن تشيلها وتخلي السيرفس Singleton من root
   templateUrl: './orders.html',
   styleUrl: './orders.css',
   animations: [
@@ -52,20 +47,20 @@ export class Orders implements OnInit, OnDestroy {
   showNotifications = false;
   notifications: any[] = [];
 
-  // Get delivery man ID from auth service
   private deliveryManId: string = '';
 
   constructor(
     private deliveryService: DeliveryService,
     private authService: AuthService
   ) {
-    // Get the actual delivery man ID from auth service
     this.deliveryManId = this.authService.getUserId() || '';
   }
 
   ngOnInit(): void {
     this.subscribeToObservables();
+
     this.deliveryService.fetchCurrentOrder();
+    this.deliveryService.fetchCompletedOrders();
   }
 
   ngOnDestroy(): void {
@@ -91,9 +86,17 @@ export class Orders implements OnInit, OnDestroy {
       .subscribe((notifications) => (this.notifications = notifications));
   }
 
+  getImage(path: string | null | undefined): string {
+    return this.authService.getImageUrl(path);
+  }
+
   setActiveTab(tab: string): void {
     this.activeTab = tab;
     this.showOrderDetails = false;
+
+    if (tab === 'completed') {
+      this.deliveryService.fetchCompletedOrders();
+    }
   }
 
   toggleOrderDetails(): void {
@@ -124,7 +127,11 @@ export class Orders implements OnInit, OnDestroy {
     this.deliveryService.fetchCurrentOrder();
   }
 
-  // Test notification function
+  refreshCompletedOrders(): void {
+    this.deliveryService.fetchCompletedOrders();
+  }
+
+  // Test notification
   testNotification(): void {
     this.deliveryService
       .sendNotification({

@@ -22,7 +22,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   styleUrls: ['./login.css'],
 })
 export class LoginComponent implements OnInit {
-
   value!: string;
   isLoading = false;
   errorMsg = '';
@@ -102,14 +101,57 @@ export class LoginComponent implements OnInit {
 
   redirectUser(role: string): void {
     switch (role.toLowerCase()) {
-      case 'deliveryman':
-        this.router.navigate(['/DeliveryManDashboard']);
+      case 'deliveryman': {
+        const userId = this.loginAuth.getUserId();
+        if (!userId) {
+          this.error = 'User ID not found.';
+          return;
+        }
+        const token = sessionStorage.getItem('authToken');
+        if (!token) {
+          this.error = 'Authorization token not found.';
+          return;
+        }
+
+        if (!token) {
+          this.error = 'Authorization token not found.';
+          return;
+        }
+        const headers = new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+        });
+        this.http
+          .get<{ accountStatus: number; deliveryManID: string; $id: string }>(
+            `${this.baseUrl}/api/DeliveryMan/${userId}`,
+            { headers }
+          )
+          .subscribe({
+            next: (DeliveryMan) => {
+              console.log('DeliveryMan response:', DeliveryMan);
+
+              if (DeliveryMan.accountStatus === 1) {
+                this.router
+                  .navigate(['/DeliveryManDashboard'])
+                  .catch((err) => console.error(err));
+              } else {
+                this.router.navigate(['/action-pending']);
+              }
+            },
+            error: (err) => {
+              console.error('Error fetching DeliveryMan info:', err);
+              this.router.navigate(['/']);
+            },
+          });
+
         break;
+      }
+
       case 'admin':
-        const token = sessionStorage.getItem("authToken");
+        const token = sessionStorage.getItem('authToken');
         if (token) {
-          window.location.href =
-            `http://localhost:5000/admin/Dashboard?token=${encodeURIComponent(token)}`;
+          window.location.href = `http://localhost:5000/admin/Dashboard?token=${encodeURIComponent(
+            token
+          )}`;
         }
         break;
       case 'customer':
@@ -191,5 +233,5 @@ export class LoginComponent implements OnInit {
   }
   forgotPassword() {
     this.router.navigate(['/reset-password']);
-}
+  }
 }

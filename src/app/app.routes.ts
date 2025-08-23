@@ -37,6 +37,7 @@ import { CustomerAddresses } from './components/CustomerDashboard/customer-addre
 import { CustomerOrders } from './components/CustomerDashboard/customer-orders/customer-orders';
 import { CustomerInbobox } from './components/CustomerDashboard/customer-inbobox/customer-inbobox';
 import { ResturantAllDetails } from './components/pages/resturant-all-details/resturant-all-details';
+import { OrderHomeComponent } from './components/pages/homeComponents/order-home/order-home.component';
 
 // Guard Functions for Angular 20
 export const authGuard = () => {
@@ -96,7 +97,6 @@ export const routes: Routes = [
   { path: 'getAllResturant', component: Getallresturant },
   { path: 'billing', component: BillingPageComponent },
   { path: 'order', component: OrderHistoryComponent },
-  { path: 'shoppingCart', component: ShoppingCart },
   { path: 'chatBot', component: ChatBot },
 
   // User dashboard routes
@@ -153,13 +153,6 @@ export const routes: Routes = [
       },
     ],
   },
-  // {
-  //   path:'shoppingcart',
-  //   loadComponent: () =>
-  //     import('./components/Shopping-cart/shopping-cart/shopping-cart').then(
-  //       (m) => m.ShoppingCart
-  //     ),
-  // },
   {
     path: 'confirm-email',
     loadComponent: () =>
@@ -233,7 +226,6 @@ export const routes: Routes = [
     title: 'Dashboard',
   },
 
-  
   //Customer Dashboard
   {
     path: 'CustomerDashboard',
@@ -278,11 +270,10 @@ export const routes: Routes = [
     component: PlaceOrder,
     canActivate: [roleGuard('Customer')],
   },
+
   // Wildcard route - must be last
   { path: '**', redirectTo: '/home' },
-
 ];
-
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

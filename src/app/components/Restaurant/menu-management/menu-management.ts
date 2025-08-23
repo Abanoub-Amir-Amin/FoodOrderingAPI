@@ -86,8 +86,7 @@ export class MenuManagement implements OnInit {
       category: ['', Validators.required],
       isAvailable: [true],
       imageFile: [null],
-      imageUrl: [null]
-
+      imageUrl: [null],
     });
 
     this.discountForm = this.fb.group({
@@ -233,11 +232,11 @@ export class MenuManagement implements OnInit {
     this.itemIdSubscriptionSet = true;
   }
 
-    onImageFileChange(event: Event): void {
-      const input = event.target as HTMLInputElement;
-      if (input.files && input.files.length > 0) {
-        const file = input.files[0];  
-        this.addItemForm.patchValue({
+  onImageFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.addItemForm.patchValue({
         imageFile: file,
       });
       // If you want to trigger validation or mark as touched
@@ -245,7 +244,6 @@ export class MenuManagement implements OnInit {
       this.getImageUrl('imageFile');
     }
   }
-
 
   extractCategories(): void {
     this.categories = Array.from(
@@ -350,37 +348,43 @@ export class MenuManagement implements OnInit {
     }
   }
 
-// Called when user selects an item to edit -- just patches the form
-editItem(item: ItemUpdateDto): void {
-  this.editItemId = item.itemID || null;
-  this.imagePreviewUrl = this.getImageUrl(item.imageUrl);
-  this.addItemForm.patchValue({
-    name: item.name,
-    description: item.description,
-    price: item.price,
-    discountedPrice: item.discountedPrice,
-    category: item.category,
-    isAvailable: item.isAvailable,
-    imageFile: null, // Do not patch the file input directly
-    imageUrl: item.imageUrl
-  });
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+  // Called when user selects an item to edit -- just patches the form
+  editItem(item: ItemUpdateDto): void {
+    this.editItemId = item.itemID || null;
+    this.imagePreviewUrl = this.getImageUrl(item.imageUrl);
+    this.addItemForm.patchValue({
+      name: item.name,
+      description: item.description,
+      price: item.price,
+      discountedPrice: item.discountedPrice,
+      category: item.category,
+      isAvailable: item.isAvailable,
+      imageFile: null, // Do not patch the file input directly
+      imageUrl: item.imageUrl,
+    });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
-cancelEditItem(): void {
-  this.editItemId = null;
-  this.imagePreviewUrl = null;
-  this.addItemForm.reset({
-    name: '',
-    description: '',
-    price: 0,
-    category: '',
-    isAvailable: true,
-    imageFile: null,
-    imageUrl: null,
-  });
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+  }
+
+  cancelEditItem(): void {
+    this.editItemId = null;
+    this.imagePreviewUrl = null;
+    this.addItemForm.reset({
+      name: '',
+      description: '',
+      price: 0,
+      category: '',
+      isAvailable: true,
+      imageFile: null,
+      imageUrl: null,
+    });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+  }
 
   deleteItem(item: ItemDto): void {
     if (!item.itemID) {
@@ -520,7 +524,9 @@ cancelEditItem(): void {
       startDate: this.formatDateForInput(discount.startDate),
       endDate: this.formatDateForInput(discount.endDate),
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 
   deleteDiscount(discount: DiscountDto): void {

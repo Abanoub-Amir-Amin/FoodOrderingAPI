@@ -32,7 +32,12 @@
       </div>
 
       <div class="item-actions">
-        <button class="view-btn" (click)="GoToCart()">Show Details</button>
+        <button
+          class="view-btn"
+          (click)="AddToCart(item.itemID, item.description)"
+        >
+          Add To Cart
+        </button>
       </div>
     </div>
   </div>

@@ -3,7 +3,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse, DeliveryManRegistration } from './deliveryman.model';
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -14,8 +13,7 @@ export class DeliverymanService {
 
   registerDeliveryman(
     registrationData: DeliveryManRegistration
-  ):
-   Observable<ApiResponse> {
+  ): Observable<ApiResponse> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
