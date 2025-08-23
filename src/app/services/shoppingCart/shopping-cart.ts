@@ -16,6 +16,7 @@ export class ShoppingCart {
   headers!: HttpHeaders;
   userid!: string;
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) id: object) {
+    console.log('called...')
     if (isPlatformBrowser(id)) {
       this.headers = this.getAuthHeaders();
     }
@@ -82,6 +83,7 @@ export class ShoppingCart {
   private getAuthHeaders(): HttpHeaders {
     const token = sessionStorage.getItem('authToken');
     this.userid = sessionStorage.getItem('userId') ?? '';
+    console
 
     if (token) {
       return new HttpHeaders({
