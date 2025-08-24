@@ -79,7 +79,18 @@ export class AuthService {
       })
     );
   }
+  rejectUser(){
+    if (!this.isBrowser) return;
 
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('sessionId');
+    sessionStorage.removeItem('loginTime');
+    sessionStorage.removeItem('userInfo');
+    this.currentUserSubject.next(null);
+    
+  }
   logout(): void {
     if (!this.isBrowser) return;
 

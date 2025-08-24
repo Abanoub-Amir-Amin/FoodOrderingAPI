@@ -160,57 +160,55 @@ export class MenuManagement implements OnInit {
   // ===== Items =====
 
   loadItems(): void {
-    const headers = this.getAuthHeaders();
+  const headers = this.getAuthHeaders();
 
-    if (this.categoryFilter) {
-      const query = `category=${encodeURIComponent(this.categoryFilter)}`;
-      this.http
-        .get<ItemDto[]>(
-          `${this.baseUrl}/item/${this.restaurantId}/items/bycategory?${query}`,
-          { headers }
-        )
-        .subscribe({
-          next: (items) => {
-            this.items = Array.isArray(items) ? items : [];
-            this.extractCategories();
-            this.applyItemFilters();
-            this.setupItemIdValueChangesSubscription();
-          },
-          error: () => {
-            this.snackBar.open('Failed to load items by category', undefined, {
-              duration: 3000,
-            });
-          },
-        });
-    } else {
-      this.http
-        .get<ItemDto[]>(`${this.baseUrl}/item/items`, { headers })
-        .subscribe({
-          next: (res) => {
-            console.log(res);
-            let itemsArray: ItemDto[] = [];
-            if (Array.isArray(res)) {
-              itemsArray = res;
-            } else if (res && Array.isArray((res as any).$values)) {
-              itemsArray = (res as any).$values;
-              console.log('itemsArray', itemsArray);
-            }
+  if (this.categoryFilter) {
+    const query = `category=${encodeURIComponent(this.categoryFilter)}`;
+    this.http
+      .get<ItemDto[]>(
+        `${this.baseUrl}/item/${this.restaurantId}/items/bycategory?${query}`,
+        { headers }
+      )
+      .subscribe({
+        next: (items) => {
+          this.items = Array.isArray(items) ? items : [];
+          this.extractCategories();
+          this.applyItemFilters();
+          this.setupItemIdValueChangesSubscription();
+        },
+        error: () => {
+          this.snackBar.open('Failed to load items by category', undefined, {
+            duration: 3000,
+          });
+        },
+      });
+  } else {
+    this.http.get<any>(`${this.baseUrl}/item/${this.restaurantId}/items`, { headers }).subscribe({
+  next: (res) => {
+    let itemsArray: ItemDto[] = [];
 
-            this.items = itemsArray;
-            console.log('itemsArray:', itemsArray);
-            console.log('this.items:', this.items);
-            this.extractCategories();
-            this.applyItemFilters();
-            this.setupItemIdValueChangesSubscription();
-          },
-          error: () => {
-            this.snackBar.open('Failed to load all items', undefined, {
-              duration: 3000,
-            });
-          },
-        });
+    if (Array.isArray(res)) {
+      itemsArray = res;
+    } else if (res && Array.isArray(res.$values)) {
+      itemsArray = res.$values;
     }
+
+    this.items = itemsArray;
+
+    if (this.items.length === 0) {
+      this.snackBar.open('No items found for this restaurant', undefined, { duration: 3000 });
+    }
+
+    this.extractCategories();
+    this.applyItemFilters();
+    this.setupItemIdValueChangesSubscription();
+  },
+  error: () => {
+    this.snackBar.open('Failed to load items for restaurant', undefined, { duration: 3000 });
   }
+});
+  }
+}
 
   private itemIdSubscriptionSet = false; // flag to prevent multiple subscriptions
 

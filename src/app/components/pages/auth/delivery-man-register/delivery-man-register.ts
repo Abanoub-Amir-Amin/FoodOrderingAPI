@@ -18,11 +18,13 @@ import { DeliverymanService } from '../../../../services/deliveryman.service';
 import { CustomValidators } from '../../../../services/validators.service';
 import { DeliveryManRegistration } from '../../../../services/deliveryman.model';
 import { PasswordModule } from 'primeng/password';
+import { MapComponent } from '../../../shared/map-component/map-component';
+import { AddressDto } from '../../../../models/DTO.model';
 
 @Component({
   standalone: true,
   selector: 'app-delivery-man-register',
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule, PasswordModule],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule, PasswordModule,MapComponent],
   templateUrl: './delivery-man-register.html',
   styleUrls: ['./delivery-man-register.css'],
 })
@@ -42,6 +44,7 @@ export class DeliveryManRegister implements OnInit, AfterViewInit, OnDestroy {
   hasUpperCase = false;
   hasSpecialChar = false;
   hasMinLength = false;
+  address: AddressDto | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -143,7 +146,9 @@ export class DeliveryManRegister implements OnInit, AfterViewInit, OnDestroy {
       this.hasMinLength = value?.length >= 8;
     });
   }
-
+ setAddress(add: AddressDto) {
+    this.address = add;
+  }
   setLocationMarker(lat: number, lng: number) {
     if (!this.L || !this.isMapInitialized) {
       console.error('Map or Leaflet not initialized');

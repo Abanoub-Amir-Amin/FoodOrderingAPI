@@ -41,18 +41,19 @@ export class ResturantAllDetails implements OnInit {
     private ReviewService: ReviewService
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     const restaurantName = this.route.snapshot.paramMap.get('name')!;
 
     // جلب بيانات المطعم
-    this.restaurantService.getAllRestaurants().subscribe({
+    await new Promise((resolve, reject) => {this.restaurantService.getAllRestaurants().subscribe({
       next: (data) => {
         const restaurants = data.$values ?? [];
         this.restaurant = restaurants.find(r => r.restaurantName === restaurantName)!;
+        resolve(data);
       },
-      error: (err) => console.error('Error fetching restaurant details', err)
+      error: (err) => {console.error('Error fetching restaurant details', err);reject(err)}
     });
-
+  });
     // جلب الأطباق
     this.restaurantService.getItemsByRestaurantName(restaurantName).subscribe({
       next: (data) => {
@@ -96,7 +97,9 @@ export class ResturantAllDetails implements OnInit {
   getReviews() {
     this.restaurantService.getAllReviews().subscribe({
       next: (data) => {
+        console.log("All Reviews",data)
         this.reviews = (data.$values ?? []).filter(r => r.restaurantID === this.restaurant?.id);
+        console.log(`reviews for restaurant id =${this.restaurant.id} : ${this.reviews}`)
       },
       error: (err) => console.error('Error fetching reviews', err)
     });
@@ -165,7 +168,7 @@ export class ResturantAllDetails implements OnInit {
       this.ReviewService.deleteReview(reviewId).subscribe({
         next: () => {
           console.log('Review deleted successfully');
-           this.toastservice.showSuccess("Review Deleted Sucsses", "Add To Cart")
+           this.toastservice.showSuccess("Review Deleted Sucsses", "Review Deleted")
           // ✅ إعادة تحميل الريفيوهات من الـ API
           this.getReviews();
         },

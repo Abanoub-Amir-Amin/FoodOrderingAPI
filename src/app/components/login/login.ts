@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { CustomValidators } from '../../services/validators.service';
-import { AuthService as LoginService } from '../../services/auth';
+import { AuthService, AuthService as LoginService } from '../../services/auth';
 import { Router } from '@angular/router';
 import { loginResponse } from '../../models/ilogin';
 import { isPlatformBrowser, NgIf } from '@angular/common';
@@ -33,6 +33,7 @@ export class LoginComponent implements OnInit {
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private loginAuth: LoginService,
+    private auth:AuthService,
     private router: Router,
     private http: HttpClient // Add http to constructor
     
@@ -81,7 +82,8 @@ export class LoginComponent implements OnInit {
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMsg = err.error?.Message || 'Login failed';
+        console.log(err)
+        this.errorMsg = err?.error || 'Login failed';
       },
     });
   }
@@ -138,7 +140,9 @@ export class LoginComponent implements OnInit {
                   .navigate(['/DeliveryManDashboard'])
                   .catch((err) => console.error(err));
               } else {
+                this.auth.rejectUser(); 
                 this.router.navigate(['/action-pending']);
+
               }
             },
             error: (err) => {
@@ -190,7 +194,9 @@ export class LoginComponent implements OnInit {
                   .navigate(['/restaurant-dashboard'])
                   .catch((err) => console.error(err));
               } else {
+                this.auth.rejectUser(); 
                 this.router.navigate(['/action-pending']);
+
               }
             },
             error: (err) => {

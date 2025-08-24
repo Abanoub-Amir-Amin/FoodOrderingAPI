@@ -134,7 +134,7 @@
 
         <!-- Location Section -->
         <div class="form-group">
-          <label class="form-label">Your Location *</label>
+          <!-- <label class="form-label">Your Location *</label>
           <p class="location-info">
             Click on the map to set your delivery location
           </p>
@@ -148,7 +148,9 @@
             class="error-message"
           >
             Please select your location on the map
-          </span>
+          </span> -->
+          <app-map-component (addressInfo)="setAddress($event)"  [formSubmitted]="formSubmitted"></app-map-component>
+
         </div>
 
         <!-- Terms Agreement -->
