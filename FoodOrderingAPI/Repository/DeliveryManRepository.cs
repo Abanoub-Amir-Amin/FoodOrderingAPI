@@ -1,4 +1,5 @@
 ﻿using FoodOrderingAPI.DTO;
+using FoodOrderingAPI.Interfaces;
 using FoodOrderingAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +11,11 @@ namespace FoodOrderingAPI.Repository
     {
         private readonly ApplicationDBContext _context;
 
-
-        public DeliveryManRepository(ApplicationDBContext context)
+        private readonly INotificationRepo notificationRepo;
+        public DeliveryManRepository(ApplicationDBContext context,INotificationRepo notificationRepo)
         {
             _context = context;
+            notificationRepo = notificationRepo;
         }
 
 
@@ -163,6 +165,8 @@ namespace FoodOrderingAPI.Repository
                     await UpdateDeliveryManAfterDeliveryAsync(deliveryManId);
                 }
                 UpdateOrder.DeliveredAt = DateTime.Now;
+                notificationRepo.CreateNotificationTo(UpdateOrder.CustomerID, $"order number {UpdateOrder.OrderNumber} Delivered");
+                
             }
 
             UpdateOrder.Status = newStatus;

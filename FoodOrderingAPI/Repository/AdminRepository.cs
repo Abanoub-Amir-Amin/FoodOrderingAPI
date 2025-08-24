@@ -22,7 +22,7 @@ namespace FoodOrderingAPI.Repository
         {
             return await _context.Restaurants
                 .Include(r => r.User)
-                .Where(r => r.IsActive == isActive)
+                .Where(r => r.IsActive == isActive && r.User.EmailConfirmed==true)
                 .ToListAsync();
         }
 
@@ -62,7 +62,7 @@ namespace FoodOrderingAPI.Repository
         {
             return (IEnumerable<DeliveryMan>)await _context.DeliveryMen
                 .Include(r => r.User)
-                .Where(r => r.AccountStatus == accountStatus)
+                .Where(r => r.AccountStatus == accountStatus && r.User.EmailConfirmed==true)
                 .ToListAsync();
         }
 

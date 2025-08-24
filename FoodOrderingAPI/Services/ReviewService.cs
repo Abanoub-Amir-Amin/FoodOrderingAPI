@@ -31,7 +31,7 @@ namespace FoodOrderingAPI.Services
                 OrderID = review.OrderID,
                 Rating = review.Rating,
                 Comment = review.Comment,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.Now
             };
             await reviewRepo.CreateReviewAsync(reviewEntity);
         }
