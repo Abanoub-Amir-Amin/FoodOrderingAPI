@@ -147,7 +147,7 @@ namespace FoodOrderingAPI
                     {
                         // 1) For SignalR: Check both query string and Authorization header
                         var path = context.HttpContext.Request.Path;
-                        if (path.StartsWithSegments("/chathub") || path.StartsWithSegments("/notificationhub"))
+                        if (path.StartsWithSegments("/chathub") || path.StartsWithSegments("/notificationhub")|| path.StartsWithSegments("/itemhub"))
                         {
                             // First try query string
                             var accessToken = context.Request.Query["access_token"];
@@ -291,6 +291,7 @@ namespace FoodOrderingAPI
 
             app.MapHub<ChatHub>("/chathub");
             app.MapHub<NotificationHub>("/notificationhub");
+            app.MapHub<NotificationHub>("/itemhub");
             await app.RunAsync();
         }
 

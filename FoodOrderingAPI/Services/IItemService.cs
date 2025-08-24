@@ -7,7 +7,7 @@ namespace FoodOrderingAPI.Services
     {
         //Item-CRUD
         Task<Item> AddItemAsync(string restaurantId, ItemUpdateDto dto);
-        public Task CreateItemAsync(string restaurantId, ItemUpdateDto item);
+        public Task CreateItemAsync(Item item);
 
         Task<Item> UpdateItemAsync(Guid itemId, ItemUpdateDto dto);
         Task<bool> DeleteItemAsync(Guid itemId);

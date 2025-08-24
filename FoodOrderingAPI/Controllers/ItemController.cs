@@ -53,7 +53,7 @@ namespace FoodOrderingAPI.Controllers
                 return Forbid("Your restaurant account is not yet active.");
 
             var item = await _ItemService.AddItemAsync(restaurantId, dto);
-            await _ItemService.CreateItemAsync(restaurantId, dto); ///RecieveItem event must be subscribed by Angular to get latest items in real time in addition to GetItem end point.
+            await _ItemService.CreateItemAsync(item); ///RecieveItem event must be subscribed by Angular to get latest items in real time in addition to GetItem end point.
             return CreatedAtAction(nameof(GetItem), new { restaurantId, itemId = item.ItemID }, item);
         }
 

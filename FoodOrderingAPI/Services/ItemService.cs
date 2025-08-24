@@ -54,7 +54,7 @@ namespace FoodOrderingAPI.Services
             return await _repository.AddItemAsync(restaurantId, item);
         }
 
-        public async Task CreateItemAsync(string restaurantId, ItemUpdateDto item)
+        public async Task CreateItemAsync(Item item)
         {
             await HubContext.Clients.All.SendAsync("ReceiveItem", item);
         }
