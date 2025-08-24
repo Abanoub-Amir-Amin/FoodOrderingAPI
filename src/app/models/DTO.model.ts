@@ -197,7 +197,7 @@ export interface ItemDto {
 }
 
 export interface ItemUpdateDto {
-  // itemID?: string;
+  itemID?: string;
   name: string;
   description?: string;
   price: number;
@@ -217,17 +217,17 @@ export interface DiscountDto {
   startDate: string;
   endDate: string;
 }
-export interface ItemUpdateDto {
-  itemID?: string;
-  name: string;
-  description?: string;
-  price: number;
-  isAvailable: boolean;
-  category: string;
-  imageFile?: File;  // corresponds to IFormFile in backend
-  imageUrl?: string;
-  restaurantID?: string;
-}
+// export interface ItemUpdateDto {
+//   // itemID?: string;
+//   name: string;
+//   description?: string;
+//   price: number;
+//   isAvailable: boolean;
+//   category: string;
+//   imageFile?: File;  // corresponds to IFormFile in backend
+//   imageUrl?: string;
+//   restaurantID?: string;
+// }
 
 export interface PromoCodeDto {
   promoCodeID?: string; // Guid as string

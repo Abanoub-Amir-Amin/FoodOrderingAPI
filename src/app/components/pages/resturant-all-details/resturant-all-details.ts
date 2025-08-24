@@ -5,7 +5,7 @@ import { ListOfResturant } from '../../../services/ListOfResturant/list-of-restu
 import { MainLayoutComponent } from "../../layout/main-layout/main-layout.component";
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ShoppingCartDto, ShoppingCartItemAddedDTO } from '../../../models/DTO.model';
+import { ItemDto, ItemUpdateDto, ShoppingCartDto, ShoppingCartItemAddedDTO } from '../../../models/DTO.model';
 import { ShoppingCart } from '../../../services/shoppingCart/shopping-cart';
 import { ToastService } from '../../../services/toast-service';
 import { AuthService } from '../../../services/auth';
@@ -15,6 +15,7 @@ import { ReviewService } from '../../../services/review/review-service';
 import { CustomCurrencyPipe } from "../../pipes/custom-currency-pipe";
 import { Footer } from "../../layout/footer/footer";
 import { NavbarComponent } from "../../layout/main-layout/navbar/navbar.component";
+import * as signalR from "@microsoft/signalr";
 
 @Component({
   selector: 'app-resturant-all-details',
@@ -29,7 +30,7 @@ export class ResturantAllDetails implements OnInit {
   items: RestaurantItem[] = [];
   loading: boolean = true;
   reviews: any[] = [];
-
+  connection!:signalR.HubConnection;
   private auth = inject(AuthService);
 
   constructor(
@@ -62,8 +63,31 @@ export class ResturantAllDetails implements OnInit {
         console.error('Error fetching items', err);
         this.loading = false;
       }
+    
     });
-
+    this.connection = new signalR.HubConnectionBuilder()
+      .withUrl('http://localhost:5000/itemhub', {
+        accessTokenFactory: () => this.auth.getAuthToken() ?? ''
+      })
+      .build();
+      this.connection.start()
+      .then(() => {
+        console.log('SignalR connected.');
+        this.connection.on('ReceiveItem', (item:any) => {
+          console.log('Raw message received:', item, typeof item);
+          
+          // Convert string message to proper notification object
+          // this.items.push({itemID:item.itemID!,
+          //   name:item.name,
+          //   imageFile:item.imageFile?!
+          //   description:item.description!,
+          //   price:item.price,
+          //   category:item.category,
+          //   discountedPrice:item.discountedPrice
+          // });
+        });
+      })
+      .catch(err => console.error('SignalR connection failed:', err));
     // ✅ استدعاء فانكشن الريفيوهات
     this.getReviews();
   }

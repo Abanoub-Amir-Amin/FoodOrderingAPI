@@ -76,7 +76,7 @@
                       [src]="
                         'http://localhost:5000/' +
                         (item.imageFile?.startsWith('wwwroot')
-                          ? item.imageFile.slice(8)
+                          ? item.imageFile?.slice(8)
                           : item.imageFile)
                       "
                       alt="{{ item.name }}"
@@ -88,8 +88,12 @@
                   </div>
                   <div class="col-12 col-sm-2 col-md-2 text-center">
                     <div class="price-selection">
+                      
+                      <small class="text-muted d-block mb-2 text-danger" style="text-decoration:line-through;" *ngIf="item.price!=item.discountedPrice">
+                        {{ item.price| customCurrency }}
+                      </small>
                       <small class="text-muted d-block mb-2">
-                        {{ item.discountedPrice | customCurrency }}
+                        {{ item.discountedPrice| customCurrency }}
                       </small>
                       <button
                         class="btn btn-orange btn-add"
