@@ -13,12 +13,15 @@ namespace FoodOrderingAPI.Services
         Task<bool> DeleteItemAsync(Guid itemId);
         Task<List<Item>> GetAllItemsAsync();
         Task<Item> GetItemByIdAsync(Guid itemId);
-        Task<IEnumerable<Item>> GetItemsByRestaurantAsync(string restaurantName);
+        Task<IEnumerable<ItemDto>> GetItemsByRestaurantNameAsync(string restaurantName);
         Task<IEnumerable<Item>> GetItemsByCategoryAsync(string restaurantId, string category);
         Task<IEnumerable<ItemDto>> GetMostOrderedItemsAsync(string restaurantId, int topCount = 10);
         //Image Upload
         Task<string> SaveImageAsync(IFormFile file);
 
         Task<List<string>> GetAllCategoriesAsync();
+
+        Task<IEnumerable<ItemDto>> GetItemsByIDRestaurantAsync(string restaurantId);
+
     }
 }

@@ -1,7 +1,11 @@
-﻿namespace FoodOrderingAPI.DTO
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+
+namespace FoodOrderingAPI.DTO
 {
     public class ItemDto
     {
+        [BindNever]
+        public Guid ItemID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }

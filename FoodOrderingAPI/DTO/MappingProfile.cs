@@ -99,6 +99,13 @@ public class MappingProfile : Profile
 
         // Map from Item entity to ItemDto
         CreateMap<Item, ItemDto>()
+            .ForMember(dest => dest.ItemID, opt => opt.MapFrom(src => src.ItemID))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.IsAvailable, opt => opt.MapFrom(src => src.IsAvailable))
+            .ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src => src.DiscountedPrice))
+            .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))
             .ForMember(dest => dest.ImageFile, opt => opt.MapFrom(src => src.ImageFile));
 
         // Reverse mapping ItemDto → Item

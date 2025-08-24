@@ -12,8 +12,10 @@ namespace FoodOrderingAPI.Repository
         Task<List<Item>> GetAllItemsAsync();
         Task<Item> GetItemByIdAsync(Guid itemId);
         Task<IEnumerable<Item>> GetItemsByCategoryAsync(string category);
-        Task<IEnumerable<Item>> GetItemsByRestaurantAsync(string restaurantName);
+        Task<IEnumerable<ItemDto>> GetItemsByRestaurantNameAsync(string restaurantName);
         Task<List<(Item Item, int TotalQuantity)>> GetMostOrderedItemsAsync(string restaurantId, int topCount = 10);
         Task<List<string>> GetAllCategoriesAsync();
+        Task<IEnumerable<ItemDto>> GetItemsByRestaurantIdAsync(string restaurantId);
+
     }
 }
