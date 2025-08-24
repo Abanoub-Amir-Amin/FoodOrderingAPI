@@ -3,8 +3,8 @@ import { RestaurantItem, ResturantInterface } from '../../../models/ResturantInt
 import { ActivatedRoute } from '@angular/router';
 import { ListOfResturant } from '../../../services/ListOfResturant/list-of-resturant';
 import { MainLayoutComponent } from "../../layout/main-layout/main-layout.component";
-import { Footer } from "../../layout/footer/footer";
-
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ShoppingCartDto, ShoppingCartItemAddedDTO } from '../../../models/DTO.model';
 import { ShoppingCart } from '../../../services/shoppingCart/shopping-cart';
 import { ToastService } from '../../../services/toast-service';
@@ -13,12 +13,13 @@ import { RelativeTimePipe } from '../../pipes/pipes/relative-time-pipe';
 import { Rating } from '../rating/rating';
 import { ReviewService } from '../../../services/review/review-service';
 import { CustomCurrencyPipe } from "../../pipes/custom-currency-pipe";
-import { JsonPipe } from '@angular/common';
+import { Footer } from "../../layout/footer/footer";
+import { NavbarComponent } from "../../layout/main-layout/navbar/navbar.component";
 
 @Component({
   selector: 'app-resturant-all-details',
   standalone: true,
-  imports: [MainLayoutComponent, Footer, RelativeTimePipe, Rating, CustomCurrencyPipe,JsonPipe],
+  imports: [MainLayoutComponent, RelativeTimePipe, Rating, CustomCurrencyPipe, Footer, NavbarComponent ,CommonModule ],
   templateUrl: './resturant-all-details.html',
   styleUrl: './resturant-all-details.css'
 })
@@ -148,16 +149,6 @@ export class ResturantAllDetails implements OnInit {
           console.error('Error deleting review', err);
         }
       });
-    }
-    drawstar(rate:number):string{
-      let stars=''
-      for (const i of [1,2,3,4,5]) {
-        if(i < rate)
-          stars+='✮'
-        else
-          stars+='☆'
-      }
-      return stars
     }
   
 }

@@ -1,60 +1,181 @@
-/* الهيدر */
+
+
+/* Main wrapper responsive */
+.main-wrapper {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* Restaurant header responsive */
 .restaurant-header {
-  border-radius: 1rem;
-  overflow: hidden;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  min-height: 250px;
+  width: 100%;
+  margin: 0;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive header heights */
+@media (min-width: 768px) {
+  .restaurant-header {
+    min-height: 280px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .restaurant-header {
+    min-height: 320px;
+  }
+}
+
+/* Overlay transparent over the image */
+.restaurant-header .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 15px;
+}
+
+/* Content over the overlay */
+.restaurant-header .header-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #fff;
+  width: 100%;
 }
 
 .restaurant-header h2 {
-  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
-.open-status {
-  background: linear-gradient(90deg, #28a745, #218838);
+.restaurant-header p {
   font-size: 0.9rem;
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
 }
 
-/* صندوق التقييم */
-.rating-box {
-  width: 100px;
-  border-radius: 0.75rem;
-  text-align: center;
+/* Responsive header text */
+@media (min-width: 768px) {
+  .restaurant-header h2 {
+    font-size: 2rem;
+  }
+  
+  .restaurant-header p {
+    font-size: 1rem;
+  }
 }
 
-.rating-box .text-warning {
-  font-size: 0.9rem;
-  letter-spacing: 2px;
+/* Menu item image responsive */
+.menu-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  max-width: 100%;
 }
 
-/* قائمة الأطباق */
-.card img.rounded-circle {
-  transition: transform 0.3s ease-in-out;
+@media (min-width: 768px) {
+  .menu-img {
+    width: 90px;
+    height: 90px;
+  }
 }
 
-.card img.rounded-circle:hover {
-  transform: scale(1.05);
+/* Restaurant logo responsive */
+.restaurant-logo img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
 }
 
-.card-body h6 {
-  font-size: 1rem;
+@media (min-width: 768px) {
+  .restaurant-logo img {
+    width: 90px;
+    height: 90px;
+  }
 }
 
-.btn {
-  font-size: 0.85rem;
+/* Restaurant info responsive */
+.restaurant-info h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
-/* Customer Reviews */
-.card p {
-  font-size: 0.9rem;
-  line-height: 1.5;
+@media (min-width: 768px) {
+  .restaurant-info h2 {
+    font-size: 1.8rem;
+  }
 }
 
-.card strong {
-  font-size: 1rem;
+/* Orange theme colors */
+:root {
+  --orange-primary: #ff6600;
+  --orange-hover: #e65c00;
 }
 
-app-rating {
-  display: block;
-  margin: 2px 0;
+/* Custom tabs */
+.custom-tabs .nav-link {
+  color: var(--orange-primary);
+  font-weight: 500;
+  border: none;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+}
+
+.custom-tabs .nav-link:hover {
+  color: var(--orange-hover);
+}
+
+/* Button responsive */
+.btn-add {
+  padding: 0.5rem 0.75rem;
+  min-width: 45px;
+}
+
+@media (min-width: 768px) {
+  .btn-add {
+    padding: 0.6rem 0.9rem;
+    min-width: 50px;
+  }
+}
+
+/* Menu item spacing */
+.menu-item {
+  padding: 1rem;
+  border-radius: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.menu-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Review cards responsive */
+.review-card {
+  min-height: 200px;
+}
+
+/* Ensure consistent spacing */
+.g-3 {
+  --bs-gutter-x: 1rem;
+  --bs-gutter-y: 1rem;
+}
+
+/* Container fluid adjustments */
+.container-fluid {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+@media (min-width: 1200px) {
+  .container-fluid {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
 }

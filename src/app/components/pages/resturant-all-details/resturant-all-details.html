@@ -1,150 +1,191 @@
-<div class="container">
-  <app-main-layout />
-  <div class="row">
-    <div class="restaurant-page container py-4">
+<app-navbar />
 
-      @if (!loading) {
+<!-- Main Wrapper -->
+<div class="main-wrapper d-flex flex-column  text-center py-4 mt-5">
 
-        <!-- هيدر المطعم -->
-        <div class="restaurant-header card shadow-sm mb-4 border-0 overflow-hidden">
-          <div class="row g-0 align-items-center">
-            <div class="col-md-8 p-4 d-flex flex-column justify-content-center">
-              <!-- <p class="text-muted mb-1">
-                Desi Flavours with a blend of Italian aesthetics!
-              </p> -->
-              <h2 class="fw-bold">{{ restaurant?.restaurantName }}</h2>
-              <p class="text-secondary">in {{restaurant?.location}}</p>
-              <div class="d-flex gap-3 mt-3">
-                <div class="info-pill">
-                  <i class="bi bi-bicycle"></i>
-                  Delivary Fees : {{restaurant.delivaryPrice}} EGP
+  <!-- Header Section -->
+  <div class="header-section mb-4 w-100">
+   
+    <!-- Restaurant Header -->
+    <div
+      class="restaurant-header card shadow-sm mb-4 border-0 overflow-hidden mt-5 text-white"
+      [ngStyle]="{
+        'background-image':
+          'url(' +
+          'http://localhost:5000/' +
+          (restaurant?.imageFile?.startsWith('wwwroot')
+            ? restaurant.imageFile.slice(8)
+            : restaurant.imageFile) +
+          ')'
+      }"
+    >
+      <!-- Overlay for darkening the image -->
+      <div class="overlay"></div>
+
+      <div class="header-content p-3 p-md-5">
+        <h2 class="fw-bold mb-2">{{ restaurant?.restaurantName }}</h2>
+        <p class="mb-1"><i class="fas fa-map-marker-alt me-2"></i>{{ restaurant?.location }}</p>
+        <p class="mb-1">⭐ The Restaurant Rate is {{ restaurant?.rating || 3 }}</p>
+        <p class="mb-0">
+          🕒 The Open Hours is {{ restaurant?.openHours }}
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="nav-tabs-section mb-4 w-100">
+    <ul class="nav nav-tabs custom-tabs justify-content-center" id="mainTabs">
+      <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#menu">
+          <i class="fas fa-utensils me-2"></i>Menu
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#reviews">
+          <i class="fas fa-comments me-2"></i>Reviews
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#info">
+          <i class="fas fa-info-circle me-2"></i>Info
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="tab-content w-100 d-flex justify-content-center">
+    <div class="tab-pane fade show active w-100" id="menu">
+      <div class="row justify-content-center">
+        <div class="col-12 col-lg-10 col-xl-8">
+          <div class="menu-content">
+            <div class="menu-section" id="picks">
+              <h5 class="section-title mb-4 text-center">
+                <i class="fas fa-fire text-warning me-2"></i>Picks for you
+              </h5>
+
+              <!-- Menu Items -->
+              @for (item of items; track item.itemID) {
+              <div class="menu-item mb-4">
+                <div class="row align-items-center text-start g-3">
+                  <div class="col-12 col-sm-3 col-md-2 text-center">
+                    <img
+                      class="menu-img rounded-circle border border-3 border-light shadow-sm"
+                      [src]="
+                        'http://localhost:5000/' +
+                        (item.imageFile?.startsWith('wwwroot')
+                          ? item.imageFile.slice(8)
+                          : item.imageFile)
+                      "
+                      alt="{{ item.name }}"
+                    />
+                  </div>
+                  <div class="col-12 col-sm-7 col-md-8 text-center text-sm-start">
+                    <h6 class="menu-item-title mb-2">{{ item.name }}</h6>
+                    <p class="menu-item-desc text-muted mb-0">{{ item.description }}</p>
+                  </div>
+                  <div class="col-12 col-sm-2 col-md-2 text-center">
+                    <div class="price-selection">
+                      <small class="text-muted d-block mb-2">
+                        {{ item.discountedPrice | customCurrency }}
+                      </small>
+                      <button
+                        class="btn btn-orange btn-add"
+                        (click)="AddToCart(item.itemID, item.description)"
+                      >
+                        <i class="fas fa-plus fa-lg"></i>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div class="col-md-4 position-relative">
-              <img
-                class="restaurant-image img-fluid h-100 w-100 object-fit-cover"
-                [src]="'http://localhost:5000/' + (restaurant?.imageFile?.startsWith('wwwroot') ? restaurant.imageFile.slice(8) : restaurant.imageFile)"
-                alt="صورة المطعم">
-
-              <!-- صندوق التقييم -->
-              <div class="rating-box shadow-sm position-absolute bottom-0 start-0 p-2 bg-dark bg-opacity-75 rounded text-center">
-                <div class="text-white fw-bold">
-                  {{ restaurant?.rating || 0 }}
-                </div>
-                <div class="text-warning">{{drawstar(restaurant?.rating||0)}}</div>
-                 <!-- <div class="text-warning fs-6">
-                  <i style="font-size: 10px;" class="fa-solid fa-star"></i>
-                  <i class="fas fa-star-half-alt"></i>
-                  <i class="fa-solid fa-star"></i>
-                  <i class="fa-solid fa-star-half-stroke"></i>
-                  <i class="fa-regular fa-star"></i>
-                 </div> -->
-                <small class="text-white" >{{ reviews.length }} reviews</small>
-              </div>
+              }
             </div>
           </div>
-
-          <div class=" px-3 py-2 ">
-            Open from {{restaurant.openHours.split('-')[0]}} untill {{restaurant.openHours.split('-')[1]}}
-          </div>
-        </div>
-
-        <!-- قائمة الأطباق -->
-        <section class="menu-section">
-          <h4 class="mb-3">Restaurant Menu</h4>
-          <div class="row g-4">
-  @for (item of items; track item.itemID) {
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-      <div class="card border-0 shadow-lg h-60 rounded-4 overflow-hidden">
-
-     <!-- صورة -->
-<div class="text-center d-flex align-items-center justify-content-center bg-light rounded-circle mx-auto"
-     style="width: 150px; height: 150px; overflow: hidden;">
-  <img
-    class="menu-img rounded-circle border border-3 border-light shadow-sm"
-    [src]="'http://localhost:5000/' + (item.imageFile?.startsWith('wwwroot') ? item.imageFile.slice(8) : item.imageFile)"
-    alt="{{ item.name }}"
-    style="width: 100%; height: 100%; object-fit: cover;">
-</div>
-
-
-        <!-- تفاصيل -->
-        <div class="card-body text-center">
-          <h5 class="fw-bold mb-1 text-dark">{{ item.name }}</h5>
-          <p class="text-muted small ">{{ item.description }}</p>
-          <div class="text-success  ">
-             {{ item.discountedPrice| customCurrency }}
-
-          </div>
-
-          <!-- زرار Add to Cart -->
-          <button class="btn btn-primary w-200 rounded-pill shadow-sm mt-2"
-                              (click)="AddToCart(item.itemID, item.description)">
-            Add to Cart
-          </button>
         </div>
       </div>
     </div>
-  }
-</div>
 
-        </section>
-
-        <!-- آراء العملاء -->
-        <section class="reviews-section">
-          <h4 class="mt-5 mb-3">Customer Reviews</h4>
-          @if (reviews.length > 0) {
-            <div class="row g-4">
+    <!-- Reviews Tab -->
+    <div class="tab-pane fade w-100" id="reviews">
+      <div class="container-fluid">
+        <div class="text-center py-5">
+          <h4>Reviews</h4>
+          <section class="reviews-section">
+            @if (reviews.length > 0) {
+            <div class="row justify-content-center g-4">
               @for (review of reviews; track review.reviewID) {
-                <div class="col-12 col-md-6 col-lg-4">
-                  <div class="review-card card shadow-sm border-0 p-3 h-100">
-                    <div class="d-flex align-items-center ">
-                      <div>
-                        <strong>{{ review.userName }}</strong>
-                       <app-rating
-  [rating]="review.rating"
-  [maxStars]="review.rating"
-  [readOnly]="true">
-</app-rating>
-                        <small class="text-muted ">{{ review.createdAt | relativeTime }}</small>
-                      </div>
+              <div class="col-12 col-md-6 col-lg-4">
+                <div class="review-card card shadow-sm border-0 p-3 h-100">
+                  <div class="d-flex align-items-center mb-3">
+                    <div class="w-100">
+                      <strong>{{ review.userName }}</strong>
+                      <app-rating
+                        [rating]="review.rating"
+                        [maxStars]="review.rating"
+                        [readOnly]="true"
+                      ></app-rating>
+                      <small class="text-muted d-block">{{ review.createdAt | relativeTime }}</small>
                     </div>
-                    <p class="mb-3">{{ review.comment }}</p>
-
-                    <div *ngFor="let review of reviews">
-  <p>{{ review.comment }} ({{ review.reviewId }})</p>
-  <button *ngIf="review.customerId === currentCustomerId"
-          (click)="deleteReview(review.reviewId)">
-    Delete
-  </button>
-</div>
-
-
-                       @if (review.customerID === currentCustomerId) {
-  <button class="btn btn-sm btn-danger"
-          (click)="deleteReview(review.reviewID)">
-    <i class="bi bi-trash"></i> Delete
-  </button> }
-
-
-
-
+                  </div>
+                  <p class="mb-3">{{ review.comment }}</p>
+                  @if (review.customerID === currentCustomerId) {
+                  <button
+                    class="btn btn-sm btn-danger mt-auto"
+                    (click)="deleteReview(review.reviewID)"
+                  >
+                    <i class="bi bi-trash"></i> Delete
+                  </button>
+                  }
                 </div>
-            </div>
+              </div>
               }
             </div>
-          } @else {
+            } @else {
             <p class="text-muted">There are no reviews yet.</p>
-          }
-        </section>
+            }
+          </section>
+        </div>
+      </div>
+    </div>
 
-      } @else {
-        <p class="text-center py-5">Loading...</p>
-      }
-
+    <!-- Info Tab -->
+    <div class="tab-pane fade w-100" id="info">
+      <div class="container-fluid">
+        <div class="text-center py-5">
+          <h4 class="mb-4">Restaurant Info</h4>
+          <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+              <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
+                <div class="restaurant-logo me-md-4 mb-3 mb-md-0">
+                  <img
+                    [src]="
+                      'http://localhost:5000/' +
+                      (restaurant?.imageFile?.startsWith('wwwroot')
+                        ? restaurant.imageFile.slice(8)
+                        : restaurant.imageFile)
+                    "
+                    alt="{{ restaurant?.restaurantName }}"
+                    class="rounded-circle"
+                  />
+                </div>
+                <div class="restaurant-info text-center text-md-start">
+                  <h2 class="mb-2 text-dark">{{ restaurant?.restaurantName }}</h2>
+                  <p class="text-muted mb-2">{{ restaurant?.location }}</p>
+                  <p class="mb-2">⭐ The Restaurant Rate is {{ restaurant?.rating || 3 }}</p>
+                  <p class="text-muted mb-0">
+                    <strong>🕒 The Open Hours is {{ restaurant?.openHours }}</strong>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <app-footer />
 </div>
+
+<app-footer />

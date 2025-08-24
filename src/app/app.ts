@@ -4,13 +4,15 @@ import { Router, NavigationError } from '@angular/router';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HomeComponent } from './components/pages/home/home.component';
 import { ToastModule } from "primeng/toast";
+import { NgxSpinnerService, NgxSpinnerComponent } from "ngx-spinner";
+
 //import { AuthInterceptor } from './services/auth-token-interceptor';
 // import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ToastModule],
+  imports: [RouterOutlet, ToastModule, NgxSpinnerComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
   // providers: [
