@@ -82,9 +82,9 @@ namespace FoodOrderingAPI.Services
             return await _repository.GetAllItemsAsync();
         }
 
-        public async Task<IEnumerable<Item>> GetItemsByRestaurantAsync(string restaurantName)
+        public async Task<IEnumerable<ItemDto>> GetItemsByRestaurantNameAsync(string restaurantName)
         {
-            return await _repository.GetItemsByRestaurantAsync(restaurantName);
+            return await _repository.GetItemsByRestaurantNameAsync(restaurantName);
         }
         public async Task<bool> DeleteItemAsync(Guid itemId)
         {
@@ -163,6 +163,13 @@ namespace FoodOrderingAPI.Services
             // Get all distinct categories from the Items table
             return await _repository.GetAllCategoriesAsync();
         }
+
+        public async Task<IEnumerable<ItemDto>> GetItemsByIDRestaurantAsync(string restaurantId)
+        {
+            return await _repository.GetItemsByRestaurantIdAsync(restaurantId);
+        }
+
+
 
     }
 }

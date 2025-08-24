@@ -129,7 +129,7 @@ namespace FoodOrderingAPI.Controllers
         {
             if (string.IsNullOrWhiteSpace(restaurantName))
                 return BadRequest("Restaurant Name must be provided.");
-            var items = await _ItemService.GetItemsByRestaurantAsync(restaurantName);
+            var items = await _ItemService.GetItemsByRestaurantNameAsync(restaurantName);
             return Ok(items);
         }
 
@@ -165,5 +165,22 @@ namespace FoodOrderingAPI.Controllers
                 return NotFound("No categories found.");
             return Ok(categories);
         }
+
+
+        [HttpGet("{restaurantId}/items")]
+        public async Task<IActionResult> GetItemsByRestaurantID(string restaurantId)
+        {
+            if (string.IsNullOrWhiteSpace(restaurantId))
+                return BadRequest("Restaurant ID must be provided.");
+
+            var restaurant = await _RestaurantService.GetRestaurantByIdAsync(restaurantId);
+            if (restaurant == null || !restaurant.IsActive)
+                return NotFound($"Restaurant with ID '{restaurantId}' not found or inactive.");
+
+            var items = await _ItemService.GetItemsByIDRestaurantAsync(restaurantId);
+            return Ok(items);
+        }
+
+
     }
 }

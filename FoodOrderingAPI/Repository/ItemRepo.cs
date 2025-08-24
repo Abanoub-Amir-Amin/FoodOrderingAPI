@@ -91,7 +91,7 @@ namespace FoodOrderingAPI.Repository
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Item>> GetItemsByRestaurantAsync(string restaurantName)
+        public async Task<IEnumerable<ItemDto>> GetItemsByRestaurantNameAsync(string restaurantName)
         {
             var restaurantId = await _context.Restaurants
                 .Where(r => r.RestaurantName.Contains(restaurantName))
@@ -99,6 +99,17 @@ namespace FoodOrderingAPI.Repository
                 .FirstOrDefaultAsync();
             return await _context.Items
                 .Where(i => i.RestaurantID == restaurantId)
+                .Select(i => new ItemDto
+                {
+                    ItemID = i.ItemID,
+                    Name = i.Name,
+                    Description = i.Description,
+                    Price = i.Price,
+                    DiscountedPrice = i.DiscountedPrice,
+                    Category = i.Category,
+                    IsAvailable = i.IsAvailable,
+                    ImageFile = i.ImageFile
+                })
                 .ToListAsync();
         }
 
@@ -135,5 +146,27 @@ namespace FoodOrderingAPI.Repository
                 .ToListAsync();
             return categories;
         }
+
+        public async Task<IEnumerable<ItemDto>> GetItemsByRestaurantIdAsync(string restaurantId)
+        {
+            return await _context.Items
+                .Where(i => i.RestaurantID == restaurantId)
+                .Select(i => new ItemDto
+                {
+                    ItemID = i.ItemID,
+                    Name = i.Name,
+                    Description = i.Description,
+                    Price = i.Price,
+                    DiscountedPrice = i.DiscountedPrice,
+                    Category = i.Category,
+                    IsAvailable = i.IsAvailable,
+                    ImageFile = i.ImageFile
+                })
+                .ToListAsync();
+        }
+
+
+
+
     }
 }
