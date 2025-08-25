@@ -11,20 +11,23 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular/build:application",
+          "builder": "@ngx-env/builder:application",
           "options": {
             "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
+              "src/_redirects",
               {
                 "glob": "**/*",
                 "input": "public"
               }
             ],
             "styles": [
-               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
-                "node_modules/ngx-spinner/animations/pacman.css" ,
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+              "node_modules/ngx-spinner/animations/pacman.css",
               "node_modules/primeicons/primeicons.css",
               "node_modules/leaflet/dist/leaflet.css",
               "node_modules/leaflet-control-geocoder/dist/Control.Geocoder.css",
@@ -53,7 +56,13 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
             },
             "development": {
               "optimization": false,
@@ -64,7 +73,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular/build:dev-server",
+          "builder": "@ngx-env/builder:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "my-food-ordering-app:build:production"
@@ -73,15 +82,20 @@
               "buildTarget": "my-food-ordering-app:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {}
         },
         "extract-i18n": {
-          "builder": "@angular/build:extract-i18n"
+          "builder": "@ngx-env/builder:extract-i18n",
+          "options": {}
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@ngx-env/builder:karma",
           "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               {
