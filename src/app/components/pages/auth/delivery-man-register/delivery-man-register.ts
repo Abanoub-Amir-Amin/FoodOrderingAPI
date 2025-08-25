@@ -20,11 +20,18 @@ import { DeliveryManRegistration } from '../../../../services/deliveryman.model'
 import { PasswordModule } from 'primeng/password';
 import { MapComponent } from '../../../shared/map-component/map-component';
 import { AddressDto } from '../../../../models/DTO.model';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: true,
   selector: 'app-delivery-man-register',
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule, PasswordModule,MapComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    PasswordModule,
+    MapComponent,
+  ],
   templateUrl: './delivery-man-register.html',
   styleUrls: ['./delivery-man-register.css'],
 })
@@ -49,7 +56,8 @@ export class DeliveryManRegister implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private deliverymanService: DeliverymanService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -146,7 +154,7 @@ export class DeliveryManRegister implements OnInit, AfterViewInit, OnDestroy {
       this.hasMinLength = value?.length >= 8;
     });
   }
- setAddress(add: AddressDto) {
+  setAddress(add: AddressDto) {
     this.address = add;
   }
   setLocationMarker(lat: number, lng: number) {

@@ -1,224 +1,231 @@
 <!-- delivery-widget.component.html -->
- <div class="outer-container">
-<div class="delivery-widget">
+<div class="outer-container">
+  <div class="delivery-widget">
+    <!-- Notifications Dropdown -->
+    <div class="notifications-dropdown" *ngIf="showNotifications" [@slideDown]>
+      <div class="notifications-header">
+        <h3>Notifications</h3>
+        <button
+          class="clear-btn"
+          (click)="clearNotifications()"
+          *ngIf="notifications.length > 0"
+        >
+          Clear All
+        </button>
+      </div>
+      <div class="notifications-list">
+        <div
+          class="notification-item"
+          *ngFor="let notification of notifications"
+        >
+          <p>{{ notification.message }}</p>
+        </div>
+        <div class="no-notifications" *ngIf="notifications.length === 0">
+          <p>No new notifications</p>
+        </div>
+      </div>
+    </div>
 
-  <!-- Notifications Dropdown -->
-  <div class="notifications-dropdown" *ngIf="showNotifications" [@slideDown]>
-    <div class="notifications-header">
-      <h3>Notifications</h3>
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
       <button
-        class="clear-btn"
-        (click)="clearNotifications()"
-        *ngIf="notifications.length > 0"
+        class="tab-btn"
+        [class.active]="activeTab === 'current'"
+        (click)="setActiveTab('current')"
       >
-        Clear All
+        Current Order
+        <span class="order-indicator" *ngIf="currentOrder">1</span>
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'completed'"
+        (click)="setActiveTab('completed')"
+      >
+        Completed Orders
+        <span class="order-count" *ngIf="completedOrders.length > 0"
+          >({{ completedOrders.length }})</span
+        >
       </button>
     </div>
-    <div class="notifications-list">
-      <div class="notification-item" *ngFor="let notification of notifications">
-        <p>{{ notification.message }}</p>
-      </div>
-      <div class="no-notifications" *ngIf="notifications.length === 0">
-        <p>No new notifications</p>
-      </div>
-    </div>
-  </div>
 
-  <!-- Tab Navigation -->
-  <div class="tab-navigation">
-    <button
-      class="tab-btn"
-      [class.active]="activeTab === 'current'"
-      (click)="setActiveTab('current')"
-    >
-      Current Order
-      <span class="order-indicator" *ngIf="currentOrder">1</span>
-    </button>
-    <button
-      class="tab-btn"
-      [class.active]="activeTab === 'completed'"
-      (click)="setActiveTab('completed')"
-    >
-      Completed Orders
-      <span class="order-count" *ngIf="completedOrders.length > 0"
-        >({{ completedOrders.length }})</span
-      >
-    </button>
-  </div>
-
-  <!-- Loading State -->
-  <!-- <div class="loading-spinner" *ngIf="loading">
+    <!-- Loading State -->
+    <!-- <div class="loading-spinner" *ngIf="loading">
     <div class="spinner"></div>
     <p>Loading...</p>
   </div> -->
 
-  <!-- Current Order Tab -->
-  <div class="tab-content" *ngIf="activeTab === 'current' && !loading">
-    <div
-      class="current-order-section"
-      *ngIf="currentOrder; else noCurrentOrder"
-    >
-      <!-- Order Summary Card -->
-      <div class="order-summary-card">
-        <div class="order-header">
-          <div class="order-info">
-            <h3>Order #{{ currentOrder.orderNumber }}</h3>
-            <span
-              class="status-badge"
-              [ngClass]="'status-' + currentOrder.status"
-            >
-              {{ getStatusText(currentOrder.status || 2) }}
-            </span>
-          </div>
-          <div class="order-actions">
-            <button class="details-btn" (click)="toggleOrderDetails()">
-              {{ showOrderDetails ? "Hide" : "Show" }} Details
-            </button>
-            <button class="refresh-btn" (click)="refreshCurrentOrder()">
-              ↻
-            </button>
-          </div>
-        </div>
-
-        <div class="customer-info">
-          <h4>{{ currentOrder.customerName }}</h4>
-          <p class="address">📍 {{ currentOrder.customerAddress }}</p>
-          <p class="phone">📞 {{ currentOrder.customerPhone }}</p>
-        </div>
-
-        <div class="restaurant-info">
-          <p><strong>From:</strong> {{ currentOrder.restaurantName }}</p>
-          <p class="address">📍 {{ currentOrder.restaurantAddress }}</p>
-        </div>
-      </div>
-
-      <!-- Order Details (Expandable) -->
-      <div class="order-details" *ngIf="showOrderDetails" [@slideDown]>
-        <h4>Order Items</h4>
-        <div class="items-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Qty</th>
-                <th>Preferences</th>
-                <th>Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of currentOrder.items">
-                <td>
-                  <div class="item-cell">
-                    <img
-                      [src]="item.imageUrl"
-                      [alt]="item.itemName"
-                      class="item-image"
-                    />
-                    <span>{{ item.itemName }}</span>
-                  </div>
-                </td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.preferences || "None" }}</td>
-                <td class="price">${{ item.totalPrice.toFixed(2) }}</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr class="total-row">
-                <td colspan="3"><strong>Total Amount</strong></td>
-                <td class="price">
-                  <strong>${{ currentOrder.totalPrice.toFixed(2) }}</strong>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
-
-      <!-- Progress Section - Updated for new enum values -->
-      <div class="progress-section">
-        <div class="progress-steps">
-          <!-- Step 1: Preparing (status = 2) -->
-          <div
-            class="step"
-            [class.completed]="(currentOrder.status || 2) >= 2"
-            [class.active]="(currentOrder.status || 2) === 2"
-          >
-            <div class="step-circle">1</div>
-            <span>Preparing</span>
-          </div>
-          <!-- Step 2: Out for Delivery (status = 3) -->
-          <div
-            class="step"
-            [class.completed]="(currentOrder.status || 2) >= 3"
-            [class.active]="(currentOrder.status || 2) === 3"
-          >
-            <div class="step-circle">2</div>
-            <span>On Route</span>
-          </div>
-          <!-- Step 3: Delivered (status = 4) -->
-          <div
-            class="step"
-            [class.completed]="(currentOrder.status || 2) >= 4"
-            [class.active]="(currentOrder.status || 2) === 4"
-          >
-            <div class="step-circle">3</div>
-            <span>Delivered</span>
-          </div>
-        </div>
-
-        <button
-          class="progress-btn"
-          (click)="progressOrder()"
-          [disabled]="(currentOrder.status || 2) >= 4"
-          [class.final-step]="(currentOrder.status || 2) === 3"
-        >
-          {{ getNextButtonText(currentOrder.status || 2) }}
-        </button>
-      </div>
-    </div>
-
-    <ng-template #noCurrentOrder>
-      <div class="no-order-state">
-        <div class="no-order-icon">📦</div>
-        <h3>No Current Order</h3>
-        <p>You don't have any active orders at the moment.</p>
-        <button class="refresh-btn-large" (click)="refreshCurrentOrder()">
-          Check for Orders
-        </button>
-      </div>
-    </ng-template>
-  </div>
-
-  <!-- Completed Orders Tab -->
-  <div class="tab-content" *ngIf="activeTab === 'completed' && !loading">
-    <div
-      class="completed-orders-section"
-      *ngIf="completedOrders.length > 0; else noCompletedOrders"
-    >
-      <div class="completed-orders-list">
-        <div class="completed-order-card" *ngFor="let order of completedOrders">
-          <div class="order-summary">
-            <div class="order-number">Order #{{ order.orderNumber }}</div>
-            <div class="completion-time">
-              Delivered: {{ order.deliveredAt | date : "short" }}
+    <!-- Current Order Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'current' && !loading">
+      <div
+        class="current-order-section"
+        *ngIf="currentOrder; else noCurrentOrder"
+      >
+        <!-- Order Summary Card -->
+        <div class="order-summary-card">
+          <div class="order-header">
+            <div class="order-info">
+              <h3>Order #{{ currentOrder.orderNumber }}</h3>
+              <span
+                class="status-badge"
+                [ngClass]="'status-' + currentOrder.status"
+              >
+                {{ getStatusText(currentOrder.status || 2) }}
+              </span>
+            </div>
+            <div class="order-actions">
+              <button class="details-btn" (click)="toggleOrderDetails()">
+                {{ showOrderDetails ? "Hide" : "Show" }} Details
+              </button>
+              <button class="refresh-btn" (click)="refreshCurrentOrder()">
+                ↻
+              </button>
             </div>
           </div>
-          <div class="customer-summary">
-            <strong>{{ order.customerName }}</strong>
-            <span class="total-amount">${{ order.totalPrice.toFixed(2) }}</span>
+
+          <div class="customer-info">
+            <h4>{{ currentOrder.customerName }}</h4>
+            <p class="address">📍 {{ currentOrder.customerAddress }}</p>
+            <p class="phone">📞 {{ currentOrder.customerPhone }}</p>
           </div>
-          <div class="address-summary">{{ order.customerAddress }}</div>
+
+          <div class="restaurant-info">
+            <p><strong>From:</strong> {{ currentOrder.restaurantName }}</p>
+            <p class="address">📍 {{ currentOrder.restaurantAddress }}</p>
+          </div>
+        </div>
+
+        <!-- Order Details (Expandable) -->
+        <div class="order-details" *ngIf="showOrderDetails" [@slideDown]>
+          <h4>Order Items</h4>
+          <div class="items-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Qty</th>
+                  <th>Preferences</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of currentOrder.items">
+                  <td>
+                    <div class="item-cell">
+                      <img
+                        [src]="getImage(item.imageFile)"
+                        [alt]="item.itemName"
+                        class="item-image"
+                      />
+                      <span>{{ item.itemName }}</span>
+                    </div>
+                  </td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ item.preferences || "None" }}</td>
+                  <td class="price">${{ item.totalPrice.toFixed(2) }}</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr class="total-row">
+                  <td colspan="3"><strong>Total Amount</strong></td>
+                  <td class="price">
+                    <strong>${{ currentOrder.totalPrice.toFixed(2) }}</strong>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Progress Section - Updated for new enum values -->
+        <div class="progress-section">
+          <div class="progress-steps">
+            <!-- Step 1: Preparing (status = 2) -->
+            <div
+              class="step"
+              [class.completed]="(currentOrder.status || 2) >= 2"
+              [class.active]="(currentOrder.status || 2) === 2"
+            >
+              <div class="step-circle">1</div>
+              <span>Preparing</span>
+            </div>
+            <!-- Step 2: Out for Delivery (status = 3) -->
+            <div
+              class="step"
+              [class.completed]="(currentOrder.status || 2) >= 3"
+              [class.active]="(currentOrder.status || 2) === 3"
+            >
+              <div class="step-circle">2</div>
+              <span>On Route</span>
+            </div>
+            <!-- Step 3: Delivered (status = 4) -->
+            <div
+              class="step"
+              [class.completed]="(currentOrder.status || 2) >= 4"
+              [class.active]="(currentOrder.status || 2) === 4"
+            >
+              <div class="step-circle">3</div>
+              <span>Delivered</span>
+            </div>
+          </div>
+
+          <button
+            class="progress-btn"
+            (click)="progressOrder()"
+            [disabled]="(currentOrder.status || 2) >= 4"
+            [class.final-step]="(currentOrder.status || 2) === 3"
+          >
+            {{ getNextButtonText(currentOrder.status || 2) }}
+          </button>
         </div>
       </div>
+
+      <ng-template #noCurrentOrder>
+        <div class="no-order-state">
+          <div class="no-order-icon">📦</div>
+          <h3>No Current Order</h3>
+          <p>You don't have any active orders at the moment.</p>
+          <button class="refresh-btn-large" (click)="refreshCurrentOrder()">
+            Check for Orders
+          </button>
+        </div>
+      </ng-template>
     </div>
 
-    <ng-template #noCompletedOrders>
-      <div class="no-completed-state">
-        <div class="no-completed-icon">✅</div>
-        <h3>No Completed Orders</h3>
-        <p>Your completed delivery will appear here.</p>
+    <!-- Completed Orders Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'completed' && !loading">
+      <div
+        class="completed-orders-section"
+        *ngIf="completedOrders.length > 0; else noCompletedOrders"
+      >
+        <div class="completed-orders-list">
+          <div
+            class="completed-order-card"
+            *ngFor="let order of completedOrders"
+          >
+            <div class="order-summary">
+              <div class="order-number">Order #{{ order.orderNumber }}</div>
+              <div class="completion-time">
+                Delivered: {{ order.deliveredAt | date : "short" }}
+              </div>
+            </div>
+            <div class="customer-summary">
+              <strong>{{ order.customerName }}</strong>
+              <span class="total-amount"
+                >${{ order.totalPrice.toFixed(2) }}</span
+              >
+            </div>
+            <div class="address-summary">{{ order.customerAddress }}</div>
+          </div>
+        </div>
       </div>
-    </ng-template>
+
+      <ng-template #noCompletedOrders>
+        <div class="no-completed-state">
+          <div class="no-completed-icon">✅</div>
+          <h3>No Completed Orders</h3>
+          <p>Your completed delivery will appear here.</p>
+        </div>
+      </ng-template>
+    </div>
   </div>
-</div>
 </div>

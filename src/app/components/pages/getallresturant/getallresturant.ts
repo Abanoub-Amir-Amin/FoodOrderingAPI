@@ -40,9 +40,4 @@ export class Getallresturant implements OnInit {
   goToRestaurantItems(name: string) {
     this.router.navigate(['/restaurant', name, 'items']);
   }
-
-  Image(imageFile: string | undefined | null): void {
-    this.authService.getImageUrl(imageFile);
-  }
 }
-    

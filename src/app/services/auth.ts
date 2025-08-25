@@ -79,7 +79,7 @@ export class AuthService {
       })
     );
   }
-  rejectUser(){
+  rejectUser() {
     if (!this.isBrowser) return;
 
     sessionStorage.removeItem('authToken');
@@ -89,7 +89,6 @@ export class AuthService {
     sessionStorage.removeItem('loginTime');
     sessionStorage.removeItem('userInfo');
     this.currentUserSubject.next(null);
-    
   }
   logout(): void {
     if (!this.isBrowser) return;
