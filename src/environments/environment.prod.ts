@@ -1,3 +1,4 @@
 export const environment = {
-    url: process.env['NG_APP_URL'],
+  production: true,
+  apiUrl: "http://prestoordering.somee.com/api"
 };
