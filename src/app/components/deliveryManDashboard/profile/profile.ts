@@ -23,7 +23,7 @@ import { AuthService } from '../../../services/auth';
   templateUrl: './profile.html',
   styleUrls: ['./profile.css'],
 })
-export class Profile implements OnInit, OnDestroy, AfterViewInit {
+export class Profile implements OnInit, OnDestroy {
   // Form data
   formData: DeliveryManProfile = {
     userName: '',
@@ -91,32 +91,39 @@ export class Profile implements OnInit, OnDestroy, AfterViewInit {
     this.loadProfile();
   }
 
-  ngAfterViewInit(): void {
-    // Initialize map only on browser side after view init
-    if (this.isBrowser) {
-      setTimeout(() => {
-        this.initializeMap();
-      }, 100);
-    }
-  }
+  // ngAfterViewInit(): void {
+  //   // Initialize map only on browser side after view init
+  //   if (this.isBrowser) {
+  //     setTimeout(() => {
+  //       this.initializeMap();
+  //     }, 100);
+  //   }
+  // }
 
   private loadProfile(): void {
-    this.isLoading = true;
-    this.errorMessage = '';
-    const profileSub = this.profileService.getProfile().subscribe({
-      next: (profile: DeliveryManProfile) => {
-        this.populateForm(profile);
+  this.isLoading = true;
+  this.errorMessage = '';
+
+  const profileSub = this.profileService.getProfile().subscribe({
+    next: (profile: DeliveryManProfile) => {
+      this.populateForm(profile);
+      this.isLoading = false;
+
+      // ✅ هنا بقى نعمل الخريطة بعد ما الصفحة اتعملها Render
+      setTimeout(() => {
+        this.initializeMap();
         this.updateMapLocation(profile.latitude, profile.longitude);
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading profile:', error);
-        this.errorMessage = 'Failed to load profile data. Please try again.';
-        this.isLoading = false;
-      },
-    });
-    this.subscription.add(profileSub);
-  }
+      }, 0);
+    },
+    error: (error) => {
+      console.error('Error loading profile:', error);
+      this.errorMessage = 'Failed to load profile data. Please try again.';
+      this.isLoading = false;
+    },
+  });
+
+  this.subscription.add(profileSub);
+}
 
   private populateForm(profile: DeliveryManProfile): void {
     this.currentLat = profile.latitude;
