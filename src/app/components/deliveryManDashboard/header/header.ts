@@ -42,7 +42,7 @@ export class Header implements OnInit {
       (status) => (this.isAvailable = status)
     );
     await fetch(
-      `http://localhost:5000/api/notification/GetNotifications/${this.authService.getUserId()}`,
+      `http://prestoordering.somee.com/api/notification/GetNotifications/${this.authService.getUserId()}`,
       {
         method: 'GET',
         credentials: 'include',
@@ -66,7 +66,7 @@ export class Header implements OnInit {
       })
       .catch((err) => console.error('Error fetching notifications:', err));
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5000/notificationhub', {
+      .withUrl('http://prestoordering.somee.com/notificationhub', {
         accessTokenFactory: () => this.authService.getAuthToken() ?? '',
       })
       .build();
@@ -207,7 +207,7 @@ export class Header implements OnInit {
     this.notifications.forEach(async (notification) => {
       notification.read = true;
       await fetch(
-        `http://localhost:5000/api/notification/MarkAsRead/${notification.id}`,
+        `http://prestoordering.somee.com/api/notification/MarkAsRead/${notification.id}`,
         {
           method: 'POST',
           headers: {
@@ -266,7 +266,7 @@ export class Header implements OnInit {
   toggleNotificationRead(notification: Notification) {
     notification.read = !notification.read;
     fetch(
-      `http://localhost:5000/api/notification/MarkAsRead/${notification.id}`,
+      `http://prestoordering.somee.com/api/notification/MarkAsRead/${notification.id}`,
       {
         method: 'POST',
         headers: {

@@ -42,7 +42,7 @@ mobileOpen:boolean=false;
   }
  
   async ngOnInit() {
-       await fetch(`http://localhost:5000/api/notification/GetNotifications/${this.authService.getUserId()}`, {
+       await fetch(`http://prestoordering.somee.com/api/notification/GetNotifications/${this.authService.getUserId()}`, {
       method: "GET",
       credentials: "include"
     })
@@ -64,7 +64,7 @@ mobileOpen:boolean=false;
     })
     .catch(err => console.error('Error fetching notifications:', err));
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5000/notificationhub', {
+      .withUrl('http://prestoordering.somee.com/notificationhub', {
         accessTokenFactory: () => this.authService.getAuthToken() ?? ''
       })
       .build();
@@ -81,7 +81,7 @@ mobileOpen:boolean=false;
         });
       })
       .catch(err => console.error('SignalR connection failed:', err));
-      await fetch(`http://localhost:5000/api/Customer/ByID/${this.authService.getUserId()}`, {
+      await fetch(`http://prestoordering.somee.com/api/Customer/ByID/${this.authService.getUserId()}`, {
       method: "GET",
       headers :this.getAuthHeader()
     })
@@ -189,7 +189,7 @@ mobileOpen:boolean=false;
     // Now this will work because notifications are proper objects
     this.notifications.forEach(async notification => {
       notification.read = true;
-      await fetch(`http://localhost:5000/api/notification/MarkAsRead/${notification.id}`, {
+      await fetch(`http://prestoordering.somee.com/api/notification/MarkAsRead/${notification.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -243,7 +243,7 @@ getFilteredNotifications(): Notification[] {
 
 toggleNotificationRead(notification: Notification) {
   notification.read = !notification.read;
-  fetch(`http://localhost:5000/api/notification/MarkAsRead/${notification.id}`, {
+  fetch(`http://prestoordering.somee.com/api/notification/MarkAsRead/${notification.id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

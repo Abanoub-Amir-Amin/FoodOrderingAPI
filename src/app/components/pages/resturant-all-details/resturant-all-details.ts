@@ -43,7 +43,6 @@ export class ResturantAllDetails implements OnInit {
 
   async ngOnInit(): Promise<void> {
     const restaurantName = this.route.snapshot.paramMap.get('name')!;
-
     // جلب بيانات المطعم
     await new Promise((resolve, reject) => {this.restaurantService.getAllRestaurants().subscribe({
       next: (data) => {
@@ -55,7 +54,7 @@ export class ResturantAllDetails implements OnInit {
     });
   });
     // جلب الأطباق
-    this.restaurantService.getItemsByRestaurantName(restaurantName).subscribe({
+    await this.restaurantService.getItemsByRestaurantName(restaurantName).subscribe({
       next: (data) => {
         this.items = data.$values ?? [];
         this.loading = false;
@@ -66,29 +65,6 @@ export class ResturantAllDetails implements OnInit {
       }
     
     });
-    this.connection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5000/itemhub', {
-        accessTokenFactory: () => this.auth.getAuthToken() ?? ''
-      })
-      .build();
-      this.connection.start()
-      .then(() => {
-        console.log('SignalR connected.');
-        this.connection.on('ReceiveItem', (item:any) => {
-          console.log('Raw message received:', item, typeof item);
-          
-          // Convert string message to proper notification object
-          // this.items.push({itemID:item.itemID!,
-          //   name:item.name,
-          //   imageFile:item.imageFile?!
-          //   description:item.description!,
-          //   price:item.price,
-          //   category:item.category,
-          //   discountedPrice:item.discountedPrice
-          // });
-        });
-      })
-      .catch(err => console.error('SignalR connection failed:', err));
     // ✅ استدعاء فانكشن الريفيوهات
     this.getReviews();
   }

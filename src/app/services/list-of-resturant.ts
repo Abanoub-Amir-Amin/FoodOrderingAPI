@@ -22,9 +22,9 @@ export interface Review {
   providedIn: 'root',
 })
 export class ListOfResturant {
-  private apiUrl = 'http://localhost:5000/api/Restaurant/GetRestaurants';
-  private itemsApiUrl = 'http://localhost:5000/api/Item/items/byrestaurantname';
-  private reviewsApiUrl = 'http://localhost:5000/api/Review';
+  private apiUrl = 'http://prestoordering.somee.com/api/Restaurant/GetRestaurants';
+  private itemsApiUrl = 'http://prestoordering.somee.com/api/Item/items/byrestaurantname';
+  private reviewsApiUrl = 'http://prestoordering.somee.com/api/Review';
 
   constructor(private http: HttpClient) {}
 

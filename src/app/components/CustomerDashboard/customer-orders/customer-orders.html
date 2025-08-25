@@ -285,7 +285,7 @@
                             <div class="items-container">
                                 <div class="order-item" *ngFor="let item of selectedOrderDetails.items.$values">
                                     <div class="item-image">
-                                        <img [src]="'http://localhost:5000'+item.imageFile" 
+                                        <img [src]="'http://prestoordering.somee.com'+item.imageFile" 
                                              [alt]="item.itemName" 
                                              *ngIf="item.imageFile; else defaultIcon"
                                              style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">

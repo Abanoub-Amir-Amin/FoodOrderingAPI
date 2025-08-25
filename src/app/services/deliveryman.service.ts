@@ -7,7 +7,7 @@ import { ApiResponse, DeliveryManRegistration } from './deliveryman.model';
   providedIn: 'root',
 })
 export class DeliverymanService {
-  private apiUrl = 'http://localhost:5000/api/DeliveryMan/apply';
+  private apiUrl = 'http://prestoordering.somee.com/api/DeliveryMan/apply';
 
   constructor(private http: HttpClient) {}
 

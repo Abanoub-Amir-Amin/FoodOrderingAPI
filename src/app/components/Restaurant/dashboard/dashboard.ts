@@ -45,7 +45,7 @@ export class RestaurantDashboardComponent implements OnInit, AfterViewInit {
   private cdr = inject(ChangeDetectorRef);
   private dashboardSummaryService = inject(DashboardSummaryService); // inject the service here
 
-  private baseUrl = 'http://localhost:5000/api';
+  private baseUrl = 'http://prestoordering.somee.com/api';
 
   ngOnInit(): void {
     const restaurantId = this.authService.getUserId();

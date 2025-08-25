@@ -156,6 +156,6 @@ export class RestaurantApply implements OnInit {
     this.applyForm.get('location')?.setValue(`${add.street}, ${add.city}`)
     }
     // Optionally update location string display here
-    // this.location = `${add.label} - ${add.street}, ${add.city}`;
+    // this.location = ${add.label} - ${add.street}, ${add.city};
   }
 }

@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
-  private baseUrl = 'http://localhost:5000/api';
+  private baseUrl = 'http://prestoordering.somee.com/api';
 
   constructor(
     private auth: AuthService,

@@ -12,8 +12,8 @@
       [ngStyle]="{
         'background-image':
           'url(' +
-          'http://localhost:5000/' +
-          (restaurant?.imageFile?.startsWith('wwwroot')
+          'http://prestoordering.somee.com/' +
+          (restaurant.imageFile.startsWith('wwwroot')
             ? restaurant.imageFile.slice(8)
             : restaurant.imageFile) +
           ')'
@@ -74,7 +74,7 @@
                     <img
                       class="menu-img rounded-circle border border-3 border-light shadow-sm"
                       [src]="
-                        'http://localhost:5000/' +
+                        'http://prestoordering.somee.com/' +
                         (item.imageFile?.startsWith('wwwroot')
                           ? item.imageFile?.slice(8)
                           : item.imageFile)
@@ -166,7 +166,7 @@
                 <div class="restaurant-logo me-md-4 mb-3 mb-md-0">
                   <img
                     [src]="
-                      'http://localhost:5000/' +
+                      'http://prestoordering.somee.com/' +
                       (restaurant?.imageFile?.startsWith('wwwroot')
                         ? restaurant.imageFile.slice(8)
                         : restaurant.imageFile)

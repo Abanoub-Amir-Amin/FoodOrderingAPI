@@ -3,7 +3,7 @@ export interface OrderItemDto {
   itemName: string;
   quantity: number;
   preferences: string;
-  imageUrl: string;
+  imageFile: string;
   totalPrice: number;
 }
 

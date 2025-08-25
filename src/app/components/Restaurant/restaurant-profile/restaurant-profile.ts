@@ -39,7 +39,7 @@ export class RestaurantProfileComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private authService = inject(AuthService);
 
-  private baseUrl = 'http://localhost:5000/api';
+  private baseUrl = 'http://prestoordering.somee.com/api';
 
   ngOnInit(): void {
     const userId = this.authService.getUserId();

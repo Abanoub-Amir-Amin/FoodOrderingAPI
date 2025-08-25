@@ -17,7 +17,7 @@ export interface DeliveryManProfile {
   providedIn: 'root',
 })
 export class ProfileService {
-  private apiUrl = 'http://localhost:5000/api/DeliveryMan/profile';
+  private apiUrl = 'http://prestoordering.somee.com/api/DeliveryMan/profile';
 
   constructor(private http: HttpClient, private loginService: AuthService) {}
 

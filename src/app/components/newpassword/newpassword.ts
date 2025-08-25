@@ -64,7 +64,7 @@ export class NewPassword {
 
     const newPassword = this.form.value['newPassword'];
 
-    this.http.post('http://localhost:5000/api/auth/reset-password', {
+    this.http.post('http://prestoordering.somee.com/api/auth/reset-password', {
       email: this.email,
       token: this.token,
       newPassword

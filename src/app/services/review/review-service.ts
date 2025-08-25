@@ -18,7 +18,7 @@ export interface ReviewDTO {
   providedIn: 'root'
 })
 export class ReviewService {
-  private apiUrl = 'http://localhost:5000/api/Review';
+  private apiUrl = 'http://prestoordering.somee.com/api/Review';
   headers!: HttpHeaders;
 
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: object) {

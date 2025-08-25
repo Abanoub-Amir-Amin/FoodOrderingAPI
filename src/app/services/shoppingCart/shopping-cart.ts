@@ -12,7 +12,7 @@ import { ApiResponse } from '../deliveryman.model';
   providedIn: 'root',
 })
 export class ShoppingCart {
-  private apiUrl = 'http://localhost:5000/api/';
+  private apiUrl = 'http://prestoordering.somee.com/api/';
   headers!: HttpHeaders;
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) id: object) {
     console.log('called...')

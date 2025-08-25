@@ -7,7 +7,7 @@ import { ChatMessage, ChatSession } from '../../models/chatBot/chat.model';
   providedIn: 'root',
 })
 export class ApiChatService {
-  private baseUrl = 'http://localhost:5000/api'; // Your .NET API URL
+  private baseUrl = 'http://prestoordering.somee.com/api'; // Your .NET API URL
 
   constructor(private http: HttpClient) {}
 
