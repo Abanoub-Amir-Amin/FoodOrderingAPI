@@ -165,7 +165,6 @@ namespace FoodOrderingAPI.Repository
                     await UpdateDeliveryManAfterDeliveryAsync(deliveryManId);
                 }
                 UpdateOrder.DeliveredAt = DateTime.Now;
-                notificationRepo.CreateNotificationTo(UpdateOrder.CustomerID, $"order number {UpdateOrder.OrderNumber} Delivered");
                 
             }
 
