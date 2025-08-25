@@ -24,7 +24,7 @@ export class MostOrdered implements OnInit, OnChanges {
 
   private http = inject(HttpClient);
   private authService = inject(AuthService);
-  private baseUrl = 'http://localhost:5000/api';
+  private baseUrl = 'http://prestoordering.somee.com/api';
 
   ngOnInit() {
     if (this.restaurantID) {

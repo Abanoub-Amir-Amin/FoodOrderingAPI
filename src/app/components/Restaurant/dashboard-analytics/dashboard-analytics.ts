@@ -26,7 +26,7 @@ export class DashboardAnalytics implements OnInit, OnChanges {
 
   private authService = inject(AuthService);
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:5000/api';
+  private baseUrl = 'http://prestoordering.somee.com/api';
   private cdRef = inject(ChangeDetectorRef);
 
   ngOnInit() {

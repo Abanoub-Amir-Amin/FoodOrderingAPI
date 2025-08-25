@@ -33,7 +33,7 @@ export class ResetPassword {
     this.successMessage = '';
     this.errorMessage = '';
 
-    this.http.post('http://localhost:5000/api/auth/forgot-password', { email }, { responseType: 'text' })
+    this.http.post('http://prestoordering.somee.com/api/auth/forgot-password', { email }, { responseType: 'text' })
       .subscribe({
         next: (res) => {
           this.successMessage = res;

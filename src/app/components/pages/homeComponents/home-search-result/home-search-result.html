@@ -15,7 +15,7 @@
     <div *ngFor="let item of items" class="item-card">
       <div class="image-container">
         <img
-          [src]="'http://localhost:5000' + item.imageFile"
+          [src]="'http://prestoordering.somee.com' + item.imageFile"
           [alt]="item.name"
           (error)="onImageError($event)"
           class="item-image"

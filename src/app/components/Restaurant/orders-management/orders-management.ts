@@ -41,7 +41,7 @@ export class OrdersManagement implements OnInit {
   private snackBar = inject(MatSnackBar);
   private authService = inject(AuthService);
 
-  private baseUrl = 'http://localhost:5000/api';
+  private baseUrl = 'http://prestoordering.somee.com/api';
 
   private statusMap = new Map<any, string>([
     [1, 'WaitingToConfirm'],

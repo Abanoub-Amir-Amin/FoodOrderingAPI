@@ -25,12 +25,12 @@ export class CustomerInbobox implements OnInit, OnDestroy {
     this.senderId = this.authService.getUserId();
 
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5000/chathub', {
+      .withUrl('http://prestoordering.somee.com/chathub', {
         accessTokenFactory: () => this.authService.getAuthToken() ?? ''
       })
       .build();
 
-    const response = await fetch(`http://localhost:5000/api/chat/GetChatMessages/${this.senderId}`, {
+    const response = await fetch(`http://prestoordering.somee.com/api/chat/GetChatMessages/${this.senderId}`, {
                   method: "GET",
                   credentials: "include"
               });
@@ -88,7 +88,7 @@ export class CustomerInbobox implements OnInit, OnDestroy {
     this.addMessage(message, true);
 
     this.receiverId = 'Admin0';
-    await fetch('http://localhost:5000/api/chat/sendmessage', {
+    await fetch('http://prestoordering.somee.com/api/chat/sendmessage', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

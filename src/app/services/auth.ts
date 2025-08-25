@@ -16,7 +16,7 @@ export class AuthService {
   private isBrowser: boolean;
   private http = inject(HttpClient);
   private router = inject(Router);
-  private baseUrl = 'http://localhost:5000/api';
+  private baseUrl = 'http://prestoordering.somee.com/api';
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.isBrowser = isPlatformBrowser(this.platformId);
@@ -174,7 +174,7 @@ export class AuthService {
   getImageUrl(imageFile: string | undefined | null): string {
     if (!imageFile) return 'assets/restaurantLogo.jpg';
     if (imageFile.startsWith('http')) return imageFile; // full URL
-    return `http://localhost:5000${imageFile}`; // prefix backend server URL
+    return `http://prestoordering.somee.com${imageFile}`; // prefix backend server URL
   }
 
   // Check if token is expired (you'll need to decode JWT for this)

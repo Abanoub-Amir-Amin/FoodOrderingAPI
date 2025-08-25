@@ -12,7 +12,7 @@ export interface DashboardSummaryDto {
   providedIn: 'root',
 })
 export class DashboardSummaryService {
-  private apiUrl = 'http://localhost:5000/api/order/';
+  private apiUrl = 'http://prestoordering.somee.com/api/order/';
 
   constructor(private http: HttpClient) {}
 

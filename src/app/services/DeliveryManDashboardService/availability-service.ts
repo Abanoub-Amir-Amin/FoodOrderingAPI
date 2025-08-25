@@ -8,7 +8,7 @@ import { catchError } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class AvailabilityService {
-  private apiUrl = 'http://localhost:5000/api/DeliveryMan/availability';
+  private apiUrl = 'http://prestoordering.somee.com/api/DeliveryMan/availability';
 
   private loginInfo = inject(AuthService);
 
@@ -38,7 +38,7 @@ export class AvailabilityService {
   switchAvailabilityStatus(status: boolean): Observable<any> {
     return this.http
       .patch<any>(
-        'http://localhost:5000/api/DeliveryMan/UpdateAvailability',
+        'http://prestoordering.somee.com/api/DeliveryMan/UpdateAvailability',
         status,
         { headers: this.loginInfo.getAuthHeaderDeleviry() }
       )

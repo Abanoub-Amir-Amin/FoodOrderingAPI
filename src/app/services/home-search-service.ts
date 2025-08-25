@@ -6,7 +6,7 @@ import { Observable, forkJoin, of, map, catchError } from 'rxjs';
   providedIn: 'root',
 })
 export class HomeSearchService {
-  private baseUrl = 'http://localhost:5000/api/Item';
+  private baseUrl = 'http://prestoordering.somee.com/api/Item';
 
   constructor(private http: HttpClient) {}
 

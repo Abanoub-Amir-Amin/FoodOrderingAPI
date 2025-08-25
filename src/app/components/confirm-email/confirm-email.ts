@@ -23,7 +23,7 @@ export class ConfirmEmail implements OnInit {
       const userId = params['userId'];
       const token = params['token'];
 
-      const apiUrl = 'http://localhost:5000/api/customer/confirm-email';
+      const apiUrl = 'http://prestoordering.somee.com/api/customer/confirm-email';
       const queryParams = new HttpParams()
         .set('userId', userId)
         .set('token', token);

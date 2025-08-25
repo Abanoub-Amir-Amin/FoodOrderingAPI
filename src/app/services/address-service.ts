@@ -12,7 +12,7 @@ import { AddressDto, AddressViewDto } from '../models/DTO.model';
 export class AddressService {
   userid: string = '';
   headers!: HttpHeaders;
-  private basicUrl = 'http://localhost:5000/api/';
+  private basicUrl = 'http://prestoordering.somee.com/api/';
   constructor(private http: HttpClient, @Inject(PLATFORM_ID) id: object) {
     if (isPlatformBrowser(id)) {
       this.headers = this.getAuthHeaders();

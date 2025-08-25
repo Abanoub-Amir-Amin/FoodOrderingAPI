@@ -75,7 +75,7 @@ export class MenuManagement implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
 
-  private baseUrl = 'http://localhost:5000/api';
+  private baseUrl = 'http://prestoordering.somee.com/api';
 
   constructor() {
     this.addItemForm = this.fb.group({

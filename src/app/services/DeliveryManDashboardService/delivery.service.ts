@@ -15,7 +15,7 @@ import { AuthService } from './../auth';
   providedIn: 'root',
 })
 export class DeliveryService {
-  private readonly baseUrl = 'http://localhost:5000/api';
+  private readonly baseUrl = 'http://prestoordering.somee.com/api';
   private hubConnection!: signalR.HubConnection;
 
   // State management
@@ -41,7 +41,7 @@ export class DeliveryService {
     const token = this.authService.getAuthToken();
 
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5000/notificationHub', {
+      .withUrl('http://prestoordering.somee.com/notificationHub', {
         accessTokenFactory: () => token || '',
       })
       .build();

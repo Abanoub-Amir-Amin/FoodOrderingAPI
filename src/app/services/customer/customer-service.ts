@@ -10,9 +10,9 @@ import { ApiResponse } from '../deliveryman.model';
 })
 export class CustomerService {
   headers !: HttpHeaders;
-  private apiUrl = 'http://localhost:5000/api/Customer/Register';
+  private apiUrl = 'http://prestoordering.somee.com/api/Customer/Register';
 
-  private basicUrl= 'http://localhost:5000/api/';
+  private basicUrl= 'http://prestoordering.somee.com/api/';
   constructor(private http:HttpClient, @Inject(PLATFORM_ID) id:object){
     if(isPlatformBrowser(id)){
       this.headers = this.getAuthHeaders();
