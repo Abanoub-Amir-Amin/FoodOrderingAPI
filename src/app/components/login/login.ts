@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
   isLoading = false;
   errorMsg = '';
   error = '';
-  baseUrl = 'http://localhost:5000'; // Add your backend base URL
+  baseUrl = 'http://prestoordering.somee.com'; // Add your backend base URL
   // platformId: any; // Assign your platformId properly (if used)
 
   // Use constructor DI for all dependencies
@@ -157,7 +157,7 @@ export class LoginComponent implements OnInit {
       case 'admin':
         const token = sessionStorage.getItem('authToken');
         if (token) {
-          window.location.href = `http://localhost:5000/admin/Dashboard?token=${encodeURIComponent(
+          window.location.href = `http://prestoordering.somee.com/admin/Dashboard?token=${encodeURIComponent(
             token
           )}`;
         }
