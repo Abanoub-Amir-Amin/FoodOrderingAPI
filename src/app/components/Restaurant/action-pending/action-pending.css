@@ -1,0 +1,17 @@
+.container {
+  background-color: #fff5f2;
+}
+
+.card {
+  border-radius: 20px;
+}
+
+.btn-warning {
+  background-color: #e67e22;
+  border: none;
+  transition: 0.3s;
+}
+
+.btn-warning:hover {
+  background-color: #cf6c1e;
+}

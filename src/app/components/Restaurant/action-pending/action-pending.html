@@ -1,5 +1,16 @@
-<div class="action-pending">
-  <h2>Your application is pending approval</h2>
-  <p>Please wait until an administrator activates your account.</p>
-  <button (click)="goHome()" class="btn btn-primary mt-3">Back to Home</button>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="card shadow-lg border-0 p-4 text-center rounded-4" style="max-width: 500px; background-color: #fff8f5;">
+    <div class="mb-3">
+      <i class="bi bi-hourglass-split" style="font-size: 3rem; color: #e67e22;"></i>
+    </div>
+    <h2 class="fw-bold text-dark mb-2">Application Pending Approval</h2>
+    <p class="text-muted mb-4" style="font-size: 1.05rem;">
+      Thank you for registering! <br /> Your account is currently under review.
+      <br />
+      Make sure to check your inbox to confirm your email first until an administrator activates your account.
+    </p>
+    <button class="btn btn-lg btn-warning rounded-pill px-4 shadow-sm" (click)="goHome()">
+      <i class="bi bi-house-door-fill me-2"></i>Back to Home
+    </button>
+  </div>
 </div>

@@ -32,8 +32,13 @@ export class RestaurantApply implements OnInit {
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private baseUrl = 'http://prestoordering.somee.com/api/restaurant';
+  constructor(
+      @Inject(PLATFORM_ID) private platformId: Object
+  ){}
+
 
   ngOnInit(): void {
+    
     this.applyForm = this.fb.group({
       restaurantName: ['', Validators.required],
       openHours: [''],
@@ -151,6 +156,6 @@ export class RestaurantApply implements OnInit {
     this.applyForm.get('location')?.setValue(`${add.street}, ${add.city}`)
     }
     // Optionally update location string display here
-    // this.location = `${add.label} - ${add.street}, ${add.city}`;
+    // this.location = ${add.label} - ${add.street}, ${add.city};
   }
 }
