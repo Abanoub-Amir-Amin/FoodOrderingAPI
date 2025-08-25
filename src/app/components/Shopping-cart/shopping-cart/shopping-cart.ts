@@ -127,13 +127,12 @@ export class ShoppingCart implements OnInit {
   }
   async delete_item(cartItemId: string, item: Element | null) {
     try {
-      debugger;
       const res = await firstValueFrom(
         this.cartservices.DeleteItem(cartItemId)
       );
       console.log(res);
       // this.toastservice.showSuccess("Item Delete From Shopping Cart Successfully","Delete Cart","bottom-right")
-      await item?.classList.add('deleting');
+      
       this.cart = await this.GetCart();
       this.cartempty = !this.cart?.shoppingCartItems?.$values?.length;
     } catch (err: any) {

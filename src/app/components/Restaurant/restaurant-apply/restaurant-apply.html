@@ -41,8 +41,10 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Order Time</label>
-          <input formControlName="orderTime" type="string" class="form-control" placeholder="e.g., 01:30" />
+          <label class="form-label">Preparing Time Est.(in minutes)</label>
+          <input formControlName="orderTime" type="number" class="form-control" placeholder="e.g. 30" />
+          <span class="text-danger" *ngIf="applyForm.get('orderTime')?.errors?.['maxlength']"
+          >maximal preparing time is 120 minutes</span>
         </div>
 
         <div class="mb-3">

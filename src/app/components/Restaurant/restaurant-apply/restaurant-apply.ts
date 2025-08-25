@@ -1,7 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { MapComponent } from '../../shared/map-component/map-component';
 import { AddressDto } from '../../../models/DTO.model';
@@ -32,13 +32,17 @@ export class RestaurantApply implements OnInit {
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private baseUrl = 'http://localhost:5000/api/restaurant';
+  constructor(
+      @Inject(PLATFORM_ID) private platformId: Object
+  ){}
+
 
   ngOnInit(): void {
     this.applyForm = this.fb.group({
       restaurantName: ['', Validators.required],
       openHours: [''],
       location: [''],
-      orderTime: ['', Validators.required,Validators.pattern(/^([01]\d|2[0-3]):([0-5]\d)$/)],  // string for HH:mm format
+      orderTime: ['', Validators.required,Validators.maxLength(120)],  // string for HH:mm format
       delivaryPrice: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]], // decimal validation
       isAvailable: [true],
       user: this.fb.group({
@@ -78,7 +82,13 @@ export class RestaurantApply implements OnInit {
     formData.append('Location', formValue.location || '');
     formData.append('OpenHours', formValue.openHours || '');
 
-    let orderTimeStr = formValue.orderTime;
+    let orderhours=(Math.floor(formValue.orderTime/60)).toString()
+    let orderminutes=(formValue.orderTime%60).toString();
+    if(orderhours.length==1)
+      orderhours='0'+orderhours
+    if(orderminutes.length==1)
+      orderminutes='0'+orderminutes
+    let orderTimeStr=orderhours+':'+orderminutes
     if (orderTimeStr && orderTimeStr.length === 5) {
       orderTimeStr += ':00'; // Add seconds if missing
     } else if (!orderTimeStr) {
@@ -140,6 +150,10 @@ export class RestaurantApply implements OnInit {
   setAddress(add: AddressDto) {
     this.latitude = add.latitude;
     this.longitude = add.longitude;
+    console.log("hello");
+    if(isPlatformBrowser(this.platformId)){
+    this.applyForm.get('location')?.setValue(`${add.street}, ${add.city}`)
+    }
     // Optionally update location string display here
     // this.location = `${add.label} - ${add.street}, ${add.city}`;
   }
